@@ -96,14 +96,14 @@
   .nav-inner{
     display:flex; align-items:center; justify-content:space-between;
     padding:10px 28px;
-    max-width:1160px; margin:0 auto;
+    max-width:1320px; margin:0 auto;
   }
-  .brand{display:flex; align-items:center; gap:10px; line-height:1;}
+  .brand{display:flex; align-items:center; gap:10px; line-height:1; flex-shrink:0;}
   .brand-logo-img{height:64px; width:auto; flex-shrink:0;}
-  .nav-links{display:flex; align-items:center; gap:28px;}
+  .nav-links{display:flex; align-items:center; gap:19px; flex-shrink:0;}
   .nav-links a{
-    font-size:14px; font-weight:500; color:var(--charcoal);
-    opacity:0.75; transition:opacity 0.2s;
+    font-size:13px; font-weight:500; color:var(--charcoal);
+    opacity:0.75; transition:opacity 0.2s; white-space:nowrap;
   }
   .nav-links a:hover{opacity:1;}
   .btn{
@@ -120,9 +120,9 @@
   .btn-ghost{background:transparent; color:var(--ink-deep); border:1.5px solid var(--line);}
   .btn-ghost:hover{border-color:var(--ink);}
   .nav-cta{display:none;}
-  @media(min-width:860px){ .nav-cta{display:inline-flex;} }
-  @media(min-width:860px){ .nav-links{display:flex;} }
-  @media(max-width:859px){ .nav-links{display:none;} }
+  @media(min-width:1240px){ .nav-cta{display:inline-flex;} }
+  @media(min-width:1240px){ .nav-links{display:flex;} }
+  @media(max-width:1239px){ .nav-links{display:none;} }
 
   /* ---------- HERO ---------- */
   .hero{position:relative; padding:76px 0 90px; overflow:hidden;}
@@ -593,6 +593,15 @@
   .datetime-row input{min-width:0; width:100%;}
   @media(max-width:420px){ .datetime-row{grid-template-columns:minmax(0,1fr);} }
   .form-hint{font-size:12.5px; opacity:0.55; margin-top:4px;}
+  .kvkk-consent{
+    display:flex; align-items:flex-start; gap:10px;
+    margin:6px 0 2px; font-size:13px; opacity:0.85; line-height:1.55;
+  }
+  .kvkk-consent input{
+    margin-top:3px; flex-shrink:0; width:16px; height:16px;
+    accent-color:var(--bloom); cursor:pointer;
+  }
+  .kvkk-consent label{cursor:pointer;}
   .form-submit{
     margin-top:8px; width:100%; padding:15px 24px; font-size:15.5px;
   }
@@ -1511,6 +1520,11 @@
             </div>
             <span class="form-hint">Belirttiğiniz tarih/saat kesin değildir, size en yakın uygun zamanı planlamak için kullanılır.</span>
           </div>
+        </div>
+
+        <div class="kvkk-consent">
+          <input type="checkbox" id="kvkkOnay" name="kvkk_onay" required>
+          <label for="kvkkOnay">Kişisel verilerimin, başvurumun değerlendirilmesi ve tarafımla iletişime geçilmesi amacıyla 6698 sayılı KVKK kapsamında işlenmesini kabul ediyorum.<span class="req">*</span></label>
         </div>
 
         <button type="submit" class="btn btn-primary form-submit">Deneme dersi başvurumu gönder</button>
