@@ -17,15 +17,10 @@
 <meta property="og:description" content="Grup yok, sıra yok. Her ders birebir, her ay yeni bir proje. 5-18 yaş için Scratch'ten Python ve web geliştirmeye butik kodlama eğitimi.">
 <meta property="og:url" content="https://anthosacademy.com/">
 <meta property="og:locale" content="tr_TR">
-<!-- NOT: Sunucuya 1200x630 px bir "og-image.png" yükleyin; WhatsApp/Instagram paylaşımlarında bu görsel görünür. -->
-<meta property="og:image" content="https://anthosacademy.com/og-image.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
 
-<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Anthos — Butik Kodlama Okulu">
 <meta name="twitter:description" content="5-18 yaş için birebir, proje tabanlı kodlama dersleri.">
-<meta name="twitter:image" content="https://anthosacademy.com/og-image.png">
 
 <script type="application/ld+json">
 {
@@ -128,37 +123,6 @@
   @media(min-width:860px){ .nav-cta{display:inline-flex;} }
   @media(min-width:860px){ .nav-links{display:flex;} }
   @media(max-width:859px){ .nav-links{display:none;} }
-
-  /* ---------- MOBILE MENU ---------- */
-  .nav-burger{
-    display:none; flex-direction:column; justify-content:center; gap:5px;
-    width:44px; height:44px; padding:10px; border:none; background:transparent;
-    cursor:pointer; border-radius:10px;
-  }
-  .nav-burger:focus-visible{outline:2px solid var(--ink); outline-offset:2px;}
-  .nav-burger span{
-    display:block; height:2px; width:100%; background:var(--ink-deep);
-    border-radius:2px; transition:transform 0.25s ease, opacity 0.25s ease;
-  }
-  .nav.menu-open .nav-burger span:nth-child(1){transform:translateY(7px) rotate(45deg);}
-  .nav.menu-open .nav-burger span:nth-child(2){opacity:0;}
-  .nav.menu-open .nav-burger span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
-  @media(max-width:859px){
-    .nav-burger{display:flex;}
-    .nav-mobile{
-      display:none; flex-direction:column; gap:4px;
-      padding:12px 28px 20px; border-top:1px solid var(--line);
-      background:rgba(247,241,227,0.98);
-    }
-    .nav.menu-open .nav-mobile{display:flex;}
-    .nav-mobile a{
-      font-size:16px; font-weight:600; color:var(--ink-deep);
-      padding:11px 4px; border-bottom:1px solid var(--line);
-    }
-    .nav-mobile a:last-of-type{border-bottom:none;}
-    .nav-mobile .btn{margin-top:12px; justify-content:center;}
-  }
-  @media(min-width:860px){ .nav-mobile{display:none !important;} }
 
   /* ---------- HERO ---------- */
   .hero{position:relative; padding:76px 0 90px; overflow:hidden;}
@@ -264,6 +228,19 @@
     font-family:'JetBrains Mono', monospace; font-size:11px; color:var(--ink);
     opacity:0.7;
   }
+  .mini-blocks{display:flex; flex-direction:column; gap:12px;}
+  .mini-block{
+    display:flex; align-items:center; gap:12px;
+    font-family:'Plus Jakarta Sans', sans-serif; font-weight:600; font-size:16.5px;
+    color:#fff; padding:15px 18px; border-radius:13px; border:none; cursor:pointer;
+    width:100%; text-align:left; transition:transform 0.12s ease, filter 0.12s ease;
+  }
+  .mini-block:hover{filter:brightness(1.08);}
+  .mini-block:active{transform:scale(0.97);}
+  .mini-block svg{flex-shrink:0;}
+  .mini-block.move{background:#4C97FF;}
+  .mini-block.jump{background:#E85C4A;}
+  .mini-block.spin{background:#7C9D6F;}
   .mini-code-cta{
     display:block; margin-top:18px; font-family:'JetBrains Mono', monospace;
     font-size:13.5px; color:var(--ink); text-align:center; opacity:0.75; font-weight:500;
@@ -501,19 +478,10 @@
   .price-tier strong{font-family:'Fraunces', serif; font-size:19px; color:var(--ink-deep); white-space:nowrap;}
   .price-tier strong .cents{font-size:12px; opacity:0.7; font-weight:500;}
   .price-tier small{font-family:'JetBrains Mono', monospace; font-size:11px; color:var(--sage);}
-  .price-tier.best{background:var(--ink-deep); position:relative;}
-  .price-tier.best::after{
-    content:"EN AVANTAJLI"; position:absolute; top:-8px; right:12px;
-    font-family:'JetBrains Mono', monospace; font-size:9px; font-weight:700;
-    letter-spacing:0.08em; background:var(--gold); color:var(--ink-deep);
-    padding:3px 8px; border-radius:100px;
-  }
+  .price-tier.best{background:var(--ink-deep);}
   .price-tier.best span.label{color:var(--bloom-soft);}
   .price-tier.best strong{color:#fff;}
   .price-tier.best small{color:var(--gold);}
-  .price-card{position:relative;}
-  .price-cta{margin-top:22px;}
-  .price-cta .btn{width:100%;}
   .price-note{
     margin-top:44px; text-align:center; font-size:14.5px; opacity:0.72; max-width:620px; margin-left:auto; margin-right:auto;
   }
@@ -606,22 +574,6 @@
   .datetime-row input{min-width:0; width:100%;}
   @media(max-width:420px){ .datetime-row{grid-template-columns:minmax(0,1fr);} }
   .form-hint{font-size:12.5px; opacity:0.55; margin-top:4px;}
-  .kvkk-field{margin-top:22px;}
-  .kvkk-consent{
-    display:flex; align-items:flex-start; gap:10px; cursor:pointer;
-    font-size:13.5px; line-height:1.5;
-  }
-  .kvkk-consent input{margin-top:3px; width:16px; height:16px; flex-shrink:0; accent-color:var(--bloom); cursor:pointer;}
-  .kvkk-details{margin-top:10px;}
-  .kvkk-details summary{
-    font-size:12.5px; font-weight:600; color:var(--ink); cursor:pointer;
-    text-decoration:underline; text-underline-offset:3px;
-  }
-  .kvkk-details p{
-    font-size:12.5px; line-height:1.6; opacity:0.75; margin-top:8px;
-    padding:12px 14px; background:var(--cream-2); border-radius:12px;
-  }
-  .kvkk-details a{color:var(--bloom); text-decoration:underline;}
   .form-submit{
     margin-top:8px; width:100%; padding:15px 24px; font-size:15.5px;
   }
@@ -772,27 +724,6 @@
   .faq-a p{padding:0 24px 20px; font-size:14.5px; opacity:0.72; line-height:1.65;}
   .faq-item.open .faq-a{max-height:260px;}
 
-  /* ---------- MENTOR (EĞİTMENİNİZ) ---------- */
-  .mentor-band{
-    display:grid; grid-template-columns:auto 1fr; gap:34px; align-items:center;
-    background:#fff; border:1px solid var(--line); border-radius:var(--radius);
-    padding:40px 42px; max-width:860px; margin:0 auto;
-  }
-  @media(max-width:680px){ .mentor-band{grid-template-columns:1fr; text-align:center; padding:32px 24px;} }
-  .mentor-avatar{
-    width:110px; height:110px; border-radius:50%; flex-shrink:0;
-    background:var(--sage-soft); border:2px solid var(--sage);
-    display:flex; align-items:center; justify-content:center; margin:0 auto;
-  }
-  .mentor-copy h3{font-size:24px; margin-bottom:12px;}
-  .mentor-copy p{font-size:15px; opacity:0.75; line-height:1.65;}
-  .mentor-chips{display:flex; flex-wrap:wrap; gap:8px; margin-top:18px;}
-  @media(max-width:680px){ .mentor-chips{justify-content:center;} }
-  .mentor-chip{
-    font-family:'JetBrains Mono', monospace; font-size:11.5px; letter-spacing:0.04em;
-    color:var(--ink-deep); background:var(--cream-2); padding:7px 13px; border-radius:100px;
-  }
-
   /* ---------- TESTIMONIALS ---------- */
   .testi-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:24px;}
   @media(max-width:900px){ .testi-grid{grid-template-columns:1fr;} }
@@ -856,19 +787,6 @@
       <a href="#iletisim">İletişim</a>
     </div>
     <a href="#deneme" class="btn btn-primary nav-cta">Ücretsiz Deneme Dersi</a>
-    <button type="button" class="nav-burger" id="navBurger" aria-label="Menüyü aç/kapat" aria-expanded="false" aria-controls="navMobile">
-      <span></span><span></span><span></span>
-    </button>
-  </div>
-  <div class="nav-mobile" id="navMobile">
-    <a href="#neden">Neden Anthos</a>
-    <a href="#yorumlar">Yorumlar</a>
-    <a href="#program">Program</a>
-    <a href="#fiyatlandirma">Fiyatlandırma</a>
-    <a href="#nasil">Nasıl İşliyor</a>
-    <a href="#sss">SSS</a>
-    <a href="#iletisim">İletişim</a>
-    <a href="#deneme" class="btn btn-primary">Ücretsiz Deneme Dersi</a>
   </div>
 </nav>
 
@@ -1130,41 +1048,12 @@
       <div class="value-card reveal">
         <div class="value-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 8v5l3.5 2M21 12a9 9 0 1 1-3-6.7" stroke="#4E6B44" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
         <h3>Esnek telafi hakkı</h3>
-        <p>Hastalık ya da sınav haftası mı? 24 saat önceden haber vermeniz yeterli — dersiniz yanmaz, ayda bir derse kadar ücretsiz telafi planlarız.</p>
+        <p>Sınav haftaları veya hastalık durumları göz önünde bulundurularak, en az 24 saat önceden haber verilmesi koşuluyla ayda 1 ders için ücretsiz telafi imkanı tanınır. Paranız veya ders hakkınız yanmaz.</p>
       </div>
       <div class="value-card reveal">
         <div class="value-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 2 3 7v6c0 5 4 8 9 9 5-1 9-4 9-9V7l-9-5Z" stroke="#4E6B44" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
         <h3>Ders sonrası mentorluk</h3>
         <p>Her dersten sonra öğrencimize merak uyandırıcı küçük bir dijital "meydan okuma" (challenge) bırakılır.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="section" id="egitmen" style="padding-top:0;">
-  <div class="wrap">
-    <div class="section-head reveal center">
-      <span class="eyebrow">Eğitmeniniz</span>
-      <h2>Her hafta aynı yüz: kurucu eğitmen.</h2>
-    </div>
-    <div class="mentor-band reveal">
-      <div class="mentor-avatar" aria-hidden="true">
-        <svg width="54" height="54" viewBox="0 0 54 54" fill="none">
-          <circle cx="27" cy="27" r="8" fill="#C99A2E"/>
-          <ellipse cx="27" cy="12" rx="6" ry="9" fill="#E85C4A" opacity="0.85"/>
-          <ellipse cx="27" cy="42" rx="6" ry="9" fill="#E85C4A" opacity="0.85"/>
-          <ellipse cx="12" cy="27" rx="9" ry="6" fill="#E85C4A" opacity="0.85"/>
-          <ellipse cx="42" cy="27" rx="9" ry="6" fill="#E85C4A" opacity="0.85"/>
-        </svg>
-      </div>
-      <div class="mentor-copy">
-        <h3>Dersler eğitmen havuzuna dağıtılmaz.</h3>
-        <p>Anthos'ta tüm dersler kurucu eğitmen tarafından birebir verilir. Çocuğunuz her hafta aynı eğitmenle çalışır: güven bağı kurar, çekinmeden soru sorar ve kaldığı yerden devam eder. Aylık gelişim raporlarını da dışarıdan biri değil, bizzat derse giren eğitmen kaleme alır — çünkü çocuğunuzu en iyi o tanır.</p>
-        <div class="mentor-chips">
-          <span class="mentor-chip">Sabit eğitmen</span>
-          <span class="mentor-chip">Devir yok, vekil yok</span>
-          <span class="mentor-chip">Raporu yazan, derse giren kişidir</span>
-        </div>
       </div>
     </div>
   </div>
@@ -1210,7 +1099,7 @@
   <div class="wrap">
     <div class="path-intro reveal">
       <span class="eyebrow">Eğitim programı</span>
-      <p class="path-intro-line">Yaşa ve seviyeye göre üç aşamalı, tamamen birebir bir öğrenme yolculuğu.</p>
+      <p class="path-intro-line">Tüm paketler birebir ders formatındadır. Uzun dönem paketlerinde indirim uygulanır.</p>
       <p class="anthos-meaning">"Anthos" Yunanca'da <strong>çiçek</strong> anlamına gelir. Aşağıdaki üç aşama da — tohum, filiz, çiçek — bu isimden ilham alır: her çocuk kendi hızında filizlenir ve kendi çiçeğini açar.</p>
     </div>
 
@@ -1242,6 +1131,7 @@
         <span class="eyebrow">Öğrenme yolculuğu</span>
         <h2>Tohumdan çiçeğe, adım adım.</h2>
         <p class="path-note">Anthos'ta program yaşa göre değil, hazır olduğun yere göre ilerler — ama genel olarak üç aşamadan geçilir. Her aşamada da ders birebirdir.</p>
+        <a href="mufredatlar.html" style="display:inline-flex; align-items:center; gap:8px; margin-top:18px; font-family:'JetBrains Mono', monospace; font-size:13.5px; color:var(--bloom-soft); font-weight:600; border-bottom:1.5px solid rgba(244,185,174,0.4); padding-bottom:2px;">Tüm müfredatların tamamını incele →</a>
 
         <div class="path-track">
           <div class="path-line"></div>
@@ -1303,54 +1193,51 @@
           </div>
           <div class="price-tier">
             <div class="price-tier-top"><span class="label">3 aylık avantajlı paket</span><strong>14.790 <span class="cents">TL</span></strong></div>
-            <small>ayda 4.930 TL'ye gelir · %10 indirim</small>
+            <small>%10 indirim · 1.680 TL tasarruf</small>
           </div>
           <div class="price-tier best">
             <div class="price-tier-top"><span class="label">6 aylık uzun dönem paketi</span><strong>27.990 <span class="cents">TL</span></strong></div>
-            <small>ayda 4.665 TL'ye gelir · %15 indirim</small>
+            <small>%15 indirim · 4.950 TL tasarruf</small>
           </div>
         </div>
-        <div class="price-cta"><a href="#deneme" class="btn btn-primary">Ücretsiz deneme ile başla</a></div>
       </div>
 
       <div class="price-card reveal">
         <span class="stage-age">8–12 yaş · Filiz</span>
         <h3>Mantık &amp; algoritma programı</h3>
-        <p class="price-format">Haftada 1 gün × 60 dakika<br>(ayda 4 ders / toplam 4 saat)</p>
+        <p class="price-format">Haftada 1 gün × 50 dakika<br>(ayda 4 ders / toplam 4 saat)</p>
         <div class="price-tiers">
           <div class="price-tier">
             <div class="price-tier-top"><span class="label">Aylık paket (4 hafta)</span><strong>4.990 <span class="cents">TL</span></strong></div>
           </div>
           <div class="price-tier">
             <div class="price-tier-top"><span class="label">3 aylık avantajlı paket</span><strong>13.490 <span class="cents">TL</span></strong></div>
-            <small>ayda 4.497 TL'ye gelir · %10 indirim</small>
+            <small>%10 indirim · 1.480 TL tasarruf</small>
           </div>
           <div class="price-tier best">
             <div class="price-tier-top"><span class="label">6 aylık uzun dönem paketi</span><strong>25.490 <span class="cents">TL</span></strong></div>
-            <small>ayda 4.248 TL'ye gelir · %15 indirim</small>
+            <small>%15 indirim · 4.450 TL tasarruf</small>
           </div>
         </div>
-        <div class="price-cta"><a href="#deneme" class="btn btn-primary">Ücretsiz deneme ile başla</a></div>
       </div>
 
       <div class="price-card reveal">
         <span class="stage-age">13–18 yaş · Çiçek</span>
         <h3>İleri seviye yazılım hattı</h3>
-        <p class="price-format">Haftada 1 gün × 60 dakika<br>(ayda 4 ders / toplam 4 saat)</p>
+        <p class="price-format">Haftada 1 gün × 50 dakika<br>(ayda 4 ders / toplam 4 saat)</p>
         <div class="price-tiers">
           <div class="price-tier">
             <div class="price-tier-top"><span class="label">Aylık paket (4 hafta)</span><strong>5.490 <span class="cents">TL</span></strong></div>
           </div>
           <div class="price-tier">
             <div class="price-tier-top"><span class="label">3 aylık avantajlı paket</span><strong>14.790 <span class="cents">TL</span></strong></div>
-            <small>ayda 4.930 TL'ye gelir · %10 indirim</small>
+            <small>%10 indirim · 1.680 TL tasarruf</small>
           </div>
           <div class="price-tier best">
             <div class="price-tier-top"><span class="label">6 aylık uzun dönem paketi</span><strong>27.990 <span class="cents">TL</span></strong></div>
-            <small>ayda 4.665 TL'ye gelir · %15 indirim</small>
+            <small>%15 indirim · 4.950 TL tasarruf</small>
           </div>
         </div>
-        <div class="price-cta"><a href="#deneme" class="btn btn-primary">Ücretsiz deneme ile başla</a></div>
       </div>
     </div>
 
@@ -1444,7 +1331,7 @@
           <span>Dersi kaçırırsam ne olur?</span>
           <span class="faq-icon">+</span>
         </button>
-        <div class="faq-a"><p>Dersiniz yanmaz. En az 24 saat önceden haber vermeniz yeterli — ayda bir derse kadar ücretsiz telafi planlarız.</p></div>
+        <div class="faq-a"><p>En az 24 saat önceden haber verilmesi koşuluyla ayda 1 ders için ücretsiz telafi hakkınız vardır. Ders hakkınız yanmaz.</p></div>
       </div>
       <div class="faq-item reveal">
         <button type="button" class="faq-q" aria-expanded="false">
@@ -1482,7 +1369,7 @@
       <form class="trial-form" id="trialForm" novalidate>
         <div class="form-grid">
           <div class="form-field">
-            <label for="velinIsim">Velinin Adı ve Soyadı<span class="req">*</span></label>
+            <label for="velenIsim">Velinin Adı ve Soyadı<span class="req">*</span></label>
             <input type="text" id="velinIsim" name="veli_ad_soyad" required autocomplete="name">
           </div>
           <div class="form-field">
@@ -1499,7 +1386,7 @@
           </div>
           <div class="form-field">
             <label for="cocukYas">Yaşı<span class="req">*</span></label>
-            <input type="number" id="cocukYas" name="cocuk_yas" min="5" max="18" required>
+            <input type="number" id="cocukYas" name="cocuk_yas" min="3" max="18" required>
           </div>
           <div class="form-field">
             <label>Cinsiyeti<span class="req">*</span></label>
@@ -1578,17 +1465,6 @@
           </div>
         </div>
 
-        <div class="kvkk-field">
-          <label class="kvkk-consent">
-            <input type="checkbox" id="kvkkOnay" name="kvkk_onay" value="Onayladım" required>
-            <span><span class="req">*</span> Kişisel verilerimin ve çocuğuma ait bilgilerin, deneme dersi planlaması ve tarafıma dönüş yapılması amacıyla işlenmesine onay veriyorum.</span>
-          </label>
-          <details class="kvkk-details">
-            <summary>KVKK Aydınlatma Metni</summary>
-            <p>Bu formda paylaştığınız veli adı-soyadı, e-posta, telefon numarası ile çocuğunuza ait ad, yaş ve cinsiyet bilgileri; 6698 sayılı Kişisel Verilerin Korunması Kanunu (KVKK) kapsamında, veri sorumlusu sıfatıyla Anthos Academy tarafından yalnızca ücretsiz deneme dersinin planlanması, sizinle iletişim kurulması ve size uygun eğitim programının belirlenmesi amaçlarıyla işlenir. Verileriniz üçüncü kişilerle paylaşılmaz, pazarlama amacıyla kullanılmaz ve amaç ortadan kalktığında silinir. KVKK'nın 11. maddesi kapsamındaki haklarınız (bilgi talep etme, düzeltme, silme vb.) için <a href="mailto:merhaba@anthosacademy.com">merhaba@anthosacademy.com</a> adresinden bize ulaşabilirsiniz.</p>
-          </details>
-        </div>
-
         <button type="submit" class="btn btn-primary form-submit">Deneme dersi başvurumu gönder</button>
         <p class="form-status" id="formStatus"></p>
       </form>
@@ -1630,24 +1506,6 @@
 </footer>
 
 <script>
-  // Mobil menü
-  (function(){
-    const nav = document.querySelector('.nav');
-    const burger = document.getElementById('navBurger');
-    const mobileMenu = document.getElementById('navMobile');
-    if(!nav || !burger || !mobileMenu) return;
-    burger.addEventListener('click', ()=>{
-      const open = nav.classList.toggle('menu-open');
-      burger.setAttribute('aria-expanded', String(open));
-    });
-    mobileMenu.querySelectorAll('a').forEach(a=>{
-      a.addEventListener('click', ()=>{
-        nav.classList.remove('menu-open');
-        burger.setAttribute('aria-expanded', 'false');
-      });
-    });
-  })();
-
   // Scroll reveal
   const els = document.querySelectorAll('.reveal');
   if('IntersectionObserver' in window){
@@ -1928,19 +1786,6 @@
   const trialForm = document.getElementById('trialForm');
   const formStatus = document.getElementById('formStatus');
 
-  // "Hiç almadı" diğer seçeneklerle birlikte işaretlenemez
-  (function(){
-    const noneBox = document.getElementById('egitimYok');
-    if(!noneBox) return;
-    const others = Array.from(document.querySelectorAll('input[name="onceki_egitim"]')).filter(cb => cb !== noneBox);
-    noneBox.addEventListener('change', ()=>{
-      if(noneBox.checked) others.forEach(cb => cb.checked = false);
-    });
-    others.forEach(cb => cb.addEventListener('change', ()=>{
-      if(cb.checked) noneBox.checked = false;
-    }));
-  })();
-
   if(trialForm){
     trialForm.addEventListener('submit', async (e)=>{
       e.preventDefault();
@@ -1949,15 +1794,6 @@
 
       if(!trialForm.checkValidity()){
         trialForm.reportValidity();
-        return;
-      }
-
-      // "Daha önce eğitim aldı mı?" için en az bir seçim zorunlu
-      const egitimChecked = trialForm.querySelectorAll('input[name="onceki_egitim"]:checked');
-      if(egitimChecked.length === 0){
-        formStatus.textContent = 'Lütfen "Daha önce bir kodlama eğitimi aldı mı?" sorusunda en az bir seçenek işaretleyin.';
-        formStatus.className = 'form-status err';
-        document.getElementById('egitimArduino').focus();
         return;
       }
 
