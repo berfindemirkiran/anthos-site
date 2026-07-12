@@ -602,6 +602,30 @@
     accent-color:var(--bloom); cursor:pointer;
   }
   .kvkk-consent label{cursor:pointer;}
+  .kvkk-link{
+    color:var(--bloom); font-weight:600; text-decoration:underline;
+    text-underline-offset:2px; cursor:pointer;
+  }
+  .kvkk-modal-overlay{
+    display:none; position:fixed; inset:0; z-index:200;
+    background:rgba(23,16,80,0.45); backdrop-filter:blur(2px);
+    align-items:center; justify-content:center; padding:24px;
+  }
+  .kvkk-modal-overlay.open{display:flex;}
+  .kvkk-modal{
+    background:#fff; border-radius:20px; max-width:620px; width:100%;
+    max-height:80vh; overflow-y:auto; padding:32px 34px;
+    box-shadow:0 24px 60px rgba(23,16,80,0.25);
+  }
+  .kvkk-modal h3{font-size:20px; margin-bottom:14px;}
+  .kvkk-modal p{font-size:14px; line-height:1.7; opacity:0.85; margin-bottom:12px;}
+  .kvkk-modal ul{margin:0 0 12px 18px; font-size:14px; line-height:1.7; opacity:0.85;}
+  .kvkk-modal-close{
+    margin-top:8px; padding:11px 22px; border-radius:100px;
+    background:var(--ink-deep); color:#fff; border:none;
+    font-family:'Plus Jakarta Sans', sans-serif; font-weight:600; font-size:14px;
+    cursor:pointer;
+  }
   .form-submit{
     margin-top:8px; width:100%; padding:15px 24px; font-size:15.5px;
   }
@@ -1524,12 +1548,30 @@
 
         <div class="kvkk-consent">
           <input type="checkbox" id="kvkkOnay" name="kvkk_onay" required>
-          <label for="kvkkOnay">Kişisel verilerimin, başvurumun değerlendirilmesi ve tarafımla iletişime geçilmesi amacıyla 6698 sayılı KVKK kapsamında işlenmesini kabul ediyorum.<span class="req">*</span></label>
+          <label for="kvkkOnay"><span class="kvkk-link" id="kvkkMetniLink" role="button" tabindex="0">KVKK Aydınlatma Metni</span>'ni okudum, kişisel verilerimin işlenmesini ve tarafımla iletişime geçilmesini kabul ediyorum.<span class="req">*</span></label>
         </div>
 
         <button type="submit" class="btn btn-primary form-submit">Deneme dersi başvurumu gönder</button>
         <p class="form-status" id="formStatus"></p>
       </form>
+    </div>
+  </div>
+
+  <div class="kvkk-modal-overlay" id="kvkkModalOverlay">
+    <div class="kvkk-modal">
+      <h3>KVKK Aydınlatma Metni</h3>
+      <p>Anthos Boutique Coding School ("Anthos", "biz") olarak, 6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") kapsamında veri sorumlusu sıfatıyla, ücretsiz deneme dersi başvurusu sırasında paylaştığınız kişisel verileri aşağıda açıklanan kapsamda işliyoruz.</p>
+      <p><strong>İşlenen veriler:</strong> Veli/öğrenci adı-soyadı, telefon numarası, e-posta adresi, öğrencinin yaşı/sınıfı, önceki eğitim geçmişi ve rezervasyon tercihleri gibi başvuru formunda paylaştığınız bilgiler.</p>
+      <p><strong>İşleme amaçları:</strong></p>
+      <ul>
+        <li>Deneme dersi başvurunuzun değerlendirilmesi ve planlanması</li>
+        <li>Sizinle telefon, e-posta veya WhatsApp üzerinden iletişime geçilmesi</li>
+        <li>Talep etmeniz halinde eğitim programları hakkında bilgilendirme yapılması</li>
+      </ul>
+      <p><strong>Hukuki sebep:</strong> Verileriniz, KVKK m.5/2 kapsamında bir sözleşmenin kurulması veya ifasıyla doğrudan ilgili olması ve/veya açık rızanızın alınması suretiyle işlenir.</p>
+      <p><strong>Haklarınız:</strong> KVKK m.11 uyarınca verilerinizin işlenip işlenmediğini öğrenme, işlenmişse buna ilişkin bilgi talep etme, işlenme amacına uygun kullanılıp kullanılmadığını öğrenme, eksik/yanlış işlenmişse düzeltilmesini isteme, silinmesini/yok edilmesini isteme ve bu işlemlerin aktarıldığı üçüncü kişilere bildirilmesini isteme haklarına sahipsiniz. Bu haklarınızı kullanmak için <strong>merhaba@anthosacademy.com</strong> adresinden bizimle iletişime geçebilirsiniz.</p>
+      <p>Verileriniz, yukarıdaki amaçlar dışında üçüncü taraflarla paylaşılmaz ve amaç için gerekli süre boyunca saklanır.</p>
+      <button type="button" class="kvkk-modal-close" id="kvkkModalClose">Anladım, kapat</button>
     </div>
   </div>
 </section>
@@ -1847,6 +1889,33 @@
 
   const trialForm = document.getElementById('trialForm');
   const formStatus = document.getElementById('formStatus');
+
+  // ---------- KVKK AYDINLATMA METNİ MODAL ----------
+  const kvkkMetniLink = document.getElementById('kvkkMetniLink');
+  const kvkkModalOverlay = document.getElementById('kvkkModalOverlay');
+  const kvkkModalClose = document.getElementById('kvkkModalClose');
+
+  function openKvkkModal(){
+    if(kvkkModalOverlay) kvkkModalOverlay.classList.add('open');
+  }
+  function closeKvkkModal(){
+    if(kvkkModalOverlay) kvkkModalOverlay.classList.remove('open');
+  }
+  if(kvkkMetniLink){
+    kvkkMetniLink.addEventListener('click', openKvkkModal);
+    kvkkMetniLink.addEventListener('keydown', (e)=>{
+      if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openKvkkModal(); }
+    });
+  }
+  if(kvkkModalClose) kvkkModalClose.addEventListener('click', closeKvkkModal);
+  if(kvkkModalOverlay){
+    kvkkModalOverlay.addEventListener('click', (e)=>{
+      if(e.target === kvkkModalOverlay) closeKvkkModal();
+    });
+  }
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape') closeKvkkModal();
+  });
 
   if(trialForm){
     trialForm.addEventListener('submit', async (e)=>{
