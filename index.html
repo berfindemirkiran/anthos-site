@@ -536,6 +536,17 @@
     margin-top:44px; text-align:center; font-size:14.5px; opacity:0.72; max-width:620px; margin-left:auto; margin-right:auto;
   }
   .price-note strong{color:var(--ink-deep); opacity:1;}
+  .price-single-note{
+    margin-top:18px; padding-top:16px; border-top:1px dashed var(--line);
+    text-align:center; font-size:12.5px; opacity:0.6;
+  }
+  .price-single-note strong{color:var(--ink-deep); opacity:1; font-weight:700;}
+  .price-tier .save-badge{
+    display:inline-block; margin-left:6px; font-family:'JetBrains Mono', monospace;
+    font-size:10.5px; font-weight:700; color:var(--sage); background:var(--sage-soft);
+    padding:2px 7px; border-radius:100px; vertical-align:middle;
+  }
+  .price-tier.best .save-badge{background:rgba(201,154,46,0.22); color:var(--gold);}
 
   /* ---------- PAYMENT STRIP ---------- */
   .pay-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:20px; margin-top:44px;}
@@ -1301,58 +1312,64 @@
       <div class="price-card reveal">
         <span class="stage-age">5–7 yaş · Tohum</span>
         <h3>Yoğun takip programı</h3>
-        <p class="price-format">Haftada 2 gün × 30 dakika<br>(ayda 8 seans / toplam 4 saat)</p>
+        <p class="price-format">Haftada 1 gün × 50 dakika<br>(ayda 4 ders)</p>
         <div class="price-tiers">
           <div class="price-tier">
-            <div class="price-tier-top"><span class="label">Aylık paket (4 hafta)</span><strong>5.490 <span class="cents">TL</span></strong></div>
+            <div class="price-tier-top"><span class="label">Aylık paket · 4 ders</span><strong>6.400 <span class="cents">TL</span></strong></div>
+            <small>1.600 TL/ders <span class="save-badge">%6 tasarruf</span></small>
           </div>
           <div class="price-tier">
-            <div class="price-tier-top"><span class="label">3 aylık avantajlı paket</span><strong>14.790 <span class="cents">TL</span></strong></div>
-            <small>%10 indirim · 1.680 TL tasarruf</small>
+            <div class="price-tier-top"><span class="label">3 aylık paket · 12 ders</span><strong>18.000 <span class="cents">TL</span></strong></div>
+            <small>1.500 TL/ders <span class="save-badge">%12 tasarruf</span></small>
           </div>
           <div class="price-tier best">
-            <div class="price-tier-top"><span class="label">6 aylık uzun dönem paketi</span><strong>27.990 <span class="cents">TL</span></strong></div>
-            <small>%15 indirim · 4.950 TL tasarruf</small>
+            <div class="price-tier-top"><span class="label">6 aylık paket · 24 ders</span><strong>33.600 <span class="cents">TL</span></strong></div>
+            <small>1.400 TL/ders <span class="save-badge">%18 tasarruf</span></small>
           </div>
         </div>
+        <p class="price-single-note">Tekil ders (paketsiz): <strong>1.700 TL</strong></p>
       </div>
 
       <div class="price-card reveal">
         <span class="stage-age">8–12 yaş · Filiz</span>
         <h3>Mantık &amp; algoritma programı</h3>
-        <p class="price-format">Haftada 1 gün × 50 dakika<br>(ayda 4 ders / toplam 4 saat)</p>
+        <p class="price-format">Haftada 1 gün × 50 dakika<br>(ayda 4 ders)</p>
         <div class="price-tiers">
           <div class="price-tier">
-            <div class="price-tier-top"><span class="label">Aylık paket (4 hafta)</span><strong>4.990 <span class="cents">TL</span></strong></div>
+            <div class="price-tier-top"><span class="label">Aylık paket · 4 ders</span><strong>6.400 <span class="cents">TL</span></strong></div>
+            <small>1.600 TL/ders <span class="save-badge">%6 tasarruf</span></small>
           </div>
           <div class="price-tier">
-            <div class="price-tier-top"><span class="label">3 aylık avantajlı paket</span><strong>13.490 <span class="cents">TL</span></strong></div>
-            <small>%10 indirim · 1.480 TL tasarruf</small>
+            <div class="price-tier-top"><span class="label">3 aylık paket · 12 ders</span><strong>18.000 <span class="cents">TL</span></strong></div>
+            <small>1.500 TL/ders <span class="save-badge">%12 tasarruf</span></small>
           </div>
           <div class="price-tier best">
-            <div class="price-tier-top"><span class="label">6 aylık uzun dönem paketi</span><strong>25.490 <span class="cents">TL</span></strong></div>
-            <small>%15 indirim · 4.450 TL tasarruf</small>
+            <div class="price-tier-top"><span class="label">6 aylık paket · 24 ders</span><strong>33.600 <span class="cents">TL</span></strong></div>
+            <small>1.400 TL/ders <span class="save-badge">%18 tasarruf</span></small>
           </div>
         </div>
+        <p class="price-single-note">Tekil ders (paketsiz): <strong>1.700 TL</strong></p>
       </div>
 
       <div class="price-card reveal">
         <span class="stage-age">13–18 yaş · Çiçek</span>
         <h3>İleri seviye yazılım hattı</h3>
-        <p class="price-format">Haftada 1 gün × 50 dakika<br>(ayda 4 ders / toplam 4 saat)</p>
+        <p class="price-format">Haftada 1 gün × 50 dakika<br>(ayda 4 ders)</p>
         <div class="price-tiers">
           <div class="price-tier">
-            <div class="price-tier-top"><span class="label">Aylık paket (4 hafta)</span><strong>5.490 <span class="cents">TL</span></strong></div>
+            <div class="price-tier-top"><span class="label">Aylık paket · 4 ders</span><strong>6.400 <span class="cents">TL</span></strong></div>
+            <small>1.600 TL/ders <span class="save-badge">%6 tasarruf</span></small>
           </div>
           <div class="price-tier">
-            <div class="price-tier-top"><span class="label">3 aylık avantajlı paket</span><strong>14.790 <span class="cents">TL</span></strong></div>
-            <small>%10 indirim · 1.680 TL tasarruf</small>
+            <div class="price-tier-top"><span class="label">3 aylık paket · 12 ders</span><strong>18.000 <span class="cents">TL</span></strong></div>
+            <small>1.500 TL/ders <span class="save-badge">%12 tasarruf</span></small>
           </div>
           <div class="price-tier best">
-            <div class="price-tier-top"><span class="label">6 aylık uzun dönem paketi</span><strong>27.990 <span class="cents">TL</span></strong></div>
-            <small>%15 indirim · 4.950 TL tasarruf</small>
+            <div class="price-tier-top"><span class="label">6 aylık paket · 24 ders</span><strong>33.600 <span class="cents">TL</span></strong></div>
+            <small>1.400 TL/ders <span class="save-badge">%18 tasarruf</span></small>
           </div>
         </div>
+        <p class="price-single-note">Tekil ders (paketsiz): <strong>1.700 TL</strong></p>
       </div>
     </div>
 
