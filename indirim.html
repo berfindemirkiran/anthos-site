@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="favicon.png">
+<meta name="robots" content="noindex, follow">
+<title>Özel Kampanya — Tüm Programlarda %30 İndirim | Anthos</title>
+<meta name="description" content="Anthos'ta sınırlı süreyle Scratch, Python ve Web Geliştirme programlarının tamamında %30 indirim. Birebir kodlama eğitiminde özel kampanya fırsatı.">
+<link rel="canonical" href="https://anthosacademy.com/indirim.html">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Anthos — Butik Kodlama Okulu">
+<meta property="og:title" content="Özel Kampanya — Tüm Programlarda %30 İndirim | Anthos">
+<meta property="og:description" content="Sınırlı süreyle tüm programlarda %30 indirim. Birebir kodlama eğitiminde özel kampanya fırsatı.">
+<meta property="og:url" content="https://anthosacademy.com/indirim.html">
+<meta property="og:locale" content="tr_TR">
+<meta property="og:image" content="https://anthosacademy.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Özel Kampanya — Tüm Programlarda %30 İndirim | Anthos">
+<meta name="twitter:description" content="Sınırlı süreyle tüm programlarda %30 indirim. Birebir kodlama eğitiminde özel kampanya fırsatı.">
+<meta name="twitter:image" content="https://anthosacademy.com/og-image.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream: #F7F1E3;
+    --cream-2: #F0E8D4;
+    --ink: #241BC3;
+    --ink-deep: #171050;
+    --charcoal: #1B1A2A;
+    --bloom: #E85C4A;
+    --bloom-soft: #F4B9AE;
+    --sage: #7C9D6F;
+    --sage-soft: #DCE6D3;
+    --gold: #C99A2E;
+    --gold-soft: #F3E3BE;
+    --line: rgba(23,16,80,0.12);
+    --radius: 22px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
+  }
+  body{
+    background:var(--cream); color:var(--charcoal);
+    font-family:'Plus Jakarta Sans', sans-serif; line-height:1.5;
+    -webkit-font-smoothing:antialiased; overflow-x:hidden;
+  }
+  a{color:inherit; text-decoration:none;}
+  img,svg{display:block; max-width:100%;}
+  .wrap{max-width:1160px; margin:0 auto; padding:0 28px;}
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace; font-size:12.5px; letter-spacing:0.14em;
+    text-transform:uppercase; color:var(--ink); display:inline-flex; align-items:center; gap:8px;
+  }
+  .eyebrow::before{content:"◆"; font-size:9px; color:var(--bloom);}
+  h1,h2,h3{font-family:'Fraunces', serif; color:var(--ink-deep); font-weight:600; letter-spacing:-0.01em;}
+
+  .scroll-progress{position:fixed; top:0; left:0; height:3px; width:0%; background:linear-gradient(90deg, var(--bloom), var(--gold)); z-index:100;}
+
+  .wa-float{
+    position:fixed; right:24px; bottom:24px; z-index:90;
+    width:58px; height:58px; border-radius:50%; background:#25D366;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 10px 24px rgba(37,211,102,0.42);
+    transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .wa-float:hover{transform:scale(1.08); box-shadow:0 14px 30px rgba(37,211,102,0.5);}
+  .wa-float svg{width:29px; height:29px; position:relative; z-index:1;}
+  .wa-float::before{
+    content:""; position:absolute; inset:-6px; border-radius:50%;
+    border:2px solid rgba(37,211,102,0.55); animation:wa-pulse 2.2s ease-out infinite;
+  }
+  @keyframes wa-pulse{ 0%{transform:scale(0.92); opacity:0.85;} 100%{transform:scale(1.45); opacity:0;} }
+  @media(max-width:600px){ .wa-float{right:16px; bottom:16px; width:52px; height:52px;} .wa-float svg{width:26px; height:26px;} }
+
+  .reveal{opacity:0; transform:translateY(18px); transition:opacity 0.7s ease, transform 0.7s ease;}
+  .reveal.in{opacity:1; transform:translateY(0);}
+
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    font-family:'Plus Jakarta Sans', sans-serif; font-weight:600; font-size:14.5px;
+    padding:13px 24px; border-radius:100px; cursor:pointer; border:none;
+    transition:transform 0.18s ease, box-shadow 0.18s ease; white-space:nowrap;
+  }
+  .btn:focus-visible{outline:2px solid var(--ink); outline-offset:3px;}
+  .btn-primary{background:var(--bloom); color:#fff; box-shadow:0 6px 18px rgba(232,92,74,0.32); position:relative; overflow:hidden;}
+  .btn-primary:hover{transform:translateY(-2px); box-shadow:0 10px 22px rgba(232,92,74,0.4);}
+  .btn-primary::before{content:""; position:absolute; top:0; left:-60%; width:40%; height:100%; background:linear-gradient(120deg, transparent, rgba(255,255,255,0.45), transparent); transform:skewX(-20deg); transition:left .6s ease; pointer-events:none;}
+  .btn-primary:hover::before{left:130%;}
+  .btn-primary.big{font-size:17px; padding:18px 34px;}
+
+  /* NAV */
+  .nav{position:sticky; top:0; z-index:50; background:rgba(247,241,227,0.86); backdrop-filter:blur(10px); border-bottom:1px solid var(--line);}
+  .nav-inner{display:flex; align-items:center; justify-content:space-between; padding:10px 28px; max-width:1160px; margin:0 auto;}
+  .brand{display:flex; align-items:center; gap:10px; line-height:1;}
+  .brand-logo-img{height:64px; width:auto; flex-shrink:0; transition:transform .3s cubic-bezier(.34,1.56,.64,1);}
+  .brand:hover .brand-logo-img{transform:rotate(-4deg) scale(1.05);}
+  .nav-links{display:none; align-items:center; gap:28px;}
+  .nav-links a{font-size:14px; font-weight:500; color:var(--charcoal); opacity:0.75; transition:opacity 0.2s; position:relative;}
+  .nav-links a::after{content:""; position:absolute; left:0; right:100%; bottom:-4px; height:2px; background:var(--bloom); transition:right .25s ease;}
+  .nav-links a:hover{opacity:1;}
+  .nav-links a:hover::after{right:0;}
+  .nav-cta{display:none;}
+  @media(min-width:860px){ .nav-cta{display:inline-flex;} .nav-links{display:flex;} }
+
+  .nav-hamburger{
+    display:flex; align-items:center; justify-content:center;
+    width:38px; height:38px; background:none; border:none; cursor:pointer;
+    flex-shrink:0; padding:0; gap:5px; flex-direction:column;
+  }
+  .nav-hamburger span{
+    display:block; width:22px; height:2px; background:var(--ink-deep);
+    border-radius:2px; transition:transform 0.2s ease, opacity 0.2s ease;
+  }
+  .nav-hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+  .nav-hamburger.open span:nth-child(2){opacity:0;}
+  .nav-hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+  @media(min-width:860px){ .nav-hamburger{display:none;} }
+  @media(max-width:859px){
+    .nav-links.open{
+      display:flex; position:absolute; top:100%; left:0; right:0;
+      flex-direction:column; align-items:stretch; gap:0;
+      background:#fdf9f0; border-top:1px solid var(--line);
+      box-shadow:0 12px 24px rgba(23,16,80,0.12);
+      padding:6px 28px 18px; z-index:60;
+    }
+    .nav-links.open a{
+      padding:14px 4px; border-bottom:1px solid var(--line);
+      font-size:15px; white-space:normal;
+    }
+  }
+
+  /* HERO */
+  .hero{position:relative; padding:64px 0 60px; overflow:hidden;}
+  .hero-flower{position:absolute; top:-40px; right:-10px; width:190px; height:280px; opacity:0.5; transform:rotate(8deg); z-index:0;}
+  .hero .wrap{position:relative; z-index:1;}
+  .hero-copy{max-width:760px; text-align:center; margin:0 auto;}
+  .hero h1{font-size:clamp(36px,5.4vw,58px); line-height:1.08; margin:20px 0 22px;}
+  .hero h1 em{font-style:italic; color:var(--bloom);}
+  .hero p.lead{font-size:18px; color:var(--charcoal); opacity:0.78; max-width:620px; margin:0 auto 30px;}
+  .hero-pills{display:flex; gap:12px; flex-wrap:wrap; margin-bottom:34px; justify-content:center;}
+  .hero-pill{
+    font-family:'JetBrains Mono', monospace; font-size:13px; color:var(--ink);
+    background:#fff; border:1.5px solid var(--line); border-radius:100px; padding:10px 18px;
+  }
+  .discount-hero-badge{
+    display:inline-flex; align-items:center; gap:8px; background:var(--bloom); color:#fff;
+    font-family:'JetBrains Mono', monospace; font-weight:700; font-size:13.5px; letter-spacing:0.04em;
+    padding:11px 22px; border-radius:100px; margin-bottom:22px;
+    box-shadow:0 10px 22px rgba(232,92,74,0.38);
+    animation:badge-pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes badge-pulse{ 0%,100%{transform:scale(1);} 50%{transform:scale(1.035);} }
+
+  .section{padding:76px 0;}
+  .section-head{max-width:640px; margin:0 auto 44px; text-align:center;}
+  .section-head h2{font-size:clamp(28px,3.4vw,40px); margin-top:14px;}
+  .section-head p{font-size:16.5px; opacity:0.72; margin-top:14px;}
+
+  /* ---------- STAGE-AGE / PRICING (Anthos ana site ile birebir) ---------- */
+  .stage-age{
+    font-family:'JetBrains Mono', monospace; font-size:11.5px; letter-spacing:0.08em;
+    color:var(--bloom-soft); text-transform:uppercase; margin-bottom:8px; display:block;
+  }
+  .price-card{
+    background:#fff; border:1px solid var(--line); border-radius:var(--radius);
+    padding:32px 28px; display:flex; flex-direction:column;
+  }
+  .price-format{
+    font-size:13.5px; opacity:0.68; padding-bottom:18px; margin-bottom:18px;
+    border-bottom:1px dashed var(--line);
+  }
+  .price-tiers{display:flex; flex-direction:column; gap:14px;}
+  .price-tier{
+    display:flex; flex-direction:column; gap:2px;
+    padding:14px 16px; border-radius:14px; background:var(--cream-2);
+  }
+  .price-tier-top{display:flex; align-items:baseline; justify-content:space-between; gap:10px;}
+  .price-tier span.label{font-size:13.5px; font-weight:600; color:var(--ink-deep);}
+  .price-tier strong{font-family:'Fraunces', serif; font-size:19px; color:var(--ink-deep); white-space:nowrap;}
+  .price-tier strong .cents{font-size:12px; opacity:0.7; font-weight:500;}
+  .price-tier small{font-family:'JetBrains Mono', monospace; font-size:11px; color:var(--sage);}
+  .price-tier.best{background:var(--ink-deep);}
+  .price-tier.best span.label{color:var(--bloom-soft);}
+  .price-tier.best strong{color:#fff;}
+  .price-tier.best small{color:var(--gold);}
+  .price-note{
+    margin-top:44px; text-align:center; font-size:14.5px; opacity:0.72; max-width:620px; margin-left:auto; margin-right:auto;
+  }
+  .price-note strong{color:var(--ink-deep); opacity:1;}
+  .price-single-note{
+    margin-top:30px; padding-top:24px; border-top:1px dashed var(--line);
+    text-align:center; font-size:13.5px; opacity:0.6;
+  }
+  .price-single-note strong{color:var(--ink-deep); opacity:1; font-weight:700; font-size:16px;}
+  .price-tier .save-badge{
+    display:inline-block; margin-left:6px; font-family:'JetBrains Mono', monospace;
+    font-size:10.5px; font-weight:700; color:var(--sage); background:var(--sage-soft);
+    padding:2px 7px; border-radius:100px; vertical-align:middle;
+  }
+  .price-tier.best .save-badge{background:rgba(201,154,46,0.22); color:var(--gold);}
+
+  .price-card.single{max-width:760px; margin:0 auto; padding:48px 42px 44px;}
+  .price-card.single .price-format{
+    text-align:center; border-bottom:none; padding:16px 22px; margin-bottom:34px;
+    font-family:'JetBrains Mono', monospace; font-size:16px; font-weight:700;
+    color:var(--ink-deep); letter-spacing:0.02em; line-height:1.6;
+    background:linear-gradient(90deg, var(--sage-soft), var(--gold-soft));
+    border-radius:16px; opacity:1;
+  }
+  .price-card.single .price-format strong{
+    font-family:'Fraunces', serif; font-size:21px; font-weight:700; color:var(--bloom);
+  }
+  .price-tiers.horizontal{display:grid; grid-template-columns:repeat(3,1fr); gap:26px;}
+  @media(max-width:680px){ .price-tiers.horizontal{grid-template-columns:1fr;} }
+  .price-tiers.horizontal .price-tier{
+    padding:46px 28px 44px; gap:18px; border-radius:22px; min-height:290px;
+    border:1.5px solid var(--line); box-shadow:0 10px 24px rgba(23,16,80,0.06);
+    transition:transform 0.25s ease, box-shadow 0.25s ease; position:relative;
+  }
+  .price-tiers.horizontal .price-tier:hover{transform:translateY(-4px); box-shadow:0 16px 32px rgba(23,16,80,0.1);}
+  .price-tiers.horizontal .price-tier-top{flex-direction:column; align-items:flex-start; gap:16px;}
+  .price-tiers.horizontal .price-tier span.label{font-size:15.5px; font-weight:700; line-height:1.6;}
+  .price-tiers.horizontal .price-tier strong{font-size:38px; line-height:1.1;}
+  .price-tiers.horizontal .price-tier strong .cents{font-size:18px;}
+  .price-tiers.horizontal .price-tier small{font-size:14px; display:block; margin-top:16px; line-height:1.6;}
+  .price-tiers.horizontal .save-badge{font-size:12.5px; padding:4px 11px; font-weight:700;}
+  .price-tiers.horizontal .price-tier.best{
+    border-color:var(--ink-deep); box-shadow:0 18px 40px rgba(23,16,80,0.28);
+    transform:scale(1.045);
+  }
+  .price-tiers.horizontal .price-tier.best:hover{transform:scale(1.045) translateY(-4px);}
+  .price-tiers.horizontal .price-tier.best::before{
+    content:"EN AVANTAJLI"; position:absolute; top:-13px; left:50%; transform:translateX(-50%);
+    background:var(--bloom); color:#fff; font-family:'JetBrains Mono', monospace;
+    font-size:10.5px; font-weight:700; letter-spacing:0.06em;
+    padding:5px 14px; border-radius:100px; box-shadow:0 4px 10px rgba(232,92,74,0.4);
+  }
+  @media(max-width:680px){ .price-tiers.horizontal .price-tier.best{transform:scale(1);} .price-tiers.horizontal .price-tier.best:hover{transform:translateY(-4px);} }
+
+  .old-price{
+    text-decoration:line-through; opacity:0.45; font-size:17px; font-weight:600;
+    color:var(--charcoal); margin-right:10px; font-family:'Fraunces', serif; display:inline-block;
+  }
+  .price-tier.best .old-price{color:rgba(247,241,227,0.75); opacity:0.65;}
+  .price-single-note .old-price{font-size:15px; margin-right:8px;}
+
+  .age-groups-row{
+    display:flex; gap:18px; justify-content:center; flex-wrap:wrap; margin-bottom:40px;
+  }
+  .age-group-chip{
+    background:#fff; border:1.5px solid var(--line); border-radius:18px;
+    padding:20px 28px; text-align:center; min-width:210px;
+    transition:transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .age-group-chip:hover{transform:translateY(-3px); box-shadow:0 14px 28px rgba(23,16,80,0.08);}
+  .age-group-chip .stage-age{
+    display:block; margin-bottom:8px; color:var(--bloom) !important;
+    font-size:14px !important; font-weight:700; letter-spacing:0.06em;
+  }
+  .age-group-chip .age-group-name{font-size:17px; font-weight:700; color:var(--ink-deep);}
+
+  /* CLOSING CTA */
+  .cta-band{background:var(--ink-deep); border-radius:32px; margin:0 20px; padding:72px 40px; position:relative; overflow:hidden; text-align:center;}
+  .cta-flower{position:absolute; width:170px; height:250px; opacity:0.18;}
+  .cta-flower.f1{top:-40px; left:40px; transform:rotate(-8deg);}
+  .cta-flower.f2{bottom:-50px; right:50px; transform:rotate(10deg); opacity:0.14;}
+  .cta-band .wrap{position:relative; z-index:1; max-width:700px;}
+  .cta-band .eyebrow{color:var(--bloom-soft);}
+  .cta-band .eyebrow::before{color:var(--bloom-soft);}
+  .cta-band h2{color:#fff; font-size:clamp(28px,3.6vw,40px); margin:20px 0 18px;}
+  .cta-band p{color:rgba(247,241,227,0.75); font-size:16.5px; margin-bottom:32px;}
+
+  footer{padding:40px 0; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;}
+  footer .brand-logo-img{height:40px;}
+  footer .foot-links{display:flex; gap:20px; align-items:center;}
+  footer .foot-links a{font-size:13.5px; opacity:0.65;}
+  footer .foot-links a:hover{opacity:1;}
+  footer .foot-copy{font-family:'JetBrains Mono', monospace; font-size:12.5px; color:var(--charcoal); opacity:0.55;}
+</style>
+</head>
+<body>
+<div class="scroll-progress" id="scrollProgress"></div>
+<a class="wa-float" href="https://wa.me/905305860216" target="_blank" rel="noopener" aria-label="WhatsApp'tan bize yazın">
+  <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M16.02 4C9.4 4 4 9.37 4 16c0 2.1.55 4.15 1.6 5.96L4 28l6.2-1.57A11.9 11.9 0 0 0 16.02 28C22.63 28 28 22.63 28 16S22.63 4 16.02 4Z" fill="#fff"/>
+    <path d="M16.02 5.6c5.74 0 10.4 4.66 10.4 10.4s-4.66 10.4-10.4 10.4a10.35 10.35 0 0 1-5.28-1.45l-.38-.22-3.68.93.98-3.58-.25-.38A10.33 10.33 0 0 1 5.62 16c0-5.74 4.66-10.4 10.4-10.4Z" fill="#25D366"/>
+    <path d="M12.1 10.35c-.24-.53-.5-.54-.73-.55h-.62c-.22 0-.57.08-.87.4-.3.32-1.14 1.11-1.14 2.7 0 1.59 1.17 3.13 1.33 3.35.16.22 2.27 3.64 5.6 4.96 2.77 1.1 3.33.88 3.94.82.6-.05 1.94-.79 2.21-1.56.27-.76.27-1.42.19-1.56-.08-.14-.3-.22-.62-.38-.32-.16-1.94-.96-2.24-1.07-.3-.11-.52-.16-.73.16-.22.32-.84 1.07-1.03 1.29-.19.22-.38.24-.7.08-.32-.16-1.36-.5-2.6-1.6-.96-.85-1.6-1.9-1.79-2.22-.19-.32-.02-.49.14-.65.14-.14.32-.38.48-.57.16-.19.21-.32.32-.54.11-.22.05-.4-.03-.57-.08-.16-.7-1.77-1-2.42Z" fill="#fff"/>
+  </svg>
+</a>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="brand"><img class="brand-logo-img" src="logo.png" alt="Anthos"></a>
+    <div class="nav-links">
+      <a href="#fiyatlar">Kampanyalı Fiyatlar</a>
+      <a href="index.html">Ana Sayfa</a>
+    </div>
+    <a href="index.html#deneme" class="btn btn-primary nav-cta">Ücretsiz Deneme Dersi</a>
+    <button type="button" class="nav-hamburger" id="navHamburger" aria-label="Menü" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<header class="hero">
+  <svg class="hero-flower" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <g transform="translate(110,110)" opacity="0.85">
+      <g fill="#E85C4A">
+        <path d="M0,-14 C24,-58 44,-32 0,-72 C-44,-32 -24,-58 0,-14 Z" transform="rotate(0)"/>
+        <path d="M0,-14 C24,-58 44,-32 0,-72 C-44,-32 -24,-58 0,-14 Z" transform="rotate(72)" opacity="0.85"/>
+        <path d="M0,-14 C24,-58 44,-32 0,-72 C-44,-32 -24,-58 0,-14 Z" transform="rotate(144)" opacity="0.7"/>
+        <path d="M0,-14 C24,-58 44,-32 0,-72 C-44,-32 -24,-58 0,-14 Z" transform="rotate(216)" opacity="0.55"/>
+        <path d="M0,-14 C24,-58 44,-32 0,-72 C-44,-32 -24,-58 0,-14 Z" transform="rotate(288)" opacity="0.4"/>
+      </g>
+      <circle r="16" fill="#F3E3BE"/>
+    </g>
+  </svg>
+  <div class="wrap">
+    <div class="hero-copy reveal">
+      <span class="discount-hero-badge">🎉 SINIRLI SÜRE — ÖZEL KAMPANYA</span>
+      <span class="eyebrow">Anthos Butik Kodlama Okulu</span>
+      <h1>Tüm Programlarda <em>%30 İndirim</em></h1>
+      <p class="lead">Scratch, Python ve Web Geliştirme programlarının tamamında geçerli. Grup yok, sıra yok — her ders birebir, şimdi %30 daha uygun fiyatla.</p>
+      <div class="hero-pills">
+        <span class="hero-pill">5–18 yaş arası tüm programlar</span>
+        <span class="hero-pill">Birebir ders formatı</span>
+        <span class="hero-pill">Aynı kalite, %30 daha uygun</span>
+      </div>
+      <a href="index.html#deneme" class="btn btn-primary big">Ücretsiz Deneme Dersi Ayarla</a>
+    </div>
+  </div>
+</header>
+
+<section class="section" id="fiyatlar">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">Kampanyalı Fiyat Listesi</span>
+      <h2>Tek fiyat, üç yaş grubu — %30 indirimli.</h2>
+      <p>Tüm paketler birebir ders formatındadır ve yaş grubundan bağımsız olarak aynı fiyattan sunulur. Kampanya fiyatları sınırlı süre için geçerlidir.</p>
+    </div>
+
+    <div class="age-groups-row reveal">
+      <div class="age-group-chip">
+        <span class="stage-age">5–7 yaş · Tohum</span>
+        <span class="age-group-name">Yoğun takip programı</span>
+      </div>
+      <div class="age-group-chip">
+        <span class="stage-age">8–12 yaş · Filiz</span>
+        <span class="age-group-name">Mantık &amp; algoritma programı</span>
+      </div>
+      <div class="age-group-chip">
+        <span class="stage-age">13–18 yaş · Çiçek</span>
+        <span class="age-group-name">İleri seviye yazılım hattı</span>
+      </div>
+    </div>
+
+    <div class="price-card single reveal">
+      <p class="price-format">🗓️ Haftada 1 gün × <strong>60 dakika</strong> · Ayda 4 ders</p>
+      <div class="price-tiers horizontal">
+        <div class="price-tier">
+          <div class="price-tier-top">
+            <span class="label">Aylık paket · 4 ders</span>
+            <div><span class="old-price">6.400 TL</span><strong>4.480 <span class="cents">TL</span></strong></div>
+          </div>
+          <small>1.120 TL/ders <span class="save-badge">%30 indirim</span></small>
+        </div>
+        <div class="price-tier">
+          <div class="price-tier-top">
+            <span class="label">3 aylık paket · 12 ders</span>
+            <div><span class="old-price">18.000 TL</span><strong>12.600 <span class="cents">TL</span></strong></div>
+          </div>
+          <small>1.050 TL/ders <span class="save-badge">%30 indirim</span></small>
+        </div>
+        <div class="price-tier best">
+          <div class="price-tier-top">
+            <span class="label">6 aylık paket · 24 ders</span>
+            <div><span class="old-price">33.600 TL</span><strong>23.520 <span class="cents">TL</span></strong></div>
+          </div>
+          <small>980 TL/ders <span class="save-badge">%30 indirim</span></small>
+        </div>
+      </div>
+      <p class="price-single-note">Tekil ders (paketsiz): <span class="old-price">1.700 TL</span> <strong>1.190 TL</strong></p>
+    </div>
+
+    <p class="price-note reveal">Aynı aileden katılan kardeşler için ek olarak <strong>%10 kardeş indirimi</strong> uygulanır.</p>
+  </div>
+</section>
+
+<section class="section" style="padding-top:0;">
+  <div class="wrap">
+    <div class="cta-band reveal">
+      <svg class="cta-flower f1" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <g transform="translate(110,110)"><g fill="#E85C4A">
+          <path d="M0,-14 C24,-58 44,-32 0,-72 C-44,-32 -24,-58 0,-14 Z" transform="rotate(0)"/>
+          <path d="M0,-14 C24,-58 44,-32 0,-72 C-44,-32 -24,-58 0,-14 Z" transform="rotate(72)"/>
+          <path d="M0,-14 C24,-58 44,-32 0,-72 C-44,-32 -24,-58 0,-14 Z" transform="rotate(144)"/>
+          <path d="M0,-14 C24,-58 44,-32 0,-72 C-44,-32 -24,-58 0,-14 Z" transform="rotate(216)"/>
+          <path d="M0,-14 C24,-58 44,-32 0,-72 C-44,-32 -24,-58 0,-14 Z" transform="rotate(288)"/>
+        </g><circle r="16" fill="#F3E3BE"/></g>
+      </svg>
+      <div class="wrap">
+        <span class="eyebrow">Fırsat sınırlı süreyle geçerli</span>
+        <h2>Kampanyadan Yararlanmak İçin Hemen Başlayın</h2>
+        <p>Ücretsiz deneme dersiyle tanışın, çocuğunuza en uygun programı birlikte belirleyelim.</p>
+        <a href="index.html#deneme" class="btn btn-primary">Ücretsiz Deneme Dersi Ayarla</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; width:100%;">
+    <a href="index.html" class="brand"><img class="brand-logo-img" src="logo.png" alt="Anthos"></a>
+    <div class="foot-links">
+      <a href="index.html">Ana Sayfa</a>
+      <a href="index.html#fiyatlandirma">Standart Fiyatlar</a>
+    </div>
+    <span class="foot-copy">© 2026 Anthos Academy</span>
+  </div>
+</footer>
+
+<script>
+  // Scroll reveal
+  const els = document.querySelectorAll('.reveal');
+  if('IntersectionObserver' in window){
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, {threshold:0.1});
+    els.forEach(el=>io.observe(el));
+  } else {
+    els.forEach(el=>el.classList.add('in'));
+  }
+
+  // Scroll progress bar
+  (function(){
+    const bar = document.getElementById('scrollProgress');
+    if(!bar) return;
+    function update(){
+      const h = document.documentElement;
+      const max = h.scrollHeight - h.clientHeight;
+      const pct = max > 0 ? (h.scrollTop / max) * 100 : 0;
+      bar.style.width = pct + '%';
+    }
+    window.addEventListener('scroll', update, {passive:true});
+    window.addEventListener('resize', update);
+    update();
+  })();
+</script>
+<script>
+  // Mobile nav hamburger
+  (function(){
+    const hamburger = document.getElementById('navHamburger');
+    const navLinks = document.querySelector('.nav-links');
+    if(hamburger && navLinks){
+      hamburger.addEventListener('click', ()=>{
+        const isOpen = navLinks.classList.toggle('open');
+        hamburger.classList.toggle('open', isOpen);
+        hamburger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      });
+      navLinks.querySelectorAll('a').forEach(a=>{
+        a.addEventListener('click', ()=>{
+          navLinks.classList.remove('open');
+          hamburger.classList.remove('open');
+          hamburger.setAttribute('aria-expanded', 'false');
+        });
+      });
+      document.addEventListener('keydown', (e)=>{
+        if(e.key === 'Escape'){
+          navLinks.classList.remove('open');
+          hamburger.classList.remove('open');
+          hamburger.setAttribute('aria-expanded', 'false');
+        }
+      });
+    }
+  })();
+</script>
+</body>
+</html>
