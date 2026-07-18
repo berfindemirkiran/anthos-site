@@ -559,7 +559,16 @@
   .age-group-chip .age-group-name{font-size:14px; font-weight:600; color:var(--ink-deep);}
 
   .price-card.single{max-width:760px; margin:0 auto;}
-  .price-card.single .price-format{text-align:center; border-bottom:none; padding-bottom:6px;}
+  .price-card.single .price-format{
+    text-align:center; border-bottom:none; padding:16px 22px; margin-bottom:26px;
+    font-family:'JetBrains Mono', monospace; font-size:16px; font-weight:700;
+    color:var(--ink-deep); letter-spacing:0.02em; line-height:1.6;
+    background:linear-gradient(90deg, var(--sage-soft), var(--gold-soft));
+    border-radius:16px; opacity:1;
+  }
+  .price-card.single .price-format strong{
+    font-family:'Fraunces', serif; font-size:21px; font-weight:700; color:var(--bloom);
+  }
   .price-tiers.horizontal{display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
   @media(max-width:680px){ .price-tiers.horizontal{grid-template-columns:1fr;} }
 
@@ -1339,7 +1348,7 @@
     </div>
 
     <div class="price-card single reveal">
-      <p class="price-format">Haftada 1 gün × 50 dakika (ayda 4 ders)</p>
+      <p class="price-format">🗓️ Haftada 1 gün × <strong>60 dakika</strong> · Ayda 4 ders</p>
       <div class="price-tiers horizontal">
         <div class="price-tier">
           <div class="price-tier-top"><span class="label">Aylık paket · 4 ders</span><strong>6.400 <span class="cents">TL</span></strong></div>
