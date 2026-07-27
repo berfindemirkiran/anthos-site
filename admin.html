@@ -92,6 +92,13 @@
   .view{display:none;}
   .view.active{display:block;}
 
+  /* Dashboard stats */
+  .stat-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:16px;}
+  .stat-card{background:#fff; border:1.5px solid var(--line); border-radius:var(--radius); padding:22px;}
+  .stat-card .stat-label{font-size:12px; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; opacity:0.55; margin-bottom:8px;}
+  .stat-card .stat-value{font-size:30px; font-weight:800; color:var(--ink-deep);}
+  .stat-card.alert .stat-value{color:var(--bloom);}
+
   /* Student list */
   .student-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(260px,1fr)); gap:16px;}
   .student-card{
@@ -204,15 +211,28 @@
   <div class="sidebar">
     <div class="brand">anthos</div>
     <div class="brand-sub">Yönetim Paneli</div>
-    <div class="nav-item active" data-view="students">👥 Öğrenciler</div>
+    <div class="nav-item active" data-view="dashboard">📊 Genel Özet</div>
+    <div class="nav-item" data-view="students">👥 Öğrenciler</div>
     <div class="nav-item" id="navNewStudent">➕ Yeni Öğrenci</div>
     <div class="nav-item" data-view="trials">📝 Deneme Talepleri</div>
+    <div class="nav-item" data-view="finance">💰 Finans</div>
     <div class="sidebar-foot">Anthos Akademi © 2026</div>
   </div>
 
   <div class="main">
+    <!-- DASHBOARD VIEW -->
+    <div class="view active" id="view-dashboard">
+      <div class="topbar">
+        <h2>Genel Özet</h2>
+        <button class="btn ghost" id="btnRefreshDashboard">🔄 Yenile</button>
+      </div>
+      <div class="stat-grid" id="dashboardStats">
+        <div class="empty-state">Yükleniyor…</div>
+      </div>
+    </div>
+
     <!-- STUDENTS LIST VIEW -->
-    <div class="view active" id="view-students">
+    <div class="view" id="view-students">
       <div class="topbar">
         <h2>Öğrenciler</h2>
         <input type="text" class="search" id="studentSearch" placeholder="İsim veya numara ara...">
@@ -233,6 +253,37 @@
       <div id="trialListWrap">
         <div class="empty-state">Yükleniyor…</div>
       </div>
+    </div>
+
+    <!-- FINANCE VIEW -->
+    <div class="view" id="view-finance">
+      <div class="topbar">
+        <h2>Finans</h2>
+        <button class="btn ghost" id="btnRefreshFinance">🔄 Yenile</button>
+      </div>
+      <div class="stat-grid" id="financeStats" style="margin-bottom:18px;">
+        <div class="empty-state">Yükleniyor…</div>
+      </div>
+      <div class="panel">
+        <h3>Yeni Gelir/Gider Kaydı</h3>
+        <form class="inline-form" id="formFinance">
+          <div class="field">
+            <label>Tür</label>
+            <select id="finType">
+              <option value="gelir">Gelir</option>
+              <option value="gider">Gider</option>
+            </select>
+          </div>
+          <div class="field"><label>Tarih</label><input type="date" id="finDate"></div>
+          <div class="field"><label>Kategori</label><input type="text" id="finCategory" placeholder="Örn. Kurs Ücreti, Maaş, Kira"></div>
+          <div class="field" style="flex:2;"><label>Açıklama</label><input type="text" id="finDesc" placeholder="Örn. Atahan Kayış - Scratch paketi"></div>
+          <div class="field"><label>Tutar (₺)</label><input type="number" id="finAmount" min="0" step="0.01" required></div>
+          <div class="field"><label>Ödeme Yöntemi</label><input type="text" id="finPaymentMethod" placeholder="Örn. Havale/EFT, Nakit"></div>
+          <div class="field"><label>Maliyet Türü</label><input type="text" id="finCostType" placeholder="Örn. Sabit, Değişken, Başlangıç"></div>
+          <button class="btn sm" type="submit">Ekle</button>
+        </form>
+      </div>
+      <div class="panel"><h3>Hareketler</h3><div id="financeList"></div></div>
     </div>
 
     <!-- STUDENT DETAIL VIEW -->
@@ -260,6 +311,12 @@
           <div style="font-size:13px; opacity:0.75;">📊 Ders İlerlemesi: <strong id="infoLessonProgress">—</strong></div>
           <div class="progress-bar-track" style="max-width:320px;"><div class="progress-bar-fill" id="infoProgressFill" style="width:0%"></div></div>
         </div>
+        <div style="margin-top:14px; display:flex; gap:20px; flex-wrap:wrap; font-size:13px; opacity:0.8;">
+          <div>💳 Ödeme: <strong id="infoPayment">—</strong></div>
+          <div>📅 Paket: <strong id="infoPackageDates">—</strong></div>
+          <div>🧾 Makbuz: <strong id="infoReceipt">—</strong></div>
+          <div>👋 Hoşgeldin Mesajı: <strong id="infoWelcomeMsg">—</strong></div>
+        </div>
         <form id="formEditStudent" style="display:none; margin-top:16px;">
           <div class="inline-form">
             <div class="field"><label>Ad Soyad</label><input type="text" id="editFullName"></div>
@@ -285,6 +342,14 @@
             <div class="field"><label>Veli Adı Soyadı</label><input type="text" id="editParentName"></div>
             <div class="field"><label>Veli Telefonu</label><input type="tel" id="editParentPhone"></div>
             <div class="field"><label>Ders Bakiyesi (Toplam Ders)</label><input type="number" id="editTotalLessons" min="1" placeholder="Örn. 24"></div>
+            <div class="field"><label>Ödeme Tutarı (₺)</label><input type="number" id="editPaymentAmount" min="0" step="0.01"></div>
+            <div class="field"><label>Paket Başlangıç</label><input type="date" id="editPackageStart"></div>
+            <div class="field"><label>Paket Bitiş</label><input type="date" id="editPackageEnd"></div>
+            <div class="field"><label>Makbuz Linki</label><input type="url" id="editReceiptUrl" placeholder="https://..."></div>
+            <div class="field" style="flex-direction:row; align-items:center; gap:8px; display:flex;">
+              <input type="checkbox" id="editWelcomeMsgSent" style="width:auto;">
+              <label style="margin-bottom:0;">Hoşgeldin Mesajı Gönderildi</label>
+            </div>
             <button class="btn sm" type="submit">Kaydet</button>
           </div>
         </form>
@@ -484,7 +549,7 @@
       await api('list_students');
       gate.style.display = 'none';
       app.classList.add('active');
-      await loadStudents();
+      await loadDashboard();
     } catch (err) {
       gateError.textContent = 'Şifre yanlış görünüyor: ' + err.message;
       gateError.style.display = 'block';
@@ -496,6 +561,9 @@
     el.addEventListener('click', () => {
       showView(el.dataset.view);
       if (el.dataset.view === 'trials') loadTrialRequests();
+      if (el.dataset.view === 'students') loadStudents();
+      if (el.dataset.view === 'dashboard') loadDashboard();
+      if (el.dataset.view === 'finance') loadFinance();
     });
   });
   document.getElementById('navNewStudent').addEventListener('click', () => openNewStudentModal());
@@ -509,6 +577,108 @@
       el.classList.toggle('active', el.dataset.view === name);
     });
   }
+
+  // ---------- DASHBOARD ----------
+  async function loadDashboard() {
+    const wrap = document.getElementById('dashboardStats');
+    wrap.innerHTML = '<div class="empty-state">Yükleniyor…</div>';
+    try {
+      const data = await api('list_dashboard_stats');
+      wrap.innerHTML = `
+        <div class="stat-card">
+          <div class="stat-label">Toplam Öğrenci</div>
+          <div class="stat-value">${data.total_students}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Bugünkü Dersler</div>
+          <div class="stat-value">${data.today_lessons}</div>
+        </div>
+        <div class="stat-card ${data.low_balance_students > 0 ? 'alert' : ''}">
+          <div class="stat-label">Düşük Ders Bakiyesi</div>
+          <div class="stat-value">${data.low_balance_students}</div>
+        </div>
+        <div class="stat-card ${data.new_trial_requests > 0 ? 'alert' : ''}">
+          <div class="stat-label">Yeni Deneme Talebi</div>
+          <div class="stat-value">${data.new_trial_requests}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Toplam Gelir</div>
+          <div class="stat-value">₺${Number(data.total_income).toLocaleString('tr-TR')}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Toplam Gider</div>
+          <div class="stat-value">₺${Number(data.total_expense).toLocaleString('tr-TR')}</div>
+        </div>
+        <div class="stat-card ${data.net_profit < 0 ? 'alert' : ''}">
+          <div class="stat-label">Net Kâr</div>
+          <div class="stat-value">₺${Number(data.net_profit).toLocaleString('tr-TR')}</div>
+        </div>
+      `;
+    } catch (err) {
+      wrap.innerHTML = '<div class="empty-state">Hata: ' + err.message + '</div>';
+    }
+  }
+  document.getElementById('btnRefreshDashboard').addEventListener('click', loadDashboard);
+
+  // ---------- FINANCE ----------
+  async function loadFinance() {
+    const statsWrap = document.getElementById('financeStats');
+    const listWrap = document.getElementById('financeList');
+    statsWrap.innerHTML = '<div class="empty-state">Yükleniyor…</div>';
+    listWrap.innerHTML = '';
+    try {
+      const [dashData, finData] = await Promise.all([
+        api('list_dashboard_stats'),
+        api('list_finance_transactions')
+      ]);
+      statsWrap.innerHTML = `
+        <div class="stat-card"><div class="stat-label">Toplam Gelir</div><div class="stat-value">₺${Number(dashData.total_income).toLocaleString('tr-TR')}</div></div>
+        <div class="stat-card"><div class="stat-label">Toplam Gider</div><div class="stat-value">₺${Number(dashData.total_expense).toLocaleString('tr-TR')}</div></div>
+        <div class="stat-card ${dashData.net_profit < 0 ? 'alert' : ''}"><div class="stat-label">Net Kâr</div><div class="stat-value">₺${Number(dashData.net_profit).toLocaleString('tr-TR')}</div></div>
+      `;
+      const transactions = finData.transactions || [];
+      listWrap.innerHTML = transactions.length ? transactions.map(t => `
+        <div class="item-row">
+          <div class="item-main">
+            <div class="item-title">${escapeHtml(t.description || t.category || '—')}</div>
+            <div class="item-sub">${t.tx_date || ''} · ${escapeHtml(t.category || '')}${t.payment_method ? ' · ' + escapeHtml(t.payment_method) : ''}${t.cost_type ? ' · ' + escapeHtml(t.cost_type) : ''}</div>
+          </div>
+          <div class="item-actions">
+            <span class="badge ${t.tx_type === 'gelir' ? 'done' : 'absent'}">${t.tx_type === 'gelir' ? '+' : '-'}₺${Number(t.amount).toLocaleString('tr-TR')}</span>
+            <button class="icon-btn" data-del-fin="${t.id}">🗑</button>
+          </div>
+        </div>
+      `).join('') : '<div class="empty-state">Henüz kayıt yok.</div>';
+      listWrap.querySelectorAll('[data-del-fin]').forEach(el => {
+        el.addEventListener('click', async () => {
+          if (!confirm('Bu kaydı silmek istediğine emin misin?')) return;
+          try { await api('delete_finance_transaction', { id: el.dataset.delFin }); loadFinance(); }
+          catch (err) { alert('Hata: ' + err.message); }
+        });
+      });
+    } catch (err) {
+      statsWrap.innerHTML = '<div class="empty-state">Hata: ' + err.message + '</div>';
+    }
+  }
+  document.getElementById('btnRefreshFinance').addEventListener('click', loadFinance);
+  document.getElementById('formFinance').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    try {
+      await api('add_finance_transaction', {
+        tx_date: document.getElementById('finDate').value || null,
+        tx_type: document.getElementById('finType').value,
+        category: document.getElementById('finCategory').value.trim(),
+        description: document.getElementById('finDesc').value.trim(),
+        amount: parseFloat(document.getElementById('finAmount').value),
+        payment_method: document.getElementById('finPaymentMethod').value.trim(),
+        cost_type: document.getElementById('finCostType').value.trim()
+      });
+      e.target.reset();
+      loadFinance();
+    } catch (err) {
+      alert('Hata: ' + err.message);
+    }
+  });
 
   // ---------- STUDENT LIST ----------
   async function loadStudents() {
@@ -651,12 +821,22 @@
             <div class="item-sub" style="margin-top:4px;">🗓 Talep edilen: ${escapeHtml(r.rezervasyon_tarih || '—')} ${escapeHtml(r.rezervasyon_saat || '')}</div>
             <div class="item-sub" style="margin-top:4px;">💡 İlgi alanı: ${escapeHtml(r.sevilen_ders || '—')} · 💻 Bilgisayar: ${escapeHtml(r.bilgisayar_var_mi || '—')}</div>
             ${r.onceki_egitim ? `<div class="item-sub" style="margin-top:4px;">📚 Önceki eğitim: ${escapeHtml(r.onceki_egitim)}</div>` : ''}
+            ${(r.objection || r.next_call_date || r.recording_url) ? `<div class="item-sub" style="margin-top:4px;">${r.objection ? '❗ İtiraz: ' + escapeHtml(r.objection) + ' ' : ''}${r.next_call_date ? '· 📞 Tekrar arama: ' + escapeHtml(r.next_call_date) + ' ' : ''}${r.recording_url ? '· 🎥 <a class="zoom-link" href="' + r.recording_url + '" target="_blank">Kayıt</a>' : ''}</div>` : ''}
             <div class="item-sub" style="margin-top:4px; opacity:0.5;">KVKK: ${escapeHtml(r.kvkk_onay || '—')} · ${r.created_at ? new Date(r.created_at).toLocaleString('tr-TR') : ''}</div>
+            <div class="item-sub crm-form" data-crm-form="${r.id}" style="display:none; margin-top:10px; padding:12px; background:var(--cream-2); border-radius:12px;">
+              <div class="inline-form" style="margin-bottom:0;">
+                <div class="field"><label>İtiraz</label><input type="text" data-crm-objection="${r.id}" value="${escapeHtml(r.objection || '')}"></div>
+                <div class="field"><label>Tekrar Arama Tarihi</label><input type="date" data-crm-next-call="${r.id}" value="${r.next_call_date || ''}"></div>
+                <div class="field"><label>Kayıt Linki</label><input type="url" data-crm-recording="${r.id}" value="${escapeHtml(r.recording_url || '')}"></div>
+                <button type="button" class="btn sm" data-crm-save="${r.id}">Kaydet</button>
+              </div>
+            </div>
           </div>
           <div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px; flex-shrink:0;">
             <select data-status-select="${r.id}" style="padding:9px 12px; border-radius:10px; border:1.5px solid var(--line); font-family:inherit; font-size:12.5px; background:var(--cream);">
               ${TRIAL_STATUSES.map(v => `<option value="${v}" ${(r.status || 'yeni') === v ? 'selected' : ''}>${trialStatusLabel(v)}</option>`).join('')}
             </select>
+            <button class="icon-btn" data-toggle-crm="${r.id}">✎ CRM</button>
             <button class="icon-btn" data-del-trial="${r.id}">🗑 Sil</button>
           </div>
         </div>
@@ -677,6 +857,28 @@
         if (!confirm('Bu deneme dersi talebini silmek istediğine emin misin?')) return;
         try {
           await api('delete_trial_request', { id: el.dataset.delTrial });
+          loadTrialRequests();
+        } catch (err) {
+          alert('Hata: ' + err.message);
+        }
+      });
+    });
+    wrap.querySelectorAll('[data-toggle-crm]').forEach(el => {
+      el.addEventListener('click', () => {
+        const form = wrap.querySelector(`[data-crm-form="${el.dataset.toggleCrm}"]`);
+        if (form) form.style.display = form.style.display === 'none' ? 'block' : 'none';
+      });
+    });
+    wrap.querySelectorAll('[data-crm-save]').forEach(el => {
+      el.addEventListener('click', async () => {
+        const id = el.dataset.crmSave;
+        try {
+          await api('update_trial_request_crm', {
+            id,
+            objection: wrap.querySelector(`[data-crm-objection="${id}"]`).value.trim(),
+            next_call_date: wrap.querySelector(`[data-crm-next-call="${id}"]`).value || null,
+            recording_url: wrap.querySelector(`[data-crm-recording="${id}"]`).value.trim()
+          });
           loadTrialRequests();
         } catch (err) {
           alert('Hata: ' + err.message);
@@ -715,6 +917,15 @@
     document.getElementById('editParentName').value = s.parent_name || '';
     document.getElementById('editParentPhone').value = s.parent_phone || '';
     document.getElementById('editTotalLessons').value = s.total_lessons || 24;
+    document.getElementById('editPaymentAmount').value = s.payment_amount || '';
+    document.getElementById('editPackageStart').value = s.package_start_date || '';
+    document.getElementById('editPackageEnd').value = s.package_end_date || '';
+    document.getElementById('editReceiptUrl').value = s.receipt_url || '';
+    document.getElementById('editWelcomeMsgSent').checked = !!s.welcome_message_sent;
+    document.getElementById('infoPayment').textContent = s.payment_amount ? '₺' + Number(s.payment_amount).toLocaleString('tr-TR') : 'Belirtilmedi';
+    document.getElementById('infoPackageDates').textContent = (s.package_start_date || s.package_end_date) ? `${s.package_start_date || '?'} → ${s.package_end_date || '?'}` : 'Belirtilmedi';
+    document.getElementById('infoReceipt').innerHTML = s.receipt_url ? `<a class="zoom-link" href="${s.receipt_url}" target="_blank">Görüntüle</a>` : 'Yok';
+    document.getElementById('infoWelcomeMsg').textContent = s.welcome_message_sent ? 'Gönderildi ✓' : 'Gönderilmedi';
     document.getElementById('detailMeta').textContent = `${(s.age_group||'').toUpperCase()} · ${(s.program||'').toUpperCase()}`;
 
     // Ders ilerlemesi (otomatik hesaplanır)
@@ -1016,7 +1227,12 @@
         program: document.getElementById('editProgram').value,
         parent_name: document.getElementById('editParentName').value.trim(),
         parent_phone: document.getElementById('editParentPhone').value.trim(),
-        total_lessons: parseInt(document.getElementById('editTotalLessons').value) || null
+        total_lessons: parseInt(document.getElementById('editTotalLessons').value) || null,
+        payment_amount: document.getElementById('editPaymentAmount').value ? parseFloat(document.getElementById('editPaymentAmount').value) : null,
+        package_start_date: document.getElementById('editPackageStart').value || null,
+        package_end_date: document.getElementById('editPackageEnd').value || null,
+        receipt_url: document.getElementById('editReceiptUrl').value.trim() || null,
+        welcome_message_sent: document.getElementById('editWelcomeMsgSent').checked
       });
       document.getElementById('formEditStudent').style.display = 'none';
       const msg = document.getElementById('detailMsg');
