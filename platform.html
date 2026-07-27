@@ -4,24 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="favicon.png">
-<meta name="robots" content="noindex, follow">
+<meta name="robots" content="noindex, nofollow">
 <title>Öğrenci Platformu | Anthos Butik Kodlama Okulu</title>
-<meta name="description" content="Anthos Öğrenci Platformu — ödevlerinizi, projelerinizi ve gelişiminizi takip edin.">
-<link rel="canonical" href="https://anthosacademy.com/platform.html">
-
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="Anthos — Butik Kodlama Okulu">
-<meta property="og:title" content="Öğrenci Platformu | Anthos Butik Kodlama Okulu">
-<meta property="og:description" content="Ödevlerinizi, projelerinizi ve gelişiminizi takip edin.">
-<meta property="og:url" content="https://anthosacademy.com/platform.html">
-<meta property="og:locale" content="tr_TR">
-<meta property="og:image" content="https://anthosacademy.com/og-image.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
   :root{
@@ -31,431 +15,518 @@
     --ink-deep: #171050;
     --charcoal: #1B1A2A;
     --bloom: #E85C4A;
-    --bloom-soft: #F4B9AE;
     --sage: #7C9D6F;
     --sage-soft: #DCE6D3;
     --gold: #C99A2E;
     --gold-soft: #F3E3BE;
     --line: rgba(23,16,80,0.12);
-    --radius: 22px;
+    --radius: 20px;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
-  html{scroll-behavior:smooth;}
   body{
     background:var(--cream); color:var(--charcoal);
-    font-family:'Plus Jakarta Sans', sans-serif; line-height:1.5;
-    -webkit-font-smoothing:antialiased; min-height:100vh;
+    font-family:'Plus Jakarta Sans', -apple-system, sans-serif; line-height:1.5;
+    min-height:100vh;
   }
-  a{color:inherit; text-decoration:none;}
-  img,svg{display:block; max-width:100%;}
-  .wrap{max-width:1000px; margin:0 auto; padding:0 28px;}
-  .eyebrow{
-    font-family:'JetBrains Mono', monospace; font-size:12.5px; letter-spacing:0.14em;
-    text-transform:uppercase; color:var(--ink); display:inline-flex; align-items:center; gap:8px;
-  }
-  .eyebrow::before{content:"◆"; font-size:9px; color:var(--bloom);}
-  h1,h2,h3{font-family:'Fraunces', serif; color:var(--ink-deep); font-weight:600; letter-spacing:-0.01em;}
+  ::-webkit-scrollbar{width:8px; height:8px;}
+  ::-webkit-scrollbar-thumb{background:rgba(23,16,80,0.18); border-radius:10px;}
+  a{color:inherit;}
 
-  .btn{
-    display:inline-flex; align-items:center; justify-content:center; gap:8px;
-    font-family:'Plus Jakarta Sans', sans-serif; font-weight:600; font-size:14.5px;
-    padding:13px 24px; border-radius:100px; cursor:pointer; border:none;
-    transition:transform 0.18s ease, box-shadow 0.18s ease; white-space:nowrap;
+  /* ---------- AUTH SCREEN ---------- */
+  #authScreen{
+    min-height:100vh; display:flex; align-items:center; justify-content:center; padding:40px 20px;
   }
-  .btn:disabled{opacity:0.6; cursor:not-allowed;}
-  .btn-primary{background:var(--bloom); color:#fff; box-shadow:0 6px 18px rgba(232,92,74,0.32); width:100%;}
-  .btn-primary:hover:not(:disabled){transform:translateY(-2px); box-shadow:0 10px 22px rgba(232,92,74,0.4);}
-  .btn-ghost{background:none; border:1.5px solid var(--line); color:var(--charcoal);}
-  .btn-ghost:hover{border-color:var(--ink-deep);}
-
-  /* NAV */
-  .nav{position:sticky; top:0; z-index:50; background:rgba(247,241,227,0.86); backdrop-filter:blur(10px); border-bottom:1px solid var(--line);}
-  .nav-inner{display:flex; align-items:center; justify-content:space-between; padding:10px 28px; max-width:1000px; margin:0 auto;}
-  .brand{display:flex; align-items:center; gap:10px; line-height:1;}
-  .brand-logo-img{height:56px; width:auto; flex-shrink:0;}
-  #logoutBtn{display:none;}
-
-  /* LOGIN */
-  .login-shell{
-    min-height:calc(100vh - 77px); display:flex; align-items:center; justify-content:center; padding:40px 20px;
-  }
-  .login-card{
+  .auth-card{
     background:#fff; border:1.5px solid var(--line); border-radius:var(--radius);
-    padding:44px 40px; max-width:420px; width:100%;
-    box-shadow:0 24px 60px rgba(23,16,80,0.08);
+    padding:44px; max-width:420px; width:100%; box-shadow:0 30px 70px rgba(23,16,80,0.1);
   }
-  .login-card h1{font-size:26px; margin:14px 0 8px;}
-  .login-card p.lead{font-size:14.5px; opacity:0.68; margin-bottom:28px;}
+  .auth-logo{font-family:Georgia, serif; font-size:26px; font-weight:700; color:var(--ink-deep); margin-bottom:2px;}
+  .auth-logo span{color:var(--bloom);}
+  .auth-sub{font-size:11px; letter-spacing:0.14em; text-transform:uppercase; opacity:0.55; margin-bottom:30px;}
   .field{margin-bottom:16px;}
-  .field label{display:block; font-size:13px; font-weight:600; color:var(--ink-deep); margin-bottom:7px;}
+  .field label{display:block; font-size:13px; font-weight:600; color:var(--ink-deep); margin-bottom:6px;}
   .field input{
-    width:100%; padding:13px 16px; border-radius:12px; border:1.5px solid var(--line);
-    font-family:'Plus Jakarta Sans', sans-serif; font-size:14.5px; background:var(--cream);
-    transition:border-color 0.2s ease;
+    width:100%; padding:13px 15px; border-radius:12px; border:1.5px solid var(--line);
+    font-family:inherit; font-size:14.5px; background:var(--cream);
   }
   .field input:focus{outline:none; border-color:var(--ink); background:#fff;}
-  .login-error{
-    display:none; background:rgba(232,92,74,0.1); color:var(--bloom); border:1px solid rgba(232,92,74,0.3);
-    border-radius:12px; padding:12px 16px; font-size:13.5px; margin-bottom:16px;
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    font-weight:700; font-size:14.5px; padding:13px 24px; border-radius:100px; cursor:pointer; border:none;
+    background:var(--bloom); color:#fff; transition:transform 0.18s ease;
   }
-  .login-note{margin-top:22px; text-align:center; font-size:12.5px; opacity:0.55;}
-  .login-note a{color:var(--ink); font-weight:600; opacity:1;}
-  #signupView{display:none;}
-  .signup-success{
-    display:none; background:rgba(124,157,111,0.14); color:var(--sage); border:1px solid rgba(124,157,111,0.35);
-    border-radius:12px; padding:16px; font-size:14px; margin-bottom:16px; line-height:1.6;
-  }
+  .btn:hover{transform:translateY(-2px);}
+  .btn:disabled{opacity:0.6; cursor:not-allowed; transform:none;}
+  .btn.full{width:100%;}
+  .msg{border-radius:12px; padding:12px 16px; font-size:13.5px; margin-bottom:16px; display:none;}
+  .msg.error{background:rgba(232,92,74,0.1); color:var(--bloom); border:1px solid rgba(232,92,74,0.3);}
+  .msg.success{background:rgba(124,157,111,0.14); color:var(--sage); border:1px solid rgba(124,157,111,0.35);}
+  .auth-foot{font-size:12.5px; text-align:center; margin-top:20px; opacity:0.6;}
 
-  /* DASHBOARD */
-  #dashboardView{display:none;}
-  .section{padding:48px 0 76px;}
-  .dash-student-row{
-    display:flex; align-items:center; justify-content:space-between; margin-bottom:36px; flex-wrap:wrap; gap:16px;
-  }
-  .dash-student-name{font-family:'Fraunces', serif; font-size:28px; color:var(--ink-deep); font-weight:700;}
-  .dash-student-name span{display:block; font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--bloom); text-transform:uppercase; letter-spacing:0.06em; margin-top:6px; font-weight:600;}
+  /* ---------- APP SHELL ---------- */
+  #app{display:none; min-height:100vh; grid-template-columns:250px 1fr;}
+  #app.active{display:grid;}
 
-  .dash-identity{display:flex; align-items:center; gap:18px;}
-  .avatar-wrap{position:relative;}
-  .avatar-circle{
-    width:64px; height:64px; border-radius:50%; background:var(--sage-soft);
-    display:flex; align-items:center; justify-content:center; font-size:32px;
-    cursor:pointer; border:2.5px solid #fff; box-shadow:0 4px 14px rgba(23,16,80,0.12);
-    transition:transform 0.2s ease;
+  .sidebar{
+    background:#fff; border-right:1.5px solid var(--line); padding:30px 22px; display:flex; flex-direction:column;
   }
-  .avatar-circle:hover{transform:scale(1.06);}
-  .avatar-edit-badge{
-    position:absolute; bottom:-2px; right:-2px; width:22px; height:22px; border-radius:50%;
-    background:var(--ink-deep); color:#fff; font-size:11px; display:flex; align-items:center; justify-content:center;
-    border:2px solid var(--cream); pointer-events:none;
+  .sidebar .brand{font-family:Georgia, serif; font-size:22px; font-weight:700; color:var(--ink-deep); margin-bottom:2px;}
+  .sidebar .brand span{color:var(--bloom);}
+  .sidebar .brand-sub{font-size:10px; letter-spacing:0.12em; text-transform:uppercase; opacity:0.5; margin-bottom:30px;}
+
+  .sb-profile{display:flex; align-items:center; gap:12px; padding:14px; background:var(--cream-2); border-radius:16px; margin-bottom:28px;}
+  .sb-profile .avatar{
+    width:42px; height:42px; border-radius:50%; background:var(--sage-soft); display:flex; align-items:center;
+    justify-content:center; font-size:20px; flex-shrink:0;
+  }
+  .sb-profile .name{font-size:13.5px; font-weight:700; color:var(--ink-deep); line-height:1.3;}
+  .sb-profile .meta{font-size:10.5px; opacity:0.55; font-weight:700; letter-spacing:0.03em; text-transform:uppercase;}
+
+  .nav-item{
+    display:flex; align-items:center; gap:11px; padding:12px 14px; border-radius:12px; font-size:14px;
+    font-weight:600; color:var(--ink-deep); opacity:0.6; cursor:pointer; margin-bottom:3px; transition:all 0.15s;
+  }
+  .nav-item:hover{opacity:1; background:var(--cream-2);}
+  .nav-item.active{opacity:1; background:var(--ink-deep); color:#fff;}
+  .sidebar-foot{margin-top:auto;}
+  .logout-btn{
+    width:100%; padding:11px; border-radius:100px; border:1.5px solid var(--line); background:none;
+    font-family:inherit; font-size:13px; font-weight:700; color:var(--ink-deep); cursor:pointer; opacity:0.7;
+  }
+  .logout-btn:hover{opacity:1; border-color:var(--bloom); color:var(--bloom);}
+
+  .main{padding:40px 48px; overflow-y:auto; max-height:100vh;}
+  .page{display:none;}
+  .page.active{display:block; animation:fadeIn 0.25s ease;}
+  @keyframes fadeIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+  .page-head{margin-bottom:28px;}
+  .page-head h1{font-size:26px; color:var(--ink-deep); font-family:Georgia, serif;}
+  .page-head p{font-size:13.5px; opacity:0.6; margin-top:4px;}
+
+  .card{
+    background:#fff; border:1.5px solid var(--line); border-radius:var(--radius); padding:24px; margin-bottom:18px;
+  }
+  .card h3{font-size:14.5px; color:var(--ink-deep); margin-bottom:16px; display:flex; align-items:center; gap:8px;}
+  .empty-state{text-align:center; padding:40px 20px; color:var(--ink-deep); opacity:0.5; font-size:13.5px;}
+
+  /* Overview stat cards */
+  .stat-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(180px,1fr)); gap:16px; margin-bottom:24px;}
+  .stat-card{
+    background:#fff; border:1.5px solid var(--line); border-radius:var(--radius); padding:22px;
+  }
+  .stat-card .stat-icon{font-size:22px; margin-bottom:10px;}
+  .stat-card .stat-value{font-size:26px; font-weight:800; color:var(--ink-deep); font-family:Georgia, serif;}
+  .stat-card .stat-label{font-size:12px; opacity:0.6; margin-top:2px;}
+
+  .item-row{
+    display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .item-row:last-child{border-bottom:none;}
+  .item-row .item-main{flex:1; min-width:0;}
+  .item-row .item-title{font-size:14.5px; font-weight:700; color:var(--ink-deep);}
+  .item-row .item-sub{font-size:12.5px; opacity:0.6; margin-top:2px;}
+  .badge{font-size:11px; font-weight:700; padding:5px 12px; border-radius:100px; letter-spacing:0.02em; white-space:nowrap;}
+  .badge.done{background:var(--sage-soft); color:var(--sage);}
+  .badge.pending{background:var(--gold-soft); color:var(--gold);}
+  .badge.absent{background:rgba(232,92,74,0.12); color:var(--bloom);}
+  a.zoom-link{font-size:12.5px; color:var(--ink); font-weight:700; text-decoration:none;}
+  a.zoom-link:hover{text-decoration:underline;}
+
+  .progress-bar-track{background:var(--cream-2); border-radius:100px; height:8px; overflow:hidden; margin-top:8px;}
+  .progress-bar-fill{background:var(--sage); height:100%; border-radius:100px; transition:width 0.4s ease;}
+
+  /* Schedule grid */
+  .week-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(150px,1fr)); gap:12px;}
+  .day-card{
+    background:var(--cream-2); border-radius:16px; padding:16px; text-align:center;
+  }
+  .day-card .day-name{font-size:11px; font-weight:800; letter-spacing:0.05em; text-transform:uppercase; color:var(--bloom); margin-bottom:8px;}
+  .day-card .day-time{font-size:16px; font-weight:700; color:var(--ink-deep);}
+  .day-card .day-note{font-size:11.5px; opacity:0.6; margin-top:3px;}
+  .day-card.empty{opacity:0.35;}
+
+  /* Profile / avatar picker */
+  .avatar-big{
+    width:80px; height:80px; border-radius:50%; background:var(--sage-soft); display:flex; align-items:center;
+    justify-content:center; font-size:38px; cursor:pointer; position:relative; margin-bottom:18px;
+  }
+  .avatar-big .edit-badge{
+    position:absolute; bottom:-2px; right:-2px; background:var(--bloom); color:#fff; width:26px; height:26px;
+    border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; border:3px solid var(--cream);
   }
   .avatar-picker{
-    display:none; position:absolute; top:76px; left:0; z-index:20;
-    background:#fff; border:1.5px solid var(--line); border-radius:18px;
-    padding:14px; box-shadow:0 16px 36px rgba(23,16,80,0.14);
-    grid-template-columns:repeat(5, 1fr); gap:8px; width:230px;
+    display:none; grid-template-columns:repeat(5, 1fr); gap:8px; background:#fff; border:1.5px solid var(--line);
+    border-radius:16px; padding:14px; margin-bottom:18px; max-width:280px;
   }
-  .avatar-picker.open{display:grid;}
+  .avatar-picker.active{display:grid;}
   .avatar-option{
-    width:38px; height:38px; border-radius:50%; background:var(--cream-2); border:none;
-    font-size:20px; cursor:pointer; display:flex; align-items:center; justify-content:center;
-    transition:transform 0.15s ease, background 0.15s ease;
+    width:44px; height:44px; border-radius:50%; background:var(--cream-2); border:none; font-size:20px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; transition:transform 0.12s;
   }
   .avatar-option:hover{transform:scale(1.12); background:var(--sage-soft);}
 
-  .card{
-    background:#fff; border:1.5px solid var(--line); border-radius:var(--radius);
-    padding:30px 28px; margin-bottom:24px;
+  @media (max-width: 800px){
+    #app.active{grid-template-columns:1fr;}
+    .sidebar{position:fixed; bottom:0; left:0; right:0; z-index:20; flex-direction:row; align-items:center;
+      padding:12px 14px; border-right:none; border-top:1.5px solid var(--line); overflow-x:auto;}
+    .sidebar .brand, .sidebar .brand-sub, .sb-profile, .sidebar-foot{display:none;}
+    .nav-item{flex-direction:column; font-size:10.5px; gap:4px; padding:8px 12px; white-space:nowrap;}
+    .main{padding:24px 20px 100px;}
   }
-  .card h2{font-size:19px; margin-bottom:18px; display:flex; align-items:center; gap:10px;}
-  .list{display:flex; flex-direction:column; gap:10px;}
-  .item{
-    display:flex; align-items:center; gap:14px; padding:14px 16px;
-    background:var(--cream-2); border-radius:14px;
-  }
-  .check{
-    width:24px; height:24px; border-radius:7px; flex-shrink:0;
-    display:flex; align-items:center; justify-content:center; font-size:13px; color:#fff;
-  }
-  .check.done{background:var(--sage);}
-  .check.pending{background:#fff; border:2px solid var(--line);}
-  .item-text{font-size:14.5px; font-weight:600; color:var(--ink-deep);}
-  .item-text small{display:block; font-weight:400; opacity:0.6; font-size:12.5px; margin-top:2px;}
-  .empty-msg{font-size:14px; opacity:0.55; padding:8px 4px;}
-  .loading-msg{font-size:14px; opacity:0.55; padding:40px 4px; text-align:center;}
-
-  footer{padding:32px 0; text-align:center;}
-  footer .foot-copy{font-family:'JetBrains Mono', monospace; font-size:12.5px; color:var(--charcoal); opacity:0.55;}
 </style>
 </head>
 <body>
 
-<nav class="nav">
-  <div class="nav-inner">
-    <a href="index.html" class="brand"><img class="brand-logo-img" src="logo.png" alt="Anthos"></a>
-    <button type="button" class="btn btn-ghost" id="logoutBtn">Çıkış Yap</button>
-  </div>
-</nav>
-
-<div id="loginView" class="login-shell">
-  <div class="login-card">
-    <span class="eyebrow">Anthos Öğrenci Platformu</span>
-    <h1>Giriş Yap</h1>
-    <p class="lead">Ödevlerinizi, projelerinizi ve ilerlemenizi görmek için eğitmeninizin size ilettiği email ve şifre ile giriş yapın.</p>
-    <div class="login-error" id="loginError"></div>
+<!-- ============ AUTH SCREEN ============ -->
+<div id="authScreen">
+  <div class="auth-card">
+    <div class="auth-logo">anthos<span>.</span></div>
+    <div class="auth-sub">Öğrenci Platformu</div>
+    <div class="msg error" id="loginError"></div>
     <form id="loginForm">
-      <div class="field">
-        <label for="email">E-posta</label>
-        <input type="email" id="email" autocomplete="username" required>
-      </div>
-      <div class="field">
-        <label for="password">Şifre</label>
-        <input type="password" id="password" autocomplete="current-password" required>
-      </div>
-      <button type="submit" class="btn btn-primary" id="loginBtn">Giriş Yap</button>
+      <div class="field"><label for="loginEmail">E-posta</label><input type="email" id="loginEmail" required></div>
+      <div class="field"><label for="loginPassword">Şifre</label><input type="password" id="loginPassword" required></div>
+      <button type="submit" class="btn full" id="loginBtn">Giriş Yap</button>
     </form>
-    <p class="login-note">Hesabınız yok mu? <a href="#" id="showSignup">Kayıt olun</a></p>
+    <div class="auth-foot">Giriş bilgilerin yoksa eğitmeninle iletişime geç.</div>
   </div>
 </div>
 
-<div id="signupView" class="login-shell">
-  <div class="login-card">
-    <span class="eyebrow">Anthos Öğrenci Platformu</span>
-    <h1>Kayıt Ol</h1>
-    <p class="lead">Hesabınızı oluşturun, eğitmeniniz kısa süre içinde ödev ve ilerleme kaydınızı hesabınıza bağlayacak.</p>
-    <div class="login-error" id="signupError"></div>
-    <div class="signup-success" id="signupSuccess"></div>
-    <form id="signupForm">
-      <div class="field">
-        <label for="signupName">Öğrenci Adı Soyadı</label>
-        <input type="text" id="signupName" required>
-      </div>
-      <div class="field">
-        <label for="signupEmail">E-posta</label>
-        <input type="email" id="signupEmail" autocomplete="username" required>
-      </div>
-      <div class="field">
-        <label for="signupPassword">Şifre</label>
-        <input type="password" id="signupPassword" autocomplete="new-password" minlength="6" required>
-      </div>
-      <button type="submit" class="btn btn-primary" id="signupBtn">Kayıt Ol</button>
-    </form>
-    <p class="login-note">Zaten hesabınız var mı? <a href="#" id="showLogin">Giriş yapın</a></p>
-  </div>
-</div>
+<!-- ============ APP ============ -->
+<div id="app">
+  <div class="sidebar">
+    <div class="brand">anthos<span>.</span></div>
+    <div class="brand-sub">Öğrenci Platformu</div>
 
-<div id="dashboardView">
-  <section class="section">
-    <div class="wrap">
-      <div class="dash-student-row">
-        <div class="dash-identity">
-          <div class="avatar-wrap">
-            <div class="avatar-circle" id="avatarCircle" title="Avatarını değiştir">🎓</div>
-            <span class="avatar-edit-badge">✎</span>
-            <div class="avatar-picker" id="avatarPicker"></div>
-          </div>
-          <div class="dash-student-name" id="studentName">…<span id="studentMeta"></span></div>
-        </div>
-      </div>
-
-      <div class="card">
-        <h2>📋 Ödevler</h2>
-        <div class="list" id="assignmentsList"><p class="loading-msg">Yükleniyor…</p></div>
-      </div>
-
-      <div class="card">
-        <h2>💻 Projeler</h2>
-        <div class="list" id="projectsList"><p class="loading-msg">Yükleniyor…</p></div>
-      </div>
-
-      <div class="card">
-        <h2>📈 İlerleme Notları</h2>
-        <div class="list" id="notesList"><p class="loading-msg">Yükleniyor…</p></div>
+    <div class="sb-profile">
+      <div class="avatar" id="sbAvatar">🎓</div>
+      <div>
+        <div class="name" id="sbName">—</div>
+        <div class="meta" id="sbMeta">—</div>
       </div>
     </div>
-  </section>
-</div>
 
-<footer>
-  <span class="foot-copy">© 2026 Anthos Academy</span>
-</footer>
+    <div class="nav-item active" data-page="overview">🏠 <span>Özet</span></div>
+    <div class="nav-item" data-page="schedule">🗓 <span>Ders Programı</span></div>
+    <div class="nav-item" data-page="lessons">🎥 <span>Ders Kayıtları</span></div>
+    <div class="nav-item" data-page="assignments">📋 <span>Ödevler</span></div>
+    <div class="nav-item" data-page="projects">💻 <span>Projeler</span></div>
+    <div class="nav-item" data-page="notes">📈 <span>İlerleme Notları</span></div>
+    <div class="nav-item" data-page="profile">👤 <span>Profil</span></div>
+
+    <div class="sidebar-foot">
+      <button class="logout-btn" id="logoutBtn">Çıkış Yap</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <!-- OVERVIEW -->
+    <div class="page active" id="page-overview">
+      <div class="page-head">
+        <h1 id="greeting">Merhaba! 👋</h1>
+        <p>İşte bugünkü durumun.</p>
+      </div>
+      <div class="stat-grid">
+        <div class="stat-card"><div class="stat-icon">📋</div><div class="stat-value" id="statAssignments">0</div><div class="stat-label">Bekleyen Ödev</div></div>
+        <div class="stat-card"><div class="stat-icon">💻</div><div class="stat-value" id="statProjects">0</div><div class="stat-label">Aktif Proje</div></div>
+        <div class="stat-card"><div class="stat-icon">🗓</div><div class="stat-value" id="statNextLesson">—</div><div class="stat-label">Sıradaki Ders</div></div>
+        <div class="stat-card"><div class="stat-icon">📈</div><div class="stat-value" id="statProgress">—</div><div class="stat-label">Genel İlerleme</div></div>
+      </div>
+      <div class="card">
+        <h3>📋 Son Ödevler</h3>
+        <div id="overviewAssignments"><div class="empty-state">Yükleniyor…</div></div>
+      </div>
+      <div class="card">
+        <h3>📈 Son Not</h3>
+        <div id="overviewNote"><div class="empty-state">Yükleniyor…</div></div>
+      </div>
+    </div>
+
+    <!-- SCHEDULE -->
+    <div class="page" id="page-schedule">
+      <div class="page-head"><h1>Ders Programı</h1><p>Haftalık ders saatlerin.</p></div>
+      <div class="card"><div id="weekGrid" class="week-grid"></div></div>
+    </div>
+
+    <!-- LESSONS (attendance + zoom) -->
+    <div class="page" id="page-lessons">
+      <div class="page-head"><h1>Ders Kayıtları</h1><p>Geçmiş derslerin, yoklama durumun ve Zoom kayıtların.</p></div>
+      <div class="card"><div id="lessonsList"><div class="empty-state">Yükleniyor…</div></div></div>
+    </div>
+
+    <!-- ASSIGNMENTS -->
+    <div class="page" id="page-assignments">
+      <div class="page-head"><h1>Ödevler</h1><p>Eğitmeninin sana verdiği ödevler.</p></div>
+      <div class="card"><div id="assignmentsList"><div class="empty-state">Yükleniyor…</div></div></div>
+    </div>
+
+    <!-- PROJECTS -->
+    <div class="page" id="page-projects">
+      <div class="page-head"><h1>Projeler</h1><p>Üzerinde çalıştığın ve tamamladığın projeler.</p></div>
+      <div class="card"><div id="projectsList"><div class="empty-state">Yükleniyor…</div></div></div>
+    </div>
+
+    <!-- NOTES -->
+    <div class="page" id="page-notes">
+      <div class="page-head"><h1>İlerleme Notları</h1><p>Eğitmeninin senin için yazdığı notlar.</p></div>
+      <div class="card"><div id="notesList"><div class="empty-state">Yükleniyor…</div></div></div>
+    </div>
+
+    <!-- PROFILE -->
+    <div class="page" id="page-profile">
+      <div class="page-head"><h1>Profil</h1><p>Bilgilerin ve profil resmin.</p></div>
+      <div class="card">
+        <div class="avatar-big" id="avatarBig">🎓<div class="edit-badge">✎</div></div>
+        <div class="avatar-picker" id="avatarPicker"></div>
+        <div style="margin-top:10px;">
+          <div class="item-row"><div class="item-main"><div class="item-title" id="profileName">—</div><div class="item-sub" id="profileMeta">—</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
   const SUPABASE_URL = 'https://pqxobhknksylbpesymrg.supabase.co';
   const SUPABASE_ANON_KEY = 'sb_publishable_-AKzWhUgk-wGSjworDMeaw_ZkX8YrXE';
   const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  const loginView = document.getElementById('loginView');
-  const signupView = document.getElementById('signupView');
-  const dashboardView = document.getElementById('dashboardView');
-  const logoutBtn = document.getElementById('logoutBtn');
-  const loginForm = document.getElementById('loginForm');
-  const loginError = document.getElementById('loginError');
-  const loginBtn = document.getElementById('loginBtn');
-  const signupForm = document.getElementById('signupForm');
-  const signupError = document.getElementById('signupError');
-  const signupSuccess = document.getElementById('signupSuccess');
-  const signupBtn = document.getElementById('signupBtn');
+  const AVATAR_OPTIONS = ['🦊','🐱','🐼','🐶','🦁','🐨','🐧','🦄','🐢','🚀','🌟','🎨','⚡','🌈','🍀'];
+  const DAY_ORDER = ['Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi','Pazar'];
 
-  document.getElementById('showSignup').addEventListener('click', (e) => {
-    e.preventDefault();
-    loginView.style.display = 'none';
-    signupView.style.display = 'flex';
-  });
-  document.getElementById('showLogin').addEventListener('click', (e) => {
-    e.preventDefault();
-    signupView.style.display = 'none';
-    loginView.style.display = 'flex';
-  });
-
-  signupForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    signupError.style.display = 'none';
-    signupBtn.disabled = true;
-    signupBtn.textContent = 'Kayıt oluşturuluyor…';
-
-    const full_name = document.getElementById('signupName').value.trim();
-    const email = document.getElementById('signupEmail').value.trim();
-    const password = document.getElementById('signupPassword').value;
-
-    const { error } = await sb.auth.signUp({
-      email, password,
-      options: { data: { full_name } }
-    });
-
-    signupBtn.disabled = false;
-    signupBtn.textContent = 'Kayıt Ol';
-
-    if(error){
-      signupError.textContent = 'Kayıt oluşturulamadı: ' + error.message;
-      signupError.style.display = 'block';
-      return;
-    }
-
-    signupForm.style.display = 'none';
-    signupSuccess.textContent = 'Kaydınız oluşturuldu! E-postanıza gelen onay bağlantısına tıklayın, ardından eğitmeniniz hesabınızı öğrenci kaydınıza bağladıktan sonra giriş yapabilirsiniz.';
-    signupSuccess.style.display = 'block';
-  });
-
-  function showError(msg){
-    loginError.textContent = msg;
-    loginError.style.display = 'block';
-  }
-
-  function fmtDate(d){
-    if(!d) return '';
-    const dt = new Date(d);
-    return dt.toLocaleDateString('tr-TR', {day:'numeric', month:'long'});
-  }
-
-  const AVATAR_OPTIONS = ['🦊','🐱','🐼','🐶','🦁','🐨','🐧','🦄','🐸','🚀','🌟','🎨','⚡','🌈','🍀'];
   let currentStudent = null;
 
-  const avatarCircle = document.getElementById('avatarCircle');
-  const avatarPicker = document.getElementById('avatarPicker');
-  avatarPicker.innerHTML = AVATAR_OPTIONS.map(a => `<button type="button" class="avatar-option" data-avatar="${a}">${a}</button>`).join('');
-
-  avatarCircle.addEventListener('click', () => {
-    avatarPicker.classList.toggle('open');
-  });
-  document.addEventListener('click', (e) => {
-    if(!e.target.closest('.avatar-wrap')){
-      avatarPicker.classList.remove('open');
-    }
-  });
-  avatarPicker.addEventListener('click', async (e) => {
-    const btn = e.target.closest('.avatar-option');
-    if(!btn || !currentStudent) return;
-    const avatar = btn.dataset.avatar;
-    avatarCircle.textContent = avatar;
-    avatarPicker.classList.remove('open');
-    await sb.from('students').update({ avatar }).eq('id', currentStudent.id);
-  });
-
-  async function loadDashboard(){
-    loginView.style.display = 'none';
-    dashboardView.style.display = 'block';
-    logoutBtn.style.display = 'inline-flex';
-
-    const { data: { user } } = await sb.auth.getUser();
-    if(!user) return;
-
-    const { data: student, error: studentErr } = await sb
-      .from('students')
-      .select('*')
-      .eq('user_id', user.id)
-      .maybeSingle();
-
-    if(studentErr || !student){
-      document.getElementById('studentName').textContent = 'Kayıt bulunamadı';
-      document.getElementById('assignmentsList').innerHTML = '<p class="empty-msg">Hesabınıza henüz bir öğrenci kaydı bağlanmamış. Eğitmeninizle iletişime geçin.</p>';
-      document.getElementById('projectsList').innerHTML = '';
-      document.getElementById('notesList').innerHTML = '';
-      return;
-    }
-
-    currentStudent = student;
-    document.getElementById('studentName').innerHTML = `${student.full_name}<span>${[student.age_group, student.program].filter(Boolean).join(' · ')}</span>`;
-    avatarCircle.textContent = student.avatar || '🎓';
-
-    const [{ data: assignments }, { data: projects }, { data: notes }] = await Promise.all([
-      sb.from('assignments').select('*').eq('student_id', student.id).order('due_date', {ascending:true}),
-      sb.from('projects').select('*').eq('student_id', student.id).order('created_at', {ascending:false}),
-      sb.from('progress_notes').select('*').eq('student_id', student.id).order('created_at', {ascending:false})
-    ]);
-
-    const aList = document.getElementById('assignmentsList');
-    if(!assignments || assignments.length === 0){
-      aList.innerHTML = '<p class="empty-msg">Henüz ödev eklenmedi.</p>';
-    } else {
-      aList.innerHTML = assignments.map(a => `
-        <div class="item">
-          <span class="check ${a.status === 'done' ? 'done' : 'pending'}">${a.status === 'done' ? '✓' : ''}</span>
-          <span class="item-text">${a.title}${a.due_date ? `<small>Teslim: ${fmtDate(a.due_date)}</small>` : ''}</span>
-        </div>
-      `).join('');
-    }
-
-    const pList = document.getElementById('projectsList');
-    if(!projects || projects.length === 0){
-      pList.innerHTML = '<p class="empty-msg">Henüz proje eklenmedi.</p>';
-    } else {
-      pList.innerHTML = projects.map(p => `
-        <div class="item">
-          <span class="check done">✓</span>
-          <span class="item-text">${p.title}${p.description ? `<small>${p.description}</small>` : ''}</span>
-        </div>
-      `).join('');
-    }
-
-    const nList = document.getElementById('notesList');
-    if(!notes || notes.length === 0){
-      nList.innerHTML = '<p class="empty-msg">Henüz ilerleme notu eklenmedi.</p>';
-    } else {
-      nList.innerHTML = notes.map(n => `
-        <div class="item">
-          <span class="check done">${n.progress_percent ? n.progress_percent + '%' : '📝'}</span>
-          <span class="item-text">${n.note}<small>${fmtDate(n.created_at)}</small></span>
-        </div>
-      `).join('');
-    }
+  function escapeHtml(str){
+    return String(str || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+  function formatDate(d){
+    if(!d) return '';
+    return new Date(d).toLocaleDateString('tr-TR', { day:'numeric', month:'long', year:'numeric' });
   }
 
-  loginForm.addEventListener('submit', async (e) => {
+  // ---------- AUTH ----------
+  const authScreen = document.getElementById('authScreen');
+  const app = document.getElementById('app');
+  const loginError = document.getElementById('loginError');
+
+  document.getElementById('loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     loginError.style.display = 'none';
+    const loginBtn = document.getElementById('loginBtn');
     loginBtn.disabled = true;
     loginBtn.textContent = 'Giriş yapılıyor…';
-
-    const email = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value;
-
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
     const { error } = await sb.auth.signInWithPassword({ email, password });
-
-    loginBtn.disabled = false;
-    loginBtn.textContent = 'Giriş Yap';
-
-    if(error){
-      showError('E-posta veya şifre hatalı. Lütfen tekrar deneyin.');
+    if (error) {
+      loginError.textContent = 'Giriş başarısız: ' + error.message;
+      loginError.style.display = 'block';
+      loginBtn.disabled = false;
+      loginBtn.textContent = 'Giriş Yap';
       return;
     }
-    await loadDashboard();
+    await boot();
   });
 
-  logoutBtn.addEventListener('click', async () => {
+  document.getElementById('logoutBtn').addEventListener('click', async () => {
     await sb.auth.signOut();
-    dashboardView.style.display = 'none';
-    logoutBtn.style.display = 'none';
-    loginView.style.display = 'flex';
-    loginForm.reset();
+    location.reload();
   });
 
-  // On load, check if already logged in
+  // ---------- NAV ----------
+  document.querySelectorAll('.nav-item[data-page]').forEach(el => {
+    el.addEventListener('click', () => showPage(el.dataset.page));
+  });
+  function showPage(name) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + name).classList.add('active');
+    document.querySelectorAll('.nav-item[data-page]').forEach(el => {
+      el.classList.toggle('active', el.dataset.page === name);
+    });
+  }
+
+  // ---------- BOOT ----------
+  async function boot() {
+    const { data: { user } } = await sb.auth.getUser();
+    if (!user) return;
+
+    const { data: student, error } = await sb.from('students').select('*').eq('user_id', user.id).maybeSingle();
+    if (error || !student) {
+      loginError.textContent = 'Öğrenci kaydın bulunamadı. Eğitmeninle iletişime geç.';
+      loginError.style.display = 'block';
+      return;
+    }
+    currentStudent = student;
+
+    authScreen.style.display = 'none';
+    app.classList.add('active');
+
+    renderProfileHeader(student);
+    setupAvatarPicker(student);
+
+    const [assignmentsRes, projectsRes, notesRes, scheduleRes, lessonsRes] = await Promise.all([
+      sb.from('assignments').select('*').eq('student_id', student.id).order('due_date', { ascending: true }),
+      sb.from('projects').select('*').eq('student_id', student.id).order('created_at', { ascending: false }),
+      sb.from('progress_notes').select('*').eq('student_id', student.id).order('created_at', { ascending: false }),
+      sb.from('schedule').select('*').eq('student_id', student.id),
+      sb.from('lessons').select('*').eq('student_id', student.id).order('lesson_date', { ascending: false }),
+    ]);
+
+    renderOverview(assignmentsRes.data || [], projectsRes.data || [], notesRes.data || [], scheduleRes.data || []);
+    renderSchedule(scheduleRes.data || []);
+    renderLessons(lessonsRes.data || []);
+    renderAssignments(assignmentsRes.data || []);
+    renderProjects(projectsRes.data || []);
+    renderNotes(notesRes.data || []);
+  }
+
+  function renderProfileHeader(student) {
+    document.getElementById('sbAvatar').textContent = student.avatar || '🎓';
+    document.getElementById('sbName').textContent = student.full_name;
+    document.getElementById('sbMeta').textContent = `${(student.age_group||'').toUpperCase()} · ${(student.program||'').toUpperCase()}`;
+    document.getElementById('greeting').textContent = `Merhaba, ${student.full_name.split(' ')[0]}! 👋`;
+    document.getElementById('avatarBig').innerHTML = (student.avatar || '🎓') + '<div class="edit-badge">✎</div>';
+    document.getElementById('profileName').textContent = student.full_name;
+    document.getElementById('profileMeta').textContent = `${student.age_group || ''} · ${student.program || ''}`;
+  }
+
+  function setupAvatarPicker(student) {
+    const avatarBig = document.getElementById('avatarBig');
+    const picker = document.getElementById('avatarPicker');
+    picker.innerHTML = AVATAR_OPTIONS.map(a => `<button class="avatar-option">${a}</button>`).join('');
+    avatarBig.addEventListener('click', () => picker.classList.toggle('active'));
+    picker.querySelectorAll('.avatar-option').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const avatar = btn.textContent;
+        avatarBig.innerHTML = avatar + '<div class="edit-badge">✎</div>';
+        document.getElementById('sbAvatar').textContent = avatar;
+        picker.classList.remove('active');
+        await sb.from('students').update({ avatar }).eq('id', student.id);
+        currentStudent.avatar = avatar;
+      });
+    });
+  }
+
+  // ---------- OVERVIEW ----------
+  function renderOverview(assignments, projects, notes, schedule) {
+    const pending = assignments.filter(a => a.status !== 'Tamamlandı');
+    const activeProjects = projects.filter(p => !p.completed_at);
+    document.getElementById('statAssignments').textContent = pending.length;
+    document.getElementById('statProjects').textContent = activeProjects.length;
+
+    // Next lesson: soonest upcoming day/time
+    if (schedule.length) {
+      const todayIdx = (new Date().getDay() + 6) % 7; // Monday=0
+      const sorted = [...schedule].sort((a,b) => {
+        const da = (DAY_ORDER.indexOf(a.day_of_week) - todayIdx + 7) % 7;
+        const db = (DAY_ORDER.indexOf(b.day_of_week) - todayIdx + 7) % 7;
+        if (da !== db) return da - db;
+        return (a.start_time||'').localeCompare(b.start_time||'');
+      });
+      const next = sorted[0];
+      document.getElementById('statNextLesson').textContent = next ? `${next.day_of_week} ${next.start_time}` : '—';
+    } else {
+      document.getElementById('statNextLesson').textContent = '—';
+    }
+
+    if (notes.length && notes[0].progress_percent != null) {
+      document.getElementById('statProgress').textContent = '%' + notes[0].progress_percent;
+    } else {
+      document.getElementById('statProgress').textContent = '—';
+    }
+
+    const recentAssignments = assignments.slice(0, 4);
+    document.getElementById('overviewAssignments').innerHTML = recentAssignments.length ? recentAssignments.map(a => `
+      <div class="item-row">
+        <div class="item-main">
+          <div class="item-title">${escapeHtml(a.title)}</div>
+          <div class="item-sub">${a.due_date ? 'Son tarih: ' + formatDate(a.due_date) : 'Tarih belirtilmedi'}</div>
+        </div>
+        <span class="badge ${a.status === 'Tamamlandı' ? 'done' : 'pending'}">${escapeHtml(a.status || 'Bekliyor')}</span>
+      </div>
+    `).join('') : '<div class="empty-state">Henüz ödev eklenmedi.</div>';
+
+    document.getElementById('overviewNote').innerHTML = notes.length ? `
+      <div class="item-title">${escapeHtml(notes[0].note)}</div>
+      <div class="item-sub">${formatDate(notes[0].created_at)}</div>
+      ${notes[0].progress_percent != null ? `<div class="progress-bar-track"><div class="progress-bar-fill" style="width:${notes[0].progress_percent}%"></div></div>` : ''}
+    ` : '<div class="empty-state">Henüz not eklenmedi.</div>';
+  }
+
+  // ---------- SCHEDULE ----------
+  function renderSchedule(schedule) {
+    const byDay = {};
+    schedule.forEach(s => { byDay[s.day_of_week] = s; });
+    document.getElementById('weekGrid').innerHTML = DAY_ORDER.map(day => {
+      const s = byDay[day];
+      return `
+        <div class="day-card ${s ? '' : 'empty'}">
+          <div class="day-name">${day}</div>
+          <div class="day-time">${s ? s.start_time : '—'}</div>
+          ${s && s.note ? `<div class="day-note">${escapeHtml(s.note)}</div>` : ''}
+        </div>
+      `;
+    }).join('');
+  }
+
+  // ---------- LESSONS ----------
+  function renderLessons(lessons) {
+    document.getElementById('lessonsList').innerHTML = lessons.length ? lessons.map(l => `
+      <div class="item-row">
+        <div class="item-main">
+          <div class="item-title">${formatDate(l.lesson_date)}${l.topic ? ' · ' + escapeHtml(l.topic) : ''}</div>
+          <div class="item-sub">${l.zoom_url ? `<a class="zoom-link" href="${l.zoom_url}" target="_blank" rel="noopener">🎥 Kayda git</a>` : 'Kayıt eklenmedi'}</div>
+        </div>
+        <span class="badge ${l.attended ? 'done' : 'absent'}">${l.attended ? 'Katıldın' : 'Katılmadın'}</span>
+      </div>
+    `).join('') : '<div class="empty-state">Henüz ders kaydı eklenmedi.</div>';
+  }
+
+  // ---------- ASSIGNMENTS ----------
+  function renderAssignments(assignments) {
+    document.getElementById('assignmentsList').innerHTML = assignments.length ? assignments.map(a => `
+      <div class="item-row">
+        <div class="item-main">
+          <div class="item-title">${escapeHtml(a.title)}</div>
+          <div class="item-sub">${a.due_date ? 'Son tarih: ' + formatDate(a.due_date) : 'Tarih belirtilmedi'}</div>
+        </div>
+        <span class="badge ${a.status === 'Tamamlandı' ? 'done' : 'pending'}">${escapeHtml(a.status || 'Bekliyor')}</span>
+      </div>
+    `).join('') : '<div class="empty-state">Henüz ödev eklenmedi.</div>';
+  }
+
+  // ---------- PROJECTS ----------
+  function renderProjects(projects) {
+    document.getElementById('projectsList').innerHTML = projects.length ? projects.map(p => `
+      <div class="item-row">
+        <div class="item-main">
+          <div class="item-title">${escapeHtml(p.title)}</div>
+          <div class="item-sub">${escapeHtml(p.description || '')}</div>
+        </div>
+        <span class="badge ${p.completed_at ? 'done' : 'pending'}">${p.completed_at ? 'Tamamlandı' : 'Devam ediyor'}</span>
+      </div>
+    `).join('') : '<div class="empty-state">Henüz proje eklenmedi.</div>';
+  }
+
+  // ---------- NOTES ----------
+  function renderNotes(notes) {
+    document.getElementById('notesList').innerHTML = notes.length ? notes.map(n => `
+      <div class="item-row">
+        <div class="item-main">
+          <div class="item-title">${escapeHtml(n.note)}</div>
+          <div class="item-sub">${formatDate(n.created_at)}</div>
+          ${n.progress_percent != null ? `<div class="progress-bar-track" style="max-width:220px;"><div class="progress-bar-fill" style="width:${n.progress_percent}%"></div></div>` : ''}
+        </div>
+        ${n.progress_percent != null ? `<span class="badge done">%${n.progress_percent}</span>` : ''}
+      </div>
+    `).join('') : '<div class="empty-state">Henüz not eklenmedi.</div>';
+  }
+
+  // ---------- INIT ----------
   (async () => {
     const { data: { session } } = await sb.auth.getSession();
-    if(session){
-      await loadDashboard();
-    }
+    if (session) await boot();
   })();
 </script>
 </body>

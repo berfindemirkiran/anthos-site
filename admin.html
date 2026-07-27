@@ -19,169 +19,486 @@
     --gold: #C99A2E;
     --gold-soft: #F3E3BE;
     --line: rgba(23,16,80,0.12);
-    --radius: 22px;
+    --radius: 18px;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   body{
     background:var(--cream); color:var(--charcoal);
     font-family:'Plus Jakarta Sans', -apple-system, sans-serif; line-height:1.5;
+    min-height:100vh;
+  }
+  ::-webkit-scrollbar{width:8px; height:8px;}
+  ::-webkit-scrollbar-thumb{background:rgba(23,16,80,0.18); border-radius:10px;}
+
+  /* Gate */
+  #gate{
     min-height:100vh; display:flex; align-items:center; justify-content:center; padding:40px 20px;
   }
   .card{
     background:#fff; border:1.5px solid var(--line); border-radius:var(--radius);
     padding:40px; max-width:440px; width:100%; box-shadow:0 24px 60px rgba(23,16,80,0.08);
   }
-  h1{font-size:22px; color:var(--ink-deep); margin-bottom:6px;}
-  p.lead{font-size:13.5px; opacity:0.65; margin-bottom:24px;}
+  .card h1{font-size:22px; color:var(--ink-deep); margin-bottom:6px;}
+  .card p.lead{font-size:13.5px; opacity:0.65; margin-bottom:24px;}
   .field{margin-bottom:16px;}
   .field label{display:block; font-size:13px; font-weight:600; color:var(--ink-deep); margin-bottom:6px;}
-  .field input, .field select{
+  .field input, .field select, .field textarea{
     width:100%; padding:12px 14px; border-radius:10px; border:1.5px solid var(--line);
     font-family:inherit; font-size:14px; background:var(--cream);
   }
-  .field input:focus, .field select:focus{outline:none; border-color:var(--ink); background:#fff;}
+  .field textarea{resize:vertical; min-height:70px;}
+  .field input:focus, .field select:focus, .field textarea:focus{outline:none; border-color:var(--ink); background:#fff;}
   .btn{
-    display:inline-flex; align-items:center; justify-content:center; gap:8px; width:100%;
-    font-weight:600; font-size:14.5px; padding:13px 24px; border-radius:100px; cursor:pointer; border:none;
-    background:var(--bloom); color:#fff; transition:transform 0.18s ease;
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    font-weight:600; font-size:14px; padding:11px 20px; border-radius:100px; cursor:pointer; border:none;
+    background:var(--bloom); color:#fff; transition:transform 0.15s ease, opacity 0.15s ease;
   }
-  .btn:hover{transform:translateY(-2px);}
-  .btn:disabled{opacity:0.6; cursor:not-allowed; transform:none;}
+  .btn:hover{transform:translateY(-1px);}
+  .btn:disabled{opacity:0.55; cursor:not-allowed; transform:none;}
+  .btn.full{width:100%;}
+  .btn.secondary{background:var(--ink-deep);}
+  .btn.ghost{background:transparent; color:var(--ink-deep); border:1.5px solid var(--line);}
+  .btn.danger{background:#fff; color:var(--bloom); border:1.5px solid rgba(232,92,74,0.4);}
+  .btn.sm{padding:7px 14px; font-size:12.5px;}
   .msg{border-radius:12px; padding:12px 16px; font-size:13.5px; margin-bottom:16px; display:none;}
   .msg.error{background:rgba(232,92,74,0.1); color:var(--bloom); border:1px solid rgba(232,92,74,0.3);}
   .msg.success{background:rgba(124,157,111,0.14); color:var(--sage); border:1px solid rgba(124,157,111,0.35);}
-  #gate{}
-  #panel{display:none;}
-  #result{display:none; margin-top:20px; background:var(--cream-2); border-radius:14px; padding:18px;}
-  #result p{font-size:13.5px; margin-bottom:6px;}
-  #result strong{color:var(--ink-deep);}
-  .copy-btn{
-    margin-top:10px; background:var(--ink-deep); color:#fff; border:none; border-radius:100px;
-    padding:9px 16px; font-size:13px; cursor:pointer; font-weight:600;
+
+  /* App shell */
+  #app{display:none; min-height:100vh; grid-template-columns:240px 1fr;}
+  #app.active{display:grid;}
+  .sidebar{
+    background:var(--ink-deep); color:#fff; padding:28px 20px; display:flex; flex-direction:column;
+  }
+  .sidebar .brand{font-family:Georgia, serif; font-size:22px; font-weight:700; margin-bottom:4px;}
+  .sidebar .brand-sub{font-size:10.5px; letter-spacing:0.12em; opacity:0.55; text-transform:uppercase; margin-bottom:36px;}
+  .nav-item{
+    display:flex; align-items:center; gap:10px; padding:11px 14px; border-radius:12px; font-size:14px;
+    font-weight:600; color:rgba(255,255,255,0.7); cursor:pointer; margin-bottom:4px; transition:background 0.15s;
+  }
+  .nav-item:hover{background:rgba(255,255,255,0.06);}
+  .nav-item.active{background:rgba(255,255,255,0.14); color:#fff;}
+  .sidebar-foot{margin-top:auto; font-size:12px; opacity:0.45;}
+
+  .main{padding:36px 44px; overflow-y:auto; max-height:100vh;}
+  .topbar{display:flex; align-items:center; justify-content:space-between; margin-bottom:28px; gap:16px;}
+  .topbar h2{font-size:24px; color:var(--ink-deep);}
+  .topbar .search{
+    flex:1; max-width:340px; padding:10px 16px; border-radius:100px; border:1.5px solid var(--line);
+    background:#fff; font-size:14px; font-family:inherit;
+  }
+  .topbar .search:focus{outline:none; border-color:var(--ink);}
+
+  .view{display:none;}
+  .view.active{display:block;}
+
+  /* Student list */
+  .student-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(260px,1fr)); gap:16px;}
+  .student-card{
+    background:#fff; border:1.5px solid var(--line); border-radius:var(--radius); padding:20px;
+    cursor:pointer; transition:transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .student-card:hover{transform:translateY(-2px); box-shadow:0 14px 30px rgba(23,16,80,0.08);}
+  .student-card .avatar{
+    width:46px; height:46px; border-radius:50%; background:var(--sage-soft); display:flex;
+    align-items:center; justify-content:center; font-size:22px; margin-bottom:12px;
+  }
+  .student-card .name{font-size:16px; font-weight:700; color:var(--ink-deep); margin-bottom:3px;}
+  .student-card .meta{font-size:12px; font-weight:700; letter-spacing:0.04em; color:var(--bloom); text-transform:uppercase;}
+  .empty-state{
+    text-align:center; padding:60px 20px; color:var(--ink-deep); opacity:0.5; font-size:14px;
+  }
+
+  /* Student detail */
+  .detail-header{
+    display:flex; align-items:center; gap:18px; margin-bottom:22px; flex-wrap:wrap;
+  }
+  .detail-header .avatar{
+    width:64px; height:64px; border-radius:50%; background:var(--sage-soft); display:flex;
+    align-items:center; justify-content:center; font-size:30px; flex-shrink:0;
+  }
+  .detail-header .info{flex:1; min-width:180px;}
+  .detail-header .info h2{font-size:22px; color:var(--ink-deep);}
+  .detail-header .info .meta{font-size:12.5px; font-weight:700; letter-spacing:0.05em; color:var(--bloom); text-transform:uppercase; margin-top:2px;}
+  .detail-actions{display:flex; gap:8px; flex-wrap:wrap;}
+
+  .tabs{display:flex; gap:6px; border-bottom:1.5px solid var(--line); margin-bottom:24px; flex-wrap:wrap;}
+  .tab-btn{
+    padding:11px 16px; font-size:13.5px; font-weight:700; color:var(--ink-deep); opacity:0.5;
+    cursor:pointer; border-bottom:2.5px solid transparent; margin-bottom:-1.5px; background:none; border-top:none; border-left:none; border-right:none; font-family:inherit;
+  }
+  .tab-btn.active{opacity:1; border-bottom-color:var(--bloom);}
+  .tab-pane{display:none;}
+  .tab-pane.active{display:block;}
+
+  .panel{
+    background:#fff; border:1.5px solid var(--line); border-radius:var(--radius); padding:22px; margin-bottom:18px;
+  }
+  .panel h3{font-size:14px; color:var(--ink-deep); margin-bottom:14px;}
+  .inline-form{display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end; margin-bottom:18px;}
+  .inline-form .field{margin-bottom:0; flex:1; min-width:130px;}
+  .inline-form label{font-size:11.5px;}
+
+  .item-row{
+    display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .item-row:last-child{border-bottom:none;}
+  .item-row .item-main{flex:1; min-width:0;}
+  .item-row .item-title{font-size:14px; font-weight:700; color:var(--ink-deep);}
+  .item-row .item-sub{font-size:12.5px; opacity:0.6; margin-top:2px;}
+  .item-row .item-actions{display:flex; gap:6px; align-items:center; flex-shrink:0;}
+  .badge{
+    font-size:11px; font-weight:700; padding:4px 10px; border-radius:100px; letter-spacing:0.02em;
+  }
+  .badge.done{background:var(--sage-soft); color:var(--sage);}
+  .badge.pending{background:var(--gold-soft); color:var(--gold);}
+  .badge.absent{background:rgba(232,92,74,0.12); color:var(--bloom);}
+  .icon-btn{
+    background:none; border:none; cursor:pointer; font-size:15px; opacity:0.5; padding:4px; border-radius:8px;
+  }
+  .icon-btn:hover{opacity:1; background:var(--cream-2);}
+  a.zoom-link{font-size:12.5px; color:var(--ink); font-weight:700; text-decoration:none;}
+  a.zoom-link:hover{text-decoration:underline;}
+
+  /* New student modal */
+  .modal-overlay{
+    display:none; position:fixed; inset:0; background:rgba(23,16,80,0.4); align-items:center; justify-content:center;
+    padding:20px; z-index:50;
+  }
+  .modal-overlay.active{display:flex;}
+  .modal{
+    background:#fff; border-radius:var(--radius); padding:32px; max-width:460px; width:100%;
+    max-height:90vh; overflow-y:auto;
+  }
+  .modal h2{font-size:19px; color:var(--ink-deep); margin-bottom:18px;}
+  .result-box{background:var(--cream-2); border-radius:14px; padding:18px; margin-top:16px;}
+  .result-box p{font-size:13.5px; margin-bottom:6px;}
+  .result-box strong{color:var(--ink-deep);}
+
+  @media (max-width: 780px){
+    #app.active{grid-template-columns:1fr;}
+    .sidebar{display:none;}
+    .main{padding:24px 20px;}
   }
 </style>
 </head>
 <body>
 
-<div class="card" id="gate">
-  <h1>Yönetim Girişi</h1>
-  <p class="lead">Devam etmek için yönetim şifresini gir.</p>
-  <div class="msg error" id="gateError"></div>
-  <div class="field">
-    <label for="gatePw">Yönetim Şifresi</label>
-    <input type="password" id="gatePw">
+<div id="gate">
+  <div class="card">
+    <h1>Yönetim Girişi</h1>
+    <p class="lead">Devam etmek için yönetim şifresini gir.</p>
+    <div class="msg error" id="gateError"></div>
+    <div class="field">
+      <label for="gatePw">Yönetim Şifresi</label>
+      <input type="password" id="gatePw">
+    </div>
+    <button class="btn full" id="gateBtn">Devam Et</button>
   </div>
-  <button class="btn" id="gateBtn">Devam Et</button>
 </div>
 
-<div class="card" id="panel">
-  <h1>Yeni Öğrenci Hesabı</h1>
-  <p class="lead">Bilgileri gir, hesap ve giriş şifresi otomatik oluşturulsun.</p>
-  <div class="msg error" id="formError"></div>
-  <form id="studentForm">
-    <div class="field">
-      <label for="fullName">Öğrenci Adı Soyadı</label>
-      <input type="text" id="fullName" required>
-    </div>
-    <div class="field">
-      <label for="email">E-posta</label>
-      <input type="email" id="email" required>
-    </div>
-    <div class="field">
-      <label for="ageGroup">Yaş Grubu</label>
-      <select id="ageGroup">
-        <option value="">Seçiniz</option>
-        <option value="Tohum">Tohum (5-7 yaş)</option>
-        <option value="Filiz">Filiz (8-12 yaş)</option>
-        <option value="Çiçek">Çiçek (13-18 yaş)</option>
-      </select>
-    </div>
-    <div class="field">
-      <label for="program">Program</label>
-      <select id="program">
-        <option value="">Seçiniz</option>
-        <option value="Scratch">Scratch</option>
-        <option value="Python">Python</option>
-        <option value="Web Geliştirme">Web Geliştirme</option>
-      </select>
-    </div>
-    <div class="field">
-      <label for="customPassword">Şifre (boş bırakırsan otomatik oluşturulur)</label>
-      <input type="text" id="customPassword" placeholder="Örn. atahankayis1001">
-    </div>
-    <button type="submit" class="btn" id="submitBtn">Hesap Oluştur</button>
-  </form>
+<div id="app">
+  <div class="sidebar">
+    <div class="brand">anthos</div>
+    <div class="brand-sub">Yönetim Paneli</div>
+    <div class="nav-item active" data-view="students">👥 Öğrenciler</div>
+    <div class="nav-item" id="navNewStudent">➕ Yeni Öğrenci</div>
+    <div class="sidebar-foot">Anthos Akademi © 2026</div>
+  </div>
 
-  <div id="result">
-    <p><strong>E-posta:</strong> <span id="resEmail"></span></p>
-    <p><strong>Şifre:</strong> <span id="resPassword"></span></p>
-    <button class="copy-btn" id="copyBtn">WhatsApp için kopyala</button>
+  <div class="main">
+    <!-- STUDENTS LIST VIEW -->
+    <div class="view active" id="view-students">
+      <div class="topbar">
+        <h2>Öğrenciler</h2>
+        <input type="text" class="search" id="studentSearch" placeholder="İsim ara...">
+        <button class="btn" id="btnOpenNewStudent">➕ Yeni Öğrenci</button>
+      </div>
+      <div id="studentListWrap">
+        <div class="empty-state">Yükleniyor…</div>
+      </div>
+    </div>
+
+    <!-- STUDENT DETAIL VIEW -->
+    <div class="view" id="view-detail">
+      <button class="btn ghost sm" id="btnBackToList" style="margin-bottom:20px;">← Öğrenci Listesi</button>
+
+      <div class="detail-header">
+        <div class="avatar" id="detailAvatar">🎓</div>
+        <div class="info">
+          <h2 id="detailName">—</h2>
+          <div class="meta" id="detailMeta">—</div>
+        </div>
+        <div class="detail-actions">
+          <button class="btn ghost sm" id="btnResetPw">🔑 Şifre Sıfırla</button>
+          <button class="btn danger sm" id="btnDeleteStudent">🗑 Öğrenciyi Sil</button>
+        </div>
+      </div>
+
+      <div class="msg success" id="detailMsg"></div>
+
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="assignments">📋 Ödevler</button>
+        <button class="tab-btn" data-tab="projects">💻 Projeler</button>
+        <button class="tab-btn" data-tab="schedule">🗓 Ders Programı</button>
+        <button class="tab-btn" data-tab="lessons">🎥 Ders Kayıtları</button>
+        <button class="tab-btn" data-tab="notes">📈 İlerleme Notları</button>
+      </div>
+
+      <!-- Assignments -->
+      <div class="tab-pane active" data-pane="assignments">
+        <div class="panel">
+          <h3>Yeni Ödev Ekle</h3>
+          <form class="inline-form" id="formAssignment">
+            <div class="field"><label>Başlık</label><input type="text" id="asgTitle" required></div>
+            <div class="field"><label>Son Tarih</label><input type="date" id="asgDue"></div>
+            <div class="field">
+              <label>Durum</label>
+              <select id="asgStatus"><option value="Bekliyor">Bekliyor</option><option value="Tamamlandı">Tamamlandı</option></select>
+            </div>
+            <button class="btn sm" type="submit">Ekle</button>
+          </form>
+        </div>
+        <div class="panel"><h3>Ödevler</h3><div id="assignmentsList"></div></div>
+      </div>
+
+      <!-- Projects -->
+      <div class="tab-pane" data-pane="projects">
+        <div class="panel">
+          <h3>Yeni Proje Ekle</h3>
+          <form class="inline-form" id="formProject">
+            <div class="field"><label>Başlık</label><input type="text" id="projTitle" required></div>
+            <div class="field"><label>Açıklama</label><input type="text" id="projDesc"></div>
+            <div class="field"><label>Tamamlanma Tarihi</label><input type="date" id="projCompleted"></div>
+            <button class="btn sm" type="submit">Ekle</button>
+          </form>
+        </div>
+        <div class="panel"><h3>Projeler</h3><div id="projectsList"></div></div>
+      </div>
+
+      <!-- Schedule -->
+      <div class="tab-pane" data-pane="schedule">
+        <div class="panel">
+          <h3>Ders Programına Ekle</h3>
+          <form class="inline-form" id="formSchedule">
+            <div class="field">
+              <label>Gün</label>
+              <select id="schDay">
+                <option>Pazartesi</option><option>Salı</option><option>Çarşamba</option>
+                <option>Perşembe</option><option>Cuma</option><option>Cumartesi</option><option>Pazar</option>
+              </select>
+            </div>
+            <div class="field"><label>Saat</label><input type="time" id="schTime" required></div>
+            <div class="field"><label>Not</label><input type="text" id="schNote" placeholder="Örn. Scratch dersi"></div>
+            <button class="btn sm" type="submit">Ekle</button>
+          </form>
+        </div>
+        <div class="panel"><h3>Haftalık Program</h3><div id="scheduleList"></div></div>
+      </div>
+
+      <!-- Lessons (yoklama + zoom) -->
+      <div class="tab-pane" data-pane="lessons">
+        <div class="panel">
+          <h3>Ders Kaydı Ekle</h3>
+          <form class="inline-form" id="formLesson">
+            <div class="field"><label>Tarih</label><input type="date" id="lesDate" required></div>
+            <div class="field"><label>Konu</label><input type="text" id="lesTopic" placeholder="Örn. Döngüler"></div>
+            <div class="field">
+              <label>Katılım</label>
+              <select id="lesAttended"><option value="true">Katıldı</option><option value="false">Katılmadı</option></select>
+            </div>
+            <div class="field"><label>Zoom Kayıt Linki</label><input type="url" id="lesZoom" placeholder="https://..."></div>
+            <button class="btn sm" type="submit">Ekle</button>
+          </form>
+        </div>
+        <div class="panel"><h3>Geçmiş Dersler</h3><div id="lessonsList"></div></div>
+      </div>
+
+      <!-- Notes -->
+      <div class="tab-pane" data-pane="notes">
+        <div class="panel">
+          <h3>İlerleme Notu Ekle</h3>
+          <form class="inline-form" id="formNote">
+            <div class="field" style="flex:2;"><label>Not</label><input type="text" id="noteText" required></div>
+            <div class="field"><label>İlerleme %</label><input type="number" id="notePercent" min="0" max="100"></div>
+            <button class="btn sm" type="submit">Ekle</button>
+          </form>
+        </div>
+        <div class="panel"><h3>Notlar</h3><div id="notesList"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- New student modal -->
+<div class="modal-overlay" id="newStudentModal">
+  <div class="modal">
+    <h2>Yeni Öğrenci Hesabı</h2>
+    <div class="msg error" id="formError"></div>
+    <form id="studentForm">
+      <div class="field"><label>Öğrenci Adı Soyadı</label><input type="text" id="fullName" required></div>
+      <div class="field"><label>E-posta</label><input type="email" id="email" required></div>
+      <div class="field">
+        <label>Yaş Grubu</label>
+        <select id="ageGroup">
+          <option value="">Seçiniz</option>
+          <option value="Tohum">Tohum (5-7 yaş)</option>
+          <option value="Filiz">Filiz (8-12 yaş)</option>
+          <option value="Çiçek">Çiçek (13-18 yaş)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Program</label>
+        <select id="program">
+          <option value="">Seçiniz</option>
+          <option value="Scratch">Scratch</option>
+          <option value="Python">Python</option>
+          <option value="Web Geliştirme">Web Geliştirme</option>
+        </select>
+      </div>
+      <div class="field"><label>Şifre (boş bırakırsan otomatik oluşturulur)</label><input type="text" id="customPassword" placeholder="Örn. atahankayis1001"></div>
+      <button type="submit" class="btn full" id="submitBtn">Hesap Oluştur</button>
+    </form>
+    <div id="result" class="result-box" style="display:none;">
+      <p><strong>E-posta:</strong> <span id="resEmail"></span></p>
+      <p><strong>Şifre:</strong> <span id="resPassword"></span></p>
+      <button class="btn secondary sm" id="copyBtn" style="margin-top:8px;">WhatsApp için kopyala</button>
+      <button class="btn ghost sm" id="closeModalBtn" style="margin-top:8px;">Kapat</button>
+    </div>
   </div>
 </div>
 
 <script>
   const FUNCTION_URL = 'https://pqxobhknksylbpesymrg.supabase.co/functions/v1/create-student';
   let adminSecret = '';
+  let students = [];
+  let currentStudentId = null;
+  let currentStudentDetail = null;
 
+  async function api(action, payload = {}) {
+    const res = await fetch(FUNCTION_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ admin_secret: adminSecret, action, ...payload })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Bilinmeyen hata');
+    return data;
+  }
+
+  // ---------- GATE ----------
   const gate = document.getElementById('gate');
-  const panel = document.getElementById('panel');
+  const app = document.getElementById('app');
   const gateError = document.getElementById('gateError');
-  const gateBtn = document.getElementById('gateBtn');
-  const formError = document.getElementById('formError');
-  const studentForm = document.getElementById('studentForm');
-  const submitBtn = document.getElementById('submitBtn');
-  const resultBox = document.getElementById('result');
 
-  gateBtn.addEventListener('click', () => {
+  document.getElementById('gateBtn').addEventListener('click', async () => {
     const pw = document.getElementById('gatePw').value.trim();
-    if(!pw){
-      gateError.textContent = 'Şifre gerekli.';
-      gateError.style.display = 'block';
-      return;
-    }
+    if (!pw) { gateError.textContent = 'Şifre gerekli.'; gateError.style.display = 'block'; return; }
     adminSecret = pw;
-    gate.style.display = 'none';
-    panel.style.display = 'block';
+    try {
+      await api('list_students');
+      gate.style.display = 'none';
+      app.classList.add('active');
+      await loadStudents();
+    } catch (err) {
+      gateError.textContent = 'Şifre yanlış görünüyor: ' + err.message;
+      gateError.style.display = 'block';
+    }
   });
 
-  studentForm.addEventListener('submit', async (e) => {
+  // ---------- NAV ----------
+  document.querySelectorAll('.nav-item[data-view]').forEach(el => {
+    el.addEventListener('click', () => showView(el.dataset.view));
+  });
+  document.getElementById('navNewStudent').addEventListener('click', () => openNewStudentModal());
+  document.getElementById('btnOpenNewStudent').addEventListener('click', () => openNewStudentModal());
+  document.getElementById('btnBackToList').addEventListener('click', () => showView('students'));
+
+  function showView(name) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById('view-' + name).classList.add('active');
+    document.querySelectorAll('.nav-item[data-view]').forEach(el => {
+      el.classList.toggle('active', el.dataset.view === name);
+    });
+  }
+
+  // ---------- STUDENT LIST ----------
+  async function loadStudents() {
+    const wrap = document.getElementById('studentListWrap');
+    wrap.innerHTML = '<div class="empty-state">Yükleniyor…</div>';
+    try {
+      const data = await api('list_students');
+      students = data.students || [];
+      renderStudentList();
+    } catch (err) {
+      wrap.innerHTML = '<div class="empty-state">Hata: ' + err.message + '</div>';
+    }
+  }
+
+  function renderStudentList() {
+    const wrap = document.getElementById('studentListWrap');
+    const term = document.getElementById('studentSearch').value.trim().toLowerCase();
+    const filtered = students.filter(s => s.full_name.toLowerCase().includes(term));
+    if (!filtered.length) {
+      wrap.innerHTML = '<div class="empty-state">Henüz öğrenci yok. "Yeni Öğrenci" ile ekleyebilirsin.</div>';
+      return;
+    }
+    wrap.innerHTML = '<div class="student-grid">' + filtered.map(s => `
+      <div class="student-card" data-id="${s.id}">
+        <div class="avatar">${s.avatar || '🎓'}</div>
+        <div class="name">${escapeHtml(s.full_name)}</div>
+        <div class="meta">${escapeHtml(s.age_group || '')} · ${escapeHtml(s.program || '')}</div>
+      </div>
+    `).join('') + '</div>';
+    wrap.querySelectorAll('.student-card').forEach(card => {
+      card.addEventListener('click', () => openStudentDetail(card.dataset.id));
+    });
+  }
+  document.getElementById('studentSearch').addEventListener('input', renderStudentList);
+
+  function escapeHtml(str) {
+    return String(str || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  // ---------- NEW STUDENT MODAL ----------
+  const newStudentModal = document.getElementById('newStudentModal');
+  function openNewStudentModal() {
+    document.getElementById('studentForm').reset();
+    document.getElementById('studentForm').style.display = 'block';
+    document.getElementById('result').style.display = 'none';
+    document.getElementById('formError').style.display = 'none';
+    newStudentModal.classList.add('active');
+  }
+  document.getElementById('closeModalBtn').addEventListener('click', () => {
+    newStudentModal.classList.remove('active');
+    loadStudents();
+  });
+  newStudentModal.addEventListener('click', (e) => { if (e.target === newStudentModal) newStudentModal.classList.remove('active'); });
+
+  document.getElementById('studentForm').addEventListener('submit', async (e) => {
     e.preventDefault();
+    const formError = document.getElementById('formError');
+    const submitBtn = document.getElementById('submitBtn');
     formError.style.display = 'none';
-    resultBox.style.display = 'none';
     submitBtn.disabled = true;
     submitBtn.textContent = 'Oluşturuluyor…';
-
-    const full_name = document.getElementById('fullName').value.trim();
-    const email = document.getElementById('email').value.trim();
-    const age_group = document.getElementById('ageGroup').value;
-    const program = document.getElementById('program').value;
-    const password = document.getElementById('customPassword').value.trim();
-
     try {
-      const res = await fetch(FUNCTION_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ admin_secret: adminSecret, email, full_name, age_group, program, password })
+      const data = await api('create_student', {
+        full_name: document.getElementById('fullName').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        age_group: document.getElementById('ageGroup').value,
+        program: document.getElementById('program').value,
+        password: document.getElementById('customPassword').value.trim()
       });
-      const data = await res.json();
-
-      if(!res.ok){
-        formError.textContent = 'Hata: ' + (data.error || 'Bilinmeyen hata');
-        formError.style.display = 'block';
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Hesap Oluştur';
-        return;
-      }
-
       document.getElementById('resEmail').textContent = data.email;
       document.getElementById('resPassword').textContent = data.password;
-      resultBox.style.display = 'block';
-      studentForm.reset();
-    } catch(err){
-      formError.textContent = 'Bağlantı hatası: ' + err.message;
+      document.getElementById('result').style.display = 'block';
+      document.getElementById('studentForm').style.display = 'none';
+    } catch (err) {
+      formError.textContent = 'Hata: ' + err.message;
       formError.style.display = 'block';
     }
-
     submitBtn.disabled = false;
     submitBtn.textContent = 'Hesap Oluştur';
   });
@@ -196,6 +513,217 @@
       btn.textContent = 'Kopyalandı ✓';
       setTimeout(() => { btn.textContent = original; }, 1800);
     });
+  });
+
+  // ---------- STUDENT DETAIL ----------
+  async function openStudentDetail(id) {
+    currentStudentId = id;
+    showView('detail');
+    document.getElementById('detailName').textContent = 'Yükleniyor…';
+    try {
+      const data = await api('get_student_detail', { student_id: id });
+      currentStudentDetail = data;
+      renderDetail(data);
+    } catch (err) {
+      document.getElementById('detailName').textContent = 'Hata: ' + err.message;
+    }
+  }
+
+  function renderDetail(data) {
+    const s = data.student;
+    document.getElementById('detailAvatar').textContent = s.avatar || '🎓';
+    document.getElementById('detailName').textContent = s.full_name;
+    document.getElementById('detailMeta').textContent = `${(s.age_group||'').toUpperCase()} · ${(s.program||'').toUpperCase()}`;
+
+    // Assignments
+    document.getElementById('assignmentsList').innerHTML = data.assignments.length ? data.assignments.map(a => `
+      <div class="item-row">
+        <div class="item-main">
+          <div class="item-title">${escapeHtml(a.title)}</div>
+          <div class="item-sub">${a.due_date ? 'Son tarih: ' + a.due_date : 'Tarih yok'}</div>
+        </div>
+        <div class="item-actions">
+          <span class="badge ${a.status === 'Tamamlandı' ? 'done' : 'pending'}" style="cursor:pointer;" data-toggle-asg="${a.id}" data-status="${a.status}">${escapeHtml(a.status)}</span>
+          <button class="icon-btn" data-del-asg="${a.id}">🗑</button>
+        </div>
+      </div>
+    `).join('') : '<div class="empty-state">Henüz ödev eklenmedi.</div>';
+
+    // Projects
+    document.getElementById('projectsList').innerHTML = data.projects.length ? data.projects.map(p => `
+      <div class="item-row">
+        <div class="item-main">
+          <div class="item-title">${escapeHtml(p.title)}</div>
+          <div class="item-sub">${escapeHtml(p.description || '')}</div>
+        </div>
+        <div class="item-actions">
+          <span class="badge ${p.completed_at ? 'done' : 'pending'}">${p.completed_at ? 'Tamamlandı: ' + p.completed_at : 'Devam ediyor'}</span>
+          <button class="icon-btn" data-del-proj="${p.id}">🗑</button>
+        </div>
+      </div>
+    `).join('') : '<div class="empty-state">Henüz proje eklenmedi.</div>';
+
+    // Schedule
+    document.getElementById('scheduleList').innerHTML = data.schedule.length ? data.schedule.map(sc => `
+      <div class="item-row">
+        <div class="item-main">
+          <div class="item-title">${escapeHtml(sc.day_of_week)} · ${escapeHtml(sc.start_time)}</div>
+          <div class="item-sub">${escapeHtml(sc.note || '')}</div>
+        </div>
+        <div class="item-actions"><button class="icon-btn" data-del-sch="${sc.id}">🗑</button></div>
+      </div>
+    `).join('') : '<div class="empty-state">Henüz ders programı eklenmedi.</div>';
+
+    // Lessons
+    document.getElementById('lessonsList').innerHTML = data.lessons.length ? data.lessons.map(l => `
+      <div class="item-row">
+        <div class="item-main">
+          <div class="item-title">${l.lesson_date}${l.topic ? ' · ' + escapeHtml(l.topic) : ''}</div>
+          <div class="item-sub">${l.zoom_url ? `<a class="zoom-link" href="${l.zoom_url}" target="_blank">🎥 Kayıt linki</a>` : 'Kayıt linki yok'}</div>
+        </div>
+        <div class="item-actions">
+          <span class="badge ${l.attended ? 'done' : 'absent'}">${l.attended ? 'Katıldı' : 'Katılmadı'}</span>
+          <button class="icon-btn" data-del-les="${l.id}">🗑</button>
+        </div>
+      </div>
+    `).join('') : '<div class="empty-state">Henüz ders kaydı eklenmedi.</div>';
+
+    // Notes
+    document.getElementById('notesList').innerHTML = data.notes.length ? data.notes.map(n => `
+      <div class="item-row">
+        <div class="item-main">
+          <div class="item-title">${escapeHtml(n.note)}</div>
+          <div class="item-sub">${n.created_at ? new Date(n.created_at).toLocaleDateString('tr-TR') : ''}</div>
+        </div>
+        <div class="item-actions">
+          ${n.progress_percent != null ? `<span class="badge done">%${n.progress_percent}</span>` : ''}
+          <button class="icon-btn" data-del-note="${n.id}">🗑</button>
+        </div>
+      </div>
+    `).join('') : '<div class="empty-state">Henüz not eklenmedi.</div>';
+
+    bindDetailActions();
+  }
+
+  function bindDetailActions() {
+    document.querySelectorAll('[data-toggle-asg]').forEach(el => {
+      el.onclick = async () => {
+        const newStatus = el.dataset.status === 'Tamamlandı' ? 'Bekliyor' : 'Tamamlandı';
+        await api('update_assignment', { id: el.dataset.toggleAsg, status: newStatus });
+        openStudentDetail(currentStudentId);
+      };
+    });
+    document.querySelectorAll('[data-del-asg]').forEach(el => {
+      el.onclick = async () => { await api('delete_assignment', { id: el.dataset.delAsg }); openStudentDetail(currentStudentId); };
+    });
+    document.querySelectorAll('[data-del-proj]').forEach(el => {
+      el.onclick = async () => { await api('delete_project', { id: el.dataset.delProj }); openStudentDetail(currentStudentId); };
+    });
+    document.querySelectorAll('[data-del-sch]').forEach(el => {
+      el.onclick = async () => { await api('delete_schedule', { id: el.dataset.delSch }); openStudentDetail(currentStudentId); };
+    });
+    document.querySelectorAll('[data-del-les]').forEach(el => {
+      el.onclick = async () => { await api('delete_lesson', { id: el.dataset.delLes }); openStudentDetail(currentStudentId); };
+    });
+    document.querySelectorAll('[data-del-note]').forEach(el => {
+      el.onclick = async () => { await api('delete_note', { id: el.dataset.delNote }); openStudentDetail(currentStudentId); };
+    });
+  }
+
+  // Tabs
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelector(`.tab-pane[data-pane="${btn.dataset.tab}"]`).classList.add('active');
+    });
+  });
+
+  // Forms
+  document.getElementById('formAssignment').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    await api('add_assignment', {
+      student_id: currentStudentId,
+      title: document.getElementById('asgTitle').value.trim(),
+      due_date: document.getElementById('asgDue').value || null,
+      status: document.getElementById('asgStatus').value
+    });
+    e.target.reset();
+    openStudentDetail(currentStudentId);
+  });
+
+  document.getElementById('formProject').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    await api('add_project', {
+      student_id: currentStudentId,
+      title: document.getElementById('projTitle').value.trim(),
+      description: document.getElementById('projDesc').value.trim(),
+      completed_at: document.getElementById('projCompleted').value || null
+    });
+    e.target.reset();
+    openStudentDetail(currentStudentId);
+  });
+
+  document.getElementById('formSchedule').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    await api('add_schedule', {
+      student_id: currentStudentId,
+      day_of_week: document.getElementById('schDay').value,
+      start_time: document.getElementById('schTime').value,
+      note: document.getElementById('schNote').value.trim()
+    });
+    e.target.reset();
+    openStudentDetail(currentStudentId);
+  });
+
+  document.getElementById('formLesson').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    await api('add_lesson', {
+      student_id: currentStudentId,
+      lesson_date: document.getElementById('lesDate').value,
+      topic: document.getElementById('lesTopic').value.trim(),
+      attended: document.getElementById('lesAttended').value === 'true',
+      zoom_url: document.getElementById('lesZoom').value.trim()
+    });
+    e.target.reset();
+    openStudentDetail(currentStudentId);
+  });
+
+  document.getElementById('formNote').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    await api('add_note', {
+      student_id: currentStudentId,
+      note: document.getElementById('noteText').value.trim(),
+      progress_percent: document.getElementById('notePercent').value ? parseInt(document.getElementById('notePercent').value) : null
+    });
+    e.target.reset();
+    openStudentDetail(currentStudentId);
+  });
+
+  // Reset password / delete student
+  document.getElementById('btnResetPw').addEventListener('click', async () => {
+    const custom = prompt('Yeni şifre gir (boş bırakırsan otomatik oluşturulur):');
+    if (custom === null) return;
+    try {
+      const data = await api('reset_password', { student_id: currentStudentId, password: custom.trim() });
+      const msg = document.getElementById('detailMsg');
+      msg.textContent = 'Yeni şifre: ' + data.password;
+      msg.style.display = 'block';
+    } catch (err) {
+      alert('Hata: ' + err.message);
+    }
+  });
+
+  document.getElementById('btnDeleteStudent').addEventListener('click', async () => {
+    if (!confirm('Bu öğrenciyi ve tüm verilerini silmek istediğine emin misin? Bu işlem geri alınamaz.')) return;
+    try {
+      await api('delete_student', { student_id: currentStudentId });
+      showView('students');
+      loadStudents();
+    } catch (err) {
+      alert('Hata: ' + err.message);
+    }
   });
 </script>
 </body>
