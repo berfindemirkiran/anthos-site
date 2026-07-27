@@ -236,6 +236,40 @@
         </div>
       </div>
 
+      <div class="panel" id="studentInfoPanel" style="margin-bottom:20px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
+          <div style="font-size:13px; opacity:0.75;">👪 Veli: <strong id="infoParentName">Belirtilmedi</strong><span id="infoParentPhoneWrap"> · <span id="infoParentPhone"></span></span></div>
+          <button class="btn ghost sm" id="btnEditStudent">✎ Bilgileri Düzenle</button>
+        </div>
+        <form id="formEditStudent" style="display:none; margin-top:16px;">
+          <div class="inline-form">
+            <div class="field"><label>Ad Soyad</label><input type="text" id="editFullName"></div>
+            <div class="field"><label>Öğrenci No</label><input type="text" id="editStudentNumber"></div>
+            <div class="field">
+              <label>Yaş Grubu</label>
+              <select id="editAgeGroup">
+                <option value="">Seçiniz</option>
+                <option value="Tohum">Tohum (5-7 yaş)</option>
+                <option value="Filiz">Filiz (8-12 yaş)</option>
+                <option value="Çiçek">Çiçek (13-18 yaş)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Program</label>
+              <select id="editProgram">
+                <option value="">Seçiniz</option>
+                <option value="Scratch">Scratch</option>
+                <option value="Python">Python</option>
+                <option value="Web Geliştirme">Web Geliştirme</option>
+              </select>
+            </div>
+            <div class="field"><label>Veli Adı Soyadı</label><input type="text" id="editParentName"></div>
+            <div class="field"><label>Veli Telefonu</label><input type="tel" id="editParentPhone"></div>
+            <button class="btn sm" type="submit">Kaydet</button>
+          </div>
+        </form>
+      </div>
+
       <div class="msg success" id="detailMsg"></div>
 
       <div class="tabs">
@@ -309,8 +343,13 @@
               <label>Katılım</label>
               <select id="lesAttended"><option value="true">Katıldı</option><option value="false">Katılmadı</option></select>
             </div>
-            <div class="field"><label>Zoom Kayıt Linki</label><input type="url" id="lesZoom" placeholder="https://..."></div>
-            <button class="btn sm" type="submit">Ekle</button>
+            <div class="field"><label>Zoom Kayıt Linki (opsiyonel)</label><input type="url" id="lesZoom" placeholder="https://..."></div>
+            <div class="field" style="flex-basis:100%;">
+              <label>Veya Video/Dosya Yükle (opsiyonel, max 20MB)</label>
+              <input type="file" id="lesFile" accept="video/*,.pdf,.zip">
+              <div class="upload-status" id="lesUploadStatus" style="font-size:12px; margin-top:6px;"></div>
+            </div>
+            <button class="btn sm" type="submit" id="lesSubmitBtn">Ekle</button>
           </form>
         </div>
         <div class="panel"><h3>Geçmiş Dersler</h3><div id="lessonsList"></div></div>
@@ -359,6 +398,22 @@
           <option value="Web Geliştirme">Web Geliştirme</option>
         </select>
       </div>
+      <div class="field">
+        <label>Ders Günü (haftada bir)</label>
+        <select id="lessonDay">
+          <option value="">Seçiniz</option>
+          <option value="Pazartesi">Pazartesi</option>
+          <option value="Salı">Salı</option>
+          <option value="Çarşamba">Çarşamba</option>
+          <option value="Perşembe">Perşembe</option>
+          <option value="Cuma">Cuma</option>
+          <option value="Cumartesi">Cumartesi</option>
+          <option value="Pazar">Pazar</option>
+        </select>
+      </div>
+      <div class="field"><label>Ders Saati</label><input type="time" id="lessonTime"></div>
+      <div class="field"><label>Veli Adı Soyadı</label><input type="text" id="parentName" placeholder="Örn. Hasan Kayış"></div>
+      <div class="field"><label>Veli Telefonu</label><input type="tel" id="parentPhone" placeholder="Örn. +90 530 940 97 13"></div>
       <div class="field"><label>Şifre (boş bırakırsan otomatik oluşturulur)</label><input type="text" id="customPassword" placeholder="Örn. atahankayis1001"></div>
       <button type="submit" class="btn full" id="submitBtn">Hesap Oluştur</button>
     </form>
@@ -495,6 +550,10 @@
         email: document.getElementById('email').value.trim(),
         age_group: document.getElementById('ageGroup').value,
         program: document.getElementById('program').value,
+        lesson_day: document.getElementById('lessonDay').value,
+        lesson_time: document.getElementById('lessonTime').value,
+        parent_name: document.getElementById('parentName').value.trim(),
+        parent_phone: document.getElementById('parentPhone').value.trim(),
         password: document.getElementById('customPassword').value.trim()
       });
       document.getElementById('resEmail').textContent = data.email;
@@ -539,6 +598,15 @@
     const s = data.student;
     document.getElementById('detailAvatar').textContent = s.avatar || '🎓';
     document.getElementById('detailName').textContent = s.full_name + (s.student_number ? ' #' + s.student_number : '');
+    document.getElementById('infoParentName').textContent = s.parent_name || 'Belirtilmedi';
+    document.getElementById('infoParentPhoneWrap').style.display = s.parent_phone ? 'inline' : 'none';
+    document.getElementById('infoParentPhone').textContent = s.parent_phone || '';
+    document.getElementById('editFullName').value = s.full_name || '';
+    document.getElementById('editStudentNumber').value = s.student_number || '';
+    document.getElementById('editAgeGroup').value = s.age_group || '';
+    document.getElementById('editProgram').value = s.program || '';
+    document.getElementById('editParentName').value = s.parent_name || '';
+    document.getElementById('editParentPhone').value = s.parent_phone || '';
     document.getElementById('detailMeta').textContent = `${(s.age_group||'').toUpperCase()} · ${(s.program||'').toUpperCase()}`;
 
     // Assignments
@@ -692,16 +760,59 @@
     openStudentDetail(currentStudentId);
   });
 
+  function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result.split(',')[1]);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
   document.getElementById('formLesson').addEventListener('submit', async (e) => {
     e.preventDefault();
+    const fileInput = document.getElementById('lesFile');
+    const statusEl = document.getElementById('lesUploadStatus');
+    const submitBtn = document.getElementById('lesSubmitBtn');
+    const file = fileInput.files[0];
+    let zoomUrl = document.getElementById('lesZoom').value.trim();
+
+    if (file) {
+      if (file.size > 20 * 1024 * 1024) {
+        statusEl.textContent = 'Dosya çok büyük (max 20MB). Büyük videolar için Zoom/Drive linkini yapıştır.';
+        statusEl.style.color = 'var(--bloom)';
+        return;
+      }
+      submitBtn.disabled = true;
+      statusEl.style.color = '';
+      statusEl.textContent = 'Yükleniyor…';
+      try {
+        const base64 = await fileToBase64(file);
+        const uploadRes = await api('upload_lesson_recording', {
+          file_base64: base64,
+          file_name: file.name,
+          content_type: file.type
+        });
+        zoomUrl = uploadRes.url;
+        statusEl.textContent = 'Yükleme tamamlandı ✓';
+      } catch (err) {
+        statusEl.textContent = 'Yükleme hatası: ' + err.message;
+        statusEl.style.color = 'var(--bloom)';
+        submitBtn.disabled = false;
+        return;
+      }
+    }
+
     await api('add_lesson', {
       student_id: currentStudentId,
       lesson_date: document.getElementById('lesDate').value,
       topic: document.getElementById('lesTopic').value.trim(),
       attended: document.getElementById('lesAttended').value === 'true',
-      zoom_url: document.getElementById('lesZoom').value.trim()
+      zoom_url: zoomUrl
     });
+    submitBtn.disabled = false;
     e.target.reset();
+    statusEl.textContent = '';
     openStudentDetail(currentStudentId);
   });
 
@@ -717,6 +828,33 @@
   });
 
   // Reset password / delete student
+  document.getElementById('btnEditStudent').addEventListener('click', () => {
+    const form = document.getElementById('formEditStudent');
+    form.style.display = form.style.display === 'none' ? 'block' : 'none';
+  });
+
+  document.getElementById('formEditStudent').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    try {
+      await api('update_student', {
+        student_id: currentStudentId,
+        full_name: document.getElementById('editFullName').value.trim(),
+        student_number: document.getElementById('editStudentNumber').value.trim(),
+        age_group: document.getElementById('editAgeGroup').value,
+        program: document.getElementById('editProgram').value,
+        parent_name: document.getElementById('editParentName').value.trim(),
+        parent_phone: document.getElementById('editParentPhone').value.trim()
+      });
+      document.getElementById('formEditStudent').style.display = 'none';
+      const msg = document.getElementById('detailMsg');
+      msg.textContent = 'Bilgiler güncellendi ✓';
+      msg.style.display = 'block';
+      openStudentDetail(currentStudentId);
+    } catch (err) {
+      alert('Hata: ' + err.message);
+    }
+  });
+
   document.getElementById('btnResetPw').addEventListener('click', async () => {
     const custom = prompt('Yeni şifre gir (boş bırakırsan otomatik oluşturulur):');
     if (custom === null) return;
