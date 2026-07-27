@@ -160,6 +160,8 @@
   .icon-btn:hover{opacity:1; background:var(--cream-2);}
   a.zoom-link{font-size:12.5px; color:var(--ink); font-weight:700; text-decoration:none;}
   a.zoom-link:hover{text-decoration:underline;}
+  .progress-bar-track{background:var(--cream-2); border-radius:100px; height:8px; overflow:hidden; margin-top:8px;}
+  .progress-bar-fill{background:var(--sage); height:100%; border-radius:100px; transition:width 0.4s ease;}
 
   /* New student modal */
   .modal-overlay{
@@ -241,6 +243,10 @@
           <div style="font-size:13px; opacity:0.75;">👪 Veli: <strong id="infoParentName">Belirtilmedi</strong><span id="infoParentPhoneWrap"> · <span id="infoParentPhone"></span></span></div>
           <button class="btn ghost sm" id="btnEditStudent">✎ Bilgileri Düzenle</button>
         </div>
+        <div style="margin-top:12px;">
+          <div style="font-size:13px; opacity:0.75;">📊 Ders İlerlemesi: <strong id="infoLessonProgress">—</strong></div>
+          <div class="progress-bar-track" style="max-width:320px;"><div class="progress-bar-fill" id="infoProgressFill" style="width:0%"></div></div>
+        </div>
         <form id="formEditStudent" style="display:none; margin-top:16px;">
           <div class="inline-form">
             <div class="field"><label>Ad Soyad</label><input type="text" id="editFullName"></div>
@@ -265,6 +271,7 @@
             </div>
             <div class="field"><label>Veli Adı Soyadı</label><input type="text" id="editParentName"></div>
             <div class="field"><label>Veli Telefonu</label><input type="tel" id="editParentPhone"></div>
+            <div class="field"><label>Ders Bakiyesi (Toplam Ders)</label><input type="number" id="editTotalLessons" min="1" placeholder="Örn. 24"></div>
             <button class="btn sm" type="submit">Kaydet</button>
           </div>
         </form>
@@ -292,7 +299,12 @@
               <select id="asgStatus"><option value="pending">Bekliyor</option><option value="done">Tamamlandı</option></select>
             </div>
             <div class="field" style="flex-basis:100%;"><label>Açıklama / Talimat</label><textarea id="asgDesc" placeholder="Ödevin ne olduğunu, nasıl teslim edileceğini yazın..."></textarea></div>
-            <button class="btn sm" type="submit">Ekle</button>
+            <div class="field" style="flex-basis:100%;">
+              <label>Ders Materyali Ekle (opsiyonel, max 20MB)</label>
+              <input type="file" id="asgFile">
+              <div class="upload-status" id="asgUploadStatus" style="font-size:12px; margin-top:6px;"></div>
+            </div>
+            <button class="btn sm" type="submit" id="asgSubmitBtn">Ekle</button>
           </form>
         </div>
         <div class="panel"><h3>Ödevler</h3><div id="assignmentsList"></div></div>
@@ -326,6 +338,7 @@
             </div>
             <div class="field"><label>Saat</label><input type="time" id="schTime" required></div>
             <div class="field"><label>Not</label><input type="text" id="schNote" placeholder="Örn. Scratch dersi"></div>
+            <div class="field" style="flex-basis:100%;"><label>Canlı Ders Zoom Linki (opsiyonel)</label><input type="url" id="schZoom" placeholder="https://zoom.us/j/..."></div>
             <button class="btn sm" type="submit">Ekle</button>
           </form>
         </div>
@@ -414,6 +427,7 @@
       <div class="field"><label>Ders Saati</label><input type="time" id="lessonTime"></div>
       <div class="field"><label>Veli Adı Soyadı</label><input type="text" id="parentName" placeholder="Örn. Hasan Kayış"></div>
       <div class="field"><label>Veli Telefonu</label><input type="tel" id="parentPhone" placeholder="Örn. +90 530 940 97 13"></div>
+      <div class="field"><label>Ders Bakiyesi (Toplam Ders)</label><input type="number" id="totalLessons" min="1" value="24"></div>
       <div class="field"><label>Şifre (boş bırakırsan otomatik oluşturulur)</label><input type="text" id="customPassword" placeholder="Örn. atahankayis1001"></div>
       <button type="submit" class="btn full" id="submitBtn">Hesap Oluştur</button>
     </form>
@@ -554,6 +568,7 @@
         lesson_time: document.getElementById('lessonTime').value,
         parent_name: document.getElementById('parentName').value.trim(),
         parent_phone: document.getElementById('parentPhone').value.trim(),
+        total_lessons: parseInt(document.getElementById('totalLessons').value) || 24,
         password: document.getElementById('customPassword').value.trim()
       });
       document.getElementById('resEmail').textContent = data.email;
@@ -607,7 +622,15 @@
     document.getElementById('editProgram').value = s.program || '';
     document.getElementById('editParentName').value = s.parent_name || '';
     document.getElementById('editParentPhone').value = s.parent_phone || '';
+    document.getElementById('editTotalLessons').value = s.total_lessons || 24;
     document.getElementById('detailMeta').textContent = `${(s.age_group||'').toUpperCase()} · ${(s.program||'').toUpperCase()}`;
+
+    // Ders ilerlemesi (otomatik hesaplanır)
+    const totalLessonsCount = s.total_lessons || 24;
+    const completedLessons = data.lessons.length;
+    const progressPct = Math.min(100, Math.round((completedLessons / totalLessonsCount) * 100));
+    document.getElementById('infoLessonProgress').textContent = `${completedLessons} / ${totalLessonsCount} ders (%${progressPct})`;
+    document.getElementById('infoProgressFill').style.width = progressPct + '%';
 
     // Assignments
     document.getElementById('assignmentsList').innerHTML = data.assignments.length ? data.assignments.map(a => `
@@ -617,6 +640,7 @@
             <div class="item-title">${escapeHtml(a.title)}</div>
             <div class="item-sub">${a.due_date ? 'Son tarih: ' + a.due_date : 'Tarih yok'}</div>
             ${a.description ? `<div class="item-sub" style="margin-top:6px; white-space:pre-wrap;">${escapeHtml(a.description)}</div>` : ''}
+            ${a.attachment_url ? `<div class="item-sub" style="margin-top:6px;">📎 <a class="zoom-link" href="${a.attachment_url}" target="_blank">${escapeHtml(a.attachment_filename || 'Ders materyali')}</a></div>` : ''}
           </div>
           <div class="item-actions">
             <span class="badge ${a.status === 'done' ? 'done' : 'pending'}" style="cursor:pointer;" data-toggle-asg="${a.id}" data-status="${a.status}">${a.status === 'done' ? 'Tamamlandı' : 'Bekliyor'}</span>
@@ -651,8 +675,12 @@
         <div class="item-main">
           <div class="item-title">${escapeHtml(sc.day_of_week)} · ${escapeHtml(sc.start_time)}</div>
           <div class="item-sub">${escapeHtml(sc.note || '')}</div>
+          <div class="item-sub">${sc.zoom_url ? `<a class="zoom-link" href="${sc.zoom_url}" target="_blank">🎥 Canlı Ders Linki</a>` : 'Zoom linki yok'}</div>
         </div>
-        <div class="item-actions"><button class="icon-btn" data-del-sch="${sc.id}">🗑</button></div>
+        <div class="item-actions">
+          <button class="icon-btn" data-edit-zoom="${sc.id}" data-current-zoom="${escapeHtml(sc.zoom_url || '')}">✎</button>
+          <button class="icon-btn" data-del-sch="${sc.id}">🗑</button>
+        </div>
       </div>
     `).join('') : '<div class="empty-state">Henüz ders programı eklenmedi.</div>';
 
@@ -704,6 +732,19 @@
     document.querySelectorAll('[data-del-sch]').forEach(el => {
       el.onclick = async () => { await api('delete_schedule', { id: el.dataset.delSch }); openStudentDetail(currentStudentId); };
     });
+    document.querySelectorAll('[data-edit-zoom]').forEach(el => {
+      el.onclick = async () => {
+        const current = el.dataset.currentZoom || '';
+        const zoomUrl = prompt('Canlı ders Zoom linki:', current);
+        if (zoomUrl === null) return;
+        try {
+          await api('update_schedule', { id: el.dataset.editZoom, zoom_url: zoomUrl.trim() });
+          openStudentDetail(currentStudentId);
+        } catch (err) {
+          alert('Hata: ' + err.message);
+        }
+      };
+    });
     document.querySelectorAll('[data-del-les]').forEach(el => {
       el.onclick = async () => { await api('delete_lesson', { id: el.dataset.delLes }); openStudentDetail(currentStudentId); };
     });
@@ -725,14 +766,52 @@
   // Forms
   document.getElementById('formAssignment').addEventListener('submit', async (e) => {
     e.preventDefault();
+    const fileInput = document.getElementById('asgFile');
+    const statusEl = document.getElementById('asgUploadStatus');
+    const submitBtn = document.getElementById('asgSubmitBtn');
+    const file = fileInput.files[0];
+    let attachmentUrl = null;
+    let attachmentFilename = null;
+
+    if (file) {
+      if (file.size > 20 * 1024 * 1024) {
+        statusEl.textContent = 'Dosya çok büyük (max 20MB).';
+        statusEl.style.color = 'var(--bloom)';
+        return;
+      }
+      submitBtn.disabled = true;
+      statusEl.style.color = '';
+      statusEl.textContent = 'Yükleniyor…';
+      try {
+        const base64 = await fileToBase64(file);
+        const uploadRes = await api('upload_assignment_file', {
+          file_base64: base64,
+          file_name: file.name,
+          content_type: file.type
+        });
+        attachmentUrl = uploadRes.url;
+        attachmentFilename = file.name;
+        statusEl.textContent = 'Yükleme tamamlandı ✓';
+      } catch (err) {
+        statusEl.textContent = 'Yükleme hatası: ' + err.message;
+        statusEl.style.color = 'var(--bloom)';
+        submitBtn.disabled = false;
+        return;
+      }
+    }
+
     await api('add_assignment', {
       student_id: currentStudentId,
       title: document.getElementById('asgTitle').value.trim(),
       due_date: document.getElementById('asgDue').value || null,
       status: document.getElementById('asgStatus').value,
-      description: document.getElementById('asgDesc').value.trim() || null
+      description: document.getElementById('asgDesc').value.trim() || null,
+      attachment_url: attachmentUrl,
+      attachment_filename: attachmentFilename
     });
+    submitBtn.disabled = false;
     e.target.reset();
+    statusEl.textContent = '';
     openStudentDetail(currentStudentId);
   });
 
@@ -754,7 +833,8 @@
       student_id: currentStudentId,
       day_of_week: document.getElementById('schDay').value,
       start_time: document.getElementById('schTime').value,
-      note: document.getElementById('schNote').value.trim()
+      note: document.getElementById('schNote').value.trim(),
+      zoom_url: document.getElementById('schZoom').value.trim()
     });
     e.target.reset();
     openStudentDetail(currentStudentId);
@@ -843,7 +923,8 @@
         age_group: document.getElementById('editAgeGroup').value,
         program: document.getElementById('editProgram').value,
         parent_name: document.getElementById('editParentName').value.trim(),
-        parent_phone: document.getElementById('editParentPhone').value.trim()
+        parent_phone: document.getElementById('editParentPhone').value.trim(),
+        total_lessons: parseInt(document.getElementById('editTotalLessons').value) || null
       });
       document.getElementById('formEditStudent').style.display = 'none';
       const msg = document.getElementById('detailMsg');
