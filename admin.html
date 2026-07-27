@@ -206,6 +206,7 @@
     <div class="brand-sub">Yönetim Paneli</div>
     <div class="nav-item active" data-view="students">👥 Öğrenciler</div>
     <div class="nav-item" id="navNewStudent">➕ Yeni Öğrenci</div>
+    <div class="nav-item" data-view="trials">📝 Deneme Talepleri</div>
     <div class="sidebar-foot">Anthos Akademi © 2026</div>
   </div>
 
@@ -218,6 +219,18 @@
         <button class="btn" id="btnOpenNewStudent">➕ Yeni Öğrenci</button>
       </div>
       <div id="studentListWrap">
+        <div class="empty-state">Yükleniyor…</div>
+      </div>
+    </div>
+
+    <!-- TRIAL REQUESTS VIEW -->
+    <div class="view" id="view-trials">
+      <div class="topbar">
+        <h2>Deneme Talepleri</h2>
+        <input type="text" class="search" id="trialSearch" placeholder="Veli veya çocuk adı ara...">
+        <button class="btn ghost" id="btnRefreshTrials">🔄 Yenile</button>
+      </div>
+      <div id="trialListWrap">
         <div class="empty-state">Yükleniyor…</div>
       </div>
     </div>
@@ -480,7 +493,10 @@
 
   // ---------- NAV ----------
   document.querySelectorAll('.nav-item[data-view]').forEach(el => {
-    el.addEventListener('click', () => showView(el.dataset.view));
+    el.addEventListener('click', () => {
+      showView(el.dataset.view);
+      if (el.dataset.view === 'trials') loadTrialRequests();
+    });
   });
   document.getElementById('navNewStudent').addEventListener('click', () => openNewStudentModal());
   document.getElementById('btnOpenNewStudent').addEventListener('click', () => openNewStudentModal());
@@ -594,6 +610,82 @@
       setTimeout(() => { btn.textContent = original; }, 1800);
     });
   });
+
+  // ---------- TRIAL REQUESTS ----------
+  let trialRequests = [];
+  const TRIAL_STATUSES = ['yeni', 'arandi', 'planlandi', 'kayit_oldu', 'ilgilenmiyor'];
+  function trialStatusLabel(v) {
+    return { yeni: 'Yeni', arandi: 'Arandı', planlandi: 'Planlandı', kayit_oldu: 'Kayıt Oldu', ilgilenmiyor: 'İlgilenmiyor' }[v] || v || 'Yeni';
+  }
+
+  async function loadTrialRequests() {
+    const wrap = document.getElementById('trialListWrap');
+    wrap.innerHTML = '<div class="empty-state">Yükleniyor…</div>';
+    try {
+      const data = await api('list_trial_requests');
+      trialRequests = data.requests || [];
+      renderTrialList();
+    } catch (err) {
+      wrap.innerHTML = '<div class="empty-state">Hata: ' + err.message + '</div>';
+    }
+  }
+
+  function renderTrialList() {
+    const wrap = document.getElementById('trialListWrap');
+    const term = document.getElementById('trialSearch').value.trim().toLowerCase();
+    const filtered = trialRequests.filter(r =>
+      (r.veli_ad_soyad || '').toLowerCase().includes(term) ||
+      (r.cocuk_ad || '').toLowerCase().includes(term) ||
+      (r.veli_telefon || '').toLowerCase().includes(term)
+    );
+    if (!filtered.length) {
+      wrap.innerHTML = '<div class="empty-state">Henüz deneme dersi talebi yok.</div>';
+      return;
+    }
+    wrap.innerHTML = filtered.map(r => `
+      <div class="panel" style="margin-bottom:14px;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:14px; flex-wrap:wrap;">
+          <div class="item-main">
+            <div class="item-title" style="font-size:15.5px;">${escapeHtml(r.cocuk_ad || '—')}${r.cocuk_yas ? ' <span style="opacity:0.55; font-weight:600;">(' + escapeHtml(r.cocuk_yas) + ' yaş' + (r.cocuk_cinsiyet ? ', ' + escapeHtml(r.cocuk_cinsiyet) : '') + ')</span>' : ''}</div>
+            <div class="item-sub">👪 ${escapeHtml(r.veli_ad_soyad || '—')} · 📞 ${escapeHtml(r.veli_telefon || '—')} · ✉️ ${escapeHtml(r.veli_email || '—')}</div>
+            <div class="item-sub" style="margin-top:4px;">🗓 Talep edilen: ${escapeHtml(r.rezervasyon_tarih || '—')} ${escapeHtml(r.rezervasyon_saat || '')}</div>
+            <div class="item-sub" style="margin-top:4px;">💡 İlgi alanı: ${escapeHtml(r.sevilen_ders || '—')} · 💻 Bilgisayar: ${escapeHtml(r.bilgisayar_var_mi || '—')}</div>
+            ${r.onceki_egitim ? `<div class="item-sub" style="margin-top:4px;">📚 Önceki eğitim: ${escapeHtml(r.onceki_egitim)}</div>` : ''}
+            <div class="item-sub" style="margin-top:4px; opacity:0.5;">KVKK: ${escapeHtml(r.kvkk_onay || '—')} · ${r.created_at ? new Date(r.created_at).toLocaleString('tr-TR') : ''}</div>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px; flex-shrink:0;">
+            <select data-status-select="${r.id}" style="padding:9px 12px; border-radius:10px; border:1.5px solid var(--line); font-family:inherit; font-size:12.5px; background:var(--cream);">
+              ${TRIAL_STATUSES.map(v => `<option value="${v}" ${(r.status || 'yeni') === v ? 'selected' : ''}>${trialStatusLabel(v)}</option>`).join('')}
+            </select>
+            <button class="icon-btn" data-del-trial="${r.id}">🗑 Sil</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+    wrap.querySelectorAll('[data-status-select]').forEach(el => {
+      el.addEventListener('change', async () => {
+        try {
+          await api('update_trial_request_status', { id: el.dataset.statusSelect, status: el.value });
+        } catch (err) {
+          alert('Hata: ' + err.message);
+        }
+      });
+    });
+    wrap.querySelectorAll('[data-del-trial]').forEach(el => {
+      el.addEventListener('click', async () => {
+        if (!confirm('Bu deneme dersi talebini silmek istediğine emin misin?')) return;
+        try {
+          await api('delete_trial_request', { id: el.dataset.delTrial });
+          loadTrialRequests();
+        } catch (err) {
+          alert('Hata: ' + err.message);
+        }
+      });
+    });
+  }
+  document.getElementById('trialSearch').addEventListener('input', renderTrialList);
+  document.getElementById('btnRefreshTrials').addEventListener('click', loadTrialRequests);
 
   // ---------- STUDENT DETAIL ----------
   async function openStudentDetail(id) {
