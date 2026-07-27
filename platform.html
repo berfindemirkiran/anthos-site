@@ -99,6 +99,12 @@
     border-radius:12px; padding:12px 16px; font-size:13.5px; margin-bottom:16px;
   }
   .login-note{margin-top:22px; text-align:center; font-size:12.5px; opacity:0.55;}
+  .login-note a{color:var(--ink); font-weight:600; opacity:1;}
+  #signupView{display:none;}
+  .signup-success{
+    display:none; background:rgba(124,157,111,0.14); color:var(--sage); border:1px solid rgba(124,157,111,0.35);
+    border-radius:12px; padding:16px; font-size:14px; margin-bottom:16px; line-height:1.6;
+  }
 
   /* DASHBOARD */
   #dashboardView{display:none;}
@@ -108,6 +114,34 @@
   }
   .dash-student-name{font-family:'Fraunces', serif; font-size:28px; color:var(--ink-deep); font-weight:700;}
   .dash-student-name span{display:block; font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--bloom); text-transform:uppercase; letter-spacing:0.06em; margin-top:6px; font-weight:600;}
+
+  .dash-identity{display:flex; align-items:center; gap:18px;}
+  .avatar-wrap{position:relative;}
+  .avatar-circle{
+    width:64px; height:64px; border-radius:50%; background:var(--sage-soft);
+    display:flex; align-items:center; justify-content:center; font-size:32px;
+    cursor:pointer; border:2.5px solid #fff; box-shadow:0 4px 14px rgba(23,16,80,0.12);
+    transition:transform 0.2s ease;
+  }
+  .avatar-circle:hover{transform:scale(1.06);}
+  .avatar-edit-badge{
+    position:absolute; bottom:-2px; right:-2px; width:22px; height:22px; border-radius:50%;
+    background:var(--ink-deep); color:#fff; font-size:11px; display:flex; align-items:center; justify-content:center;
+    border:2px solid var(--cream); pointer-events:none;
+  }
+  .avatar-picker{
+    display:none; position:absolute; top:76px; left:0; z-index:20;
+    background:#fff; border:1.5px solid var(--line); border-radius:18px;
+    padding:14px; box-shadow:0 16px 36px rgba(23,16,80,0.14);
+    grid-template-columns:repeat(5, 1fr); gap:8px; width:230px;
+  }
+  .avatar-picker.open{display:grid;}
+  .avatar-option{
+    width:38px; height:38px; border-radius:50%; background:var(--cream-2); border:none;
+    font-size:20px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+    transition:transform 0.15s ease, background 0.15s ease;
+  }
+  .avatar-option:hover{transform:scale(1.12); background:var(--sage-soft);}
 
   .card{
     background:#fff; border:1.5px solid var(--line); border-radius:var(--radius);
@@ -160,7 +194,33 @@
       </div>
       <button type="submit" class="btn btn-primary" id="loginBtn">Giriş Yap</button>
     </form>
-    <p class="login-note">Giriş bilgileriniz yoksa eğitmeninizle iletişime geçin.</p>
+    <p class="login-note">Hesabınız yok mu? <a href="#" id="showSignup">Kayıt olun</a></p>
+  </div>
+</div>
+
+<div id="signupView" class="login-shell">
+  <div class="login-card">
+    <span class="eyebrow">Anthos Öğrenci Platformu</span>
+    <h1>Kayıt Ol</h1>
+    <p class="lead">Hesabınızı oluşturun, eğitmeniniz kısa süre içinde ödev ve ilerleme kaydınızı hesabınıza bağlayacak.</p>
+    <div class="login-error" id="signupError"></div>
+    <div class="signup-success" id="signupSuccess"></div>
+    <form id="signupForm">
+      <div class="field">
+        <label for="signupName">Öğrenci Adı Soyadı</label>
+        <input type="text" id="signupName" required>
+      </div>
+      <div class="field">
+        <label for="signupEmail">E-posta</label>
+        <input type="email" id="signupEmail" autocomplete="username" required>
+      </div>
+      <div class="field">
+        <label for="signupPassword">Şifre</label>
+        <input type="password" id="signupPassword" autocomplete="new-password" minlength="6" required>
+      </div>
+      <button type="submit" class="btn btn-primary" id="signupBtn">Kayıt Ol</button>
+    </form>
+    <p class="login-note">Zaten hesabınız var mı? <a href="#" id="showLogin">Giriş yapın</a></p>
   </div>
 </div>
 
@@ -168,7 +228,14 @@
   <section class="section">
     <div class="wrap">
       <div class="dash-student-row">
-        <div class="dash-student-name" id="studentName">…<span id="studentMeta"></span></div>
+        <div class="dash-identity">
+          <div class="avatar-wrap">
+            <div class="avatar-circle" id="avatarCircle" title="Avatarını değiştir">🎓</div>
+            <span class="avatar-edit-badge">✎</span>
+            <div class="avatar-picker" id="avatarPicker"></div>
+          </div>
+          <div class="dash-student-name" id="studentName">…<span id="studentMeta"></span></div>
+        </div>
       </div>
 
       <div class="card">
@@ -199,11 +266,56 @@
   const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   const loginView = document.getElementById('loginView');
+  const signupView = document.getElementById('signupView');
   const dashboardView = document.getElementById('dashboardView');
   const logoutBtn = document.getElementById('logoutBtn');
   const loginForm = document.getElementById('loginForm');
   const loginError = document.getElementById('loginError');
   const loginBtn = document.getElementById('loginBtn');
+  const signupForm = document.getElementById('signupForm');
+  const signupError = document.getElementById('signupError');
+  const signupSuccess = document.getElementById('signupSuccess');
+  const signupBtn = document.getElementById('signupBtn');
+
+  document.getElementById('showSignup').addEventListener('click', (e) => {
+    e.preventDefault();
+    loginView.style.display = 'none';
+    signupView.style.display = 'flex';
+  });
+  document.getElementById('showLogin').addEventListener('click', (e) => {
+    e.preventDefault();
+    signupView.style.display = 'none';
+    loginView.style.display = 'flex';
+  });
+
+  signupForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    signupError.style.display = 'none';
+    signupBtn.disabled = true;
+    signupBtn.textContent = 'Kayıt oluşturuluyor…';
+
+    const full_name = document.getElementById('signupName').value.trim();
+    const email = document.getElementById('signupEmail').value.trim();
+    const password = document.getElementById('signupPassword').value;
+
+    const { error } = await sb.auth.signUp({
+      email, password,
+      options: { data: { full_name } }
+    });
+
+    signupBtn.disabled = false;
+    signupBtn.textContent = 'Kayıt Ol';
+
+    if(error){
+      signupError.textContent = 'Kayıt oluşturulamadı: ' + error.message;
+      signupError.style.display = 'block';
+      return;
+    }
+
+    signupForm.style.display = 'none';
+    signupSuccess.textContent = 'Kaydınız oluşturuldu! E-postanıza gelen onay bağlantısına tıklayın, ardından eğitmeniniz hesabınızı öğrenci kaydınıza bağladıktan sonra giriş yapabilirsiniz.';
+    signupSuccess.style.display = 'block';
+  });
 
   function showError(msg){
     loginError.textContent = msg;
@@ -215,6 +327,30 @@
     const dt = new Date(d);
     return dt.toLocaleDateString('tr-TR', {day:'numeric', month:'long'});
   }
+
+  const AVATAR_OPTIONS = ['🦊','🐱','🐼','🐶','🦁','🐨','🐧','🦄','🐸','🚀','🌟','🎨','⚡','🌈','🍀'];
+  let currentStudent = null;
+
+  const avatarCircle = document.getElementById('avatarCircle');
+  const avatarPicker = document.getElementById('avatarPicker');
+  avatarPicker.innerHTML = AVATAR_OPTIONS.map(a => `<button type="button" class="avatar-option" data-avatar="${a}">${a}</button>`).join('');
+
+  avatarCircle.addEventListener('click', () => {
+    avatarPicker.classList.toggle('open');
+  });
+  document.addEventListener('click', (e) => {
+    if(!e.target.closest('.avatar-wrap')){
+      avatarPicker.classList.remove('open');
+    }
+  });
+  avatarPicker.addEventListener('click', async (e) => {
+    const btn = e.target.closest('.avatar-option');
+    if(!btn || !currentStudent) return;
+    const avatar = btn.dataset.avatar;
+    avatarCircle.textContent = avatar;
+    avatarPicker.classList.remove('open');
+    await sb.from('students').update({ avatar }).eq('id', currentStudent.id);
+  });
 
   async function loadDashboard(){
     loginView.style.display = 'none';
@@ -238,7 +374,9 @@
       return;
     }
 
+    currentStudent = student;
     document.getElementById('studentName').innerHTML = `${student.full_name}<span>${[student.age_group, student.program].filter(Boolean).join(' · ')}</span>`;
+    avatarCircle.textContent = student.avatar || '🎓';
 
     const [{ data: assignments }, { data: projects }, { data: notes }] = await Promise.all([
       sb.from('assignments').select('*').eq('student_id', student.id).order('due_date', {ascending:true}),
