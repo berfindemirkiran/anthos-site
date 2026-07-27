@@ -166,6 +166,40 @@
   }
   .avatar-option:hover{transform:scale(1.12); background:var(--sage-soft);}
 
+  /* Assignment click + detail modal */
+  .item-row.clickable{cursor:pointer; transition:background 0.15s;}
+  .item-row.clickable:hover{background:var(--cream-2); margin:0 -14px; padding:14px; border-radius:12px;}
+  .modal-overlay{
+    display:none; position:fixed; inset:0; background:rgba(23,16,80,0.4); align-items:center; justify-content:center;
+    padding:20px; z-index:50;
+  }
+  .modal-overlay.active{display:flex;}
+  .modal{
+    background:#fff; border-radius:var(--radius); padding:32px; max-width:480px; width:100%;
+    max-height:90vh; overflow-y:auto;
+  }
+  .modal h2{font-size:19px; color:var(--ink-deep); margin-bottom:6px; font-family:Georgia, serif;}
+  .modal .modal-sub{font-size:12.5px; opacity:0.6; margin-bottom:18px;}
+  .modal .modal-desc{font-size:13.5px; line-height:1.6; color:var(--ink-deep); background:var(--cream-2); border-radius:14px; padding:14px 16px; margin-bottom:18px; white-space:pre-wrap;}
+  .modal-close{
+    position:absolute; top:20px; right:20px; background:none; border:none; font-size:18px; cursor:pointer; opacity:0.5;
+  }
+  .modal-close:hover{opacity:1;}
+  .modal{position:relative;}
+  .upload-box{
+    border:2px dashed var(--line); border-radius:14px; padding:20px; text-align:center; margin-bottom:14px;
+  }
+  .upload-box input[type=file]{font-size:12.5px; width:100%;}
+  .submission-box{
+    background:rgba(124,157,111,0.1); border:1px solid rgba(124,157,111,0.3); border-radius:14px; padding:14px 16px;
+    margin-bottom:14px; font-size:13px;
+  }
+  .submission-box a{color:var(--sage); font-weight:700; text-decoration:none;}
+  .submission-box a:hover{text-decoration:underline;}
+  .upload-status{font-size:12.5px; margin-top:8px; min-height:16px;}
+  .upload-status.error{color:var(--bloom);}
+  .upload-status.success{color:var(--sage);}
+
   @media (max-width: 800px){
     #app.active{grid-template-columns:1fr;}
     .sidebar{position:fixed; bottom:0; left:0; right:0; z-index:20; flex-direction:row; align-items:center;
@@ -287,6 +321,22 @@
   </div>
 </div>
 
+<div class="modal-overlay" id="assignmentModal">
+  <div class="modal">
+    <button class="modal-close" id="closeAssignmentModal">✕</button>
+    <h2 id="modalTitle">—</h2>
+    <div class="modal-sub" id="modalSub">—</div>
+    <div class="modal-desc" id="modalDesc" style="display:none;"></div>
+    <div id="modalSubmissionBox"></div>
+    <div class="upload-box">
+      <label style="display:block; font-size:13px; font-weight:600; color:var(--ink-deep); margin-bottom:10px;">Ödevini yükle</label>
+      <input type="file" id="submissionFile">
+      <div class="upload-status" id="uploadStatus"></div>
+    </div>
+    <button class="btn full" id="uploadBtn" type="button">Yükle ve Teslim Et</button>
+  </div>
+</div>
+
 <script>
   const SUPABASE_URL = 'https://pqxobhknksylbpesymrg.supabase.co';
   const SUPABASE_ANON_KEY = 'sb_publishable_-AKzWhUgk-wGSjworDMeaw_ZkX8YrXE';
@@ -296,6 +346,8 @@
   const DAY_ORDER = ['Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi','Pazar'];
 
   let currentStudent = null;
+  let currentUserId = null;
+  let currentAssignments = [];
 
   function escapeHtml(str){
     return String(str || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -350,6 +402,7 @@
   async function boot() {
     const { data: { user } } = await sb.auth.getUser();
     if (!user) return;
+    currentUserId = user.id;
 
     const { data: student, error } = await sb.from('students').select('*').eq('user_id', user.id).maybeSingle();
     if (error || !student) {
@@ -438,7 +491,7 @@
 
     const recentAssignments = assignments.slice(0, 4);
     document.getElementById('overviewAssignments').innerHTML = recentAssignments.length ? recentAssignments.map(a => `
-      <div class="item-row">
+      <div class="item-row clickable" data-assignment-id="${a.id}">
         <div class="item-main">
           <div class="item-title">${escapeHtml(a.title)}</div>
           <div class="item-sub">${a.due_date ? 'Son tarih: ' + formatDate(a.due_date) : 'Tarih belirtilmedi'}</div>
@@ -446,6 +499,7 @@
         <span class="badge ${a.status === 'done' ? 'done' : 'pending'}">${a.status === 'done' ? 'Tamamlandı' : 'Bekliyor'}</span>
       </div>
     `).join('') : '<div class="empty-state">Henüz ödev eklenmedi.</div>';
+    bindAssignmentClicks('overviewAssignments');
 
     document.getElementById('overviewNote').innerHTML = notes.length ? `
       <div class="item-title">${escapeHtml(notes[0].note)}</div>
@@ -485,16 +539,135 @@
 
   // ---------- ASSIGNMENTS ----------
   function renderAssignments(assignments) {
+    currentAssignments = assignments;
     document.getElementById('assignmentsList').innerHTML = assignments.length ? assignments.map(a => `
-      <div class="item-row">
+      <div class="item-row clickable" data-assignment-id="${a.id}">
         <div class="item-main">
           <div class="item-title">${escapeHtml(a.title)}</div>
-          <div class="item-sub">${a.due_date ? 'Son tarih: ' + formatDate(a.due_date) : 'Tarih belirtilmedi'}</div>
+          <div class="item-sub">${a.due_date ? 'Son tarih: ' + formatDate(a.due_date) : 'Tarih belirtilmedi'}${a.submission_url ? ' · 📎 Teslim edildi' : ''}</div>
         </div>
         <span class="badge ${a.status === 'done' ? 'done' : 'pending'}">${a.status === 'done' ? 'Tamamlandı' : 'Bekliyor'}</span>
       </div>
     `).join('') : '<div class="empty-state">Henüz ödev eklenmedi.</div>';
+    bindAssignmentClicks('assignmentsList');
   }
+
+  function bindAssignmentClicks(containerId) {
+    document.querySelectorAll(`#${containerId} [data-assignment-id]`).forEach(el => {
+      el.addEventListener('click', () => openAssignmentModal(el.dataset.assignmentId));
+    });
+  }
+
+  // ---------- ASSIGNMENT DETAIL MODAL ----------
+  const assignmentModal = document.getElementById('assignmentModal');
+  let activeAssignmentId = null;
+
+  function openAssignmentModal(id) {
+    const a = currentAssignments.find(x => String(x.id) === String(id));
+    if (!a) return;
+    activeAssignmentId = id;
+    document.getElementById('modalTitle').textContent = a.title;
+    document.getElementById('modalSub').textContent =
+      (a.due_date ? 'Son tarih: ' + formatDate(a.due_date) : 'Tarih belirtilmedi') +
+      ' · ' + (a.status === 'done' ? 'Tamamlandı' : 'Bekliyor');
+    const descEl = document.getElementById('modalDesc');
+    if (a.description) {
+      descEl.textContent = a.description;
+      descEl.style.display = 'block';
+    } else {
+      descEl.style.display = 'none';
+    }
+    renderSubmissionBox(a);
+    document.getElementById('submissionFile').value = '';
+    document.getElementById('uploadStatus').textContent = '';
+    document.getElementById('uploadStatus').className = 'upload-status';
+    assignmentModal.classList.add('active');
+  }
+
+  function renderSubmissionBox(a) {
+    const box = document.getElementById('modalSubmissionBox');
+    if (a.submission_url) {
+      box.innerHTML = `
+        <div class="submission-box">
+          📎 <a href="${a.submission_url}" target="_blank" rel="noopener">${escapeHtml(a.submission_filename || 'Yüklenen dosya')}</a>
+          ${a.submitted_at ? `<div style="opacity:0.6; margin-top:4px;">Teslim: ${new Date(a.submitted_at).toLocaleString('tr-TR')}</div>` : ''}
+        </div>
+      `;
+    } else {
+      box.innerHTML = '';
+    }
+  }
+
+  document.getElementById('closeAssignmentModal').addEventListener('click', () => {
+    assignmentModal.classList.remove('active');
+  });
+  assignmentModal.addEventListener('click', (e) => {
+    if (e.target === assignmentModal) assignmentModal.classList.remove('active');
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') assignmentModal.classList.remove('active');
+  });
+
+  document.getElementById('uploadBtn').addEventListener('click', async () => {
+    const fileInput = document.getElementById('submissionFile');
+    const statusEl = document.getElementById('uploadStatus');
+    const file = fileInput.files[0];
+    if (!file) {
+      statusEl.textContent = 'Lütfen bir dosya seç.';
+      statusEl.className = 'upload-status error';
+      return;
+    }
+    if (!currentUserId || !activeAssignmentId) return;
+
+    const btn = document.getElementById('uploadBtn');
+    btn.disabled = true;
+    btn.textContent = 'Yükleniyor…';
+    statusEl.textContent = '';
+    statusEl.className = 'upload-status';
+
+    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+    const path = `${currentUserId}/${activeAssignmentId}/${Date.now()}_${safeName}`;
+
+    const { error: uploadError } = await sb.storage.from('submissions').upload(path, file, { upsert: true });
+    if (uploadError) {
+      statusEl.textContent = 'Yükleme hatası: ' + uploadError.message;
+      statusEl.className = 'upload-status error';
+      btn.disabled = false;
+      btn.textContent = 'Yükle ve Teslim Et';
+      return;
+    }
+
+    const { data: pub } = sb.storage.from('submissions').getPublicUrl(path);
+    const submittedAt = new Date().toISOString();
+
+    const { error: updateError } = await sb.from('assignments').update({
+      submission_url: pub.publicUrl,
+      submission_filename: file.name,
+      submitted_at: submittedAt
+    }).eq('id', activeAssignmentId);
+
+    btn.disabled = false;
+    btn.textContent = 'Yükle ve Teslim Et';
+
+    if (updateError) {
+      statusEl.textContent = 'Kaydetme hatası: ' + updateError.message;
+      statusEl.className = 'upload-status error';
+      return;
+    }
+
+    // Update local state + UI
+    const a = currentAssignments.find(x => String(x.id) === String(activeAssignmentId));
+    if (a) {
+      a.submission_url = pub.publicUrl;
+      a.submission_filename = file.name;
+      a.submitted_at = submittedAt;
+      renderSubmissionBox(a);
+    }
+    renderAssignments(currentAssignments);
+    statusEl.textContent = 'Ödevin başarıyla teslim edildi! ✓';
+    statusEl.className = 'upload-status success';
+    fileInput.value = '';
+  });
 
   // ---------- PROJECTS ----------
   function renderProjects(projects) {
