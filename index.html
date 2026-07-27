@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="favicon.png">
@@ -1986,8 +1987,33 @@
   });
 
   if(trialForm){
-    trialForm.addEventListener('submit', async (e)=>{
+    const ANTHOS_SB_URL = 'https://pqxobhknksylbpesymrg.supabase.co';
+const ANTHOS_SB_ANON_KEY = 'sb_publishable_-AKzWhUgk-wGSjworDMeaw_ZkX8YrXE';
+function submitTrialRequestToPanel(formData){
+  try{
+    const sb = window.supabase.createClient(ANTHOS_SB_URL, ANTHOS_SB_ANON_KEY);
+    const cinsiyet = formData.getAll('cocuk_cinsiyet').filter(Boolean)[0] || '';
+    const bilgisayar = formData.getAll('bilgisayar_var_mi').filter(Boolean)[0] || '';
+    const oncekiEgitim = formData.getAll('onceki_egitim').filter(Boolean)[0] || '';
+    return sb.from('trial_requests').insert({
+      veli_ad_soyad: formData.get('veli_ad_soyad') || '',
+      veli_email: formData.get('veli_email') || '',
+      veli_telefon: formData.get('veli_telefon') || '',
+      cocuk_ad: formData.get('cocuk_ad') || '',
+      cocuk_yas: formData.get('cocuk_yas') || '',
+      cocuk_cinsiyet: cinsiyet,
+      sevilen_ders: formData.get('sevilen_ders') || '',
+      bilgisayar_var_mi: bilgisayar,
+      onceki_egitim: oncekiEgitim,
+      rezervasyon_tarih: formData.get('rezervasyon_tarih') || '',
+      rezervasyon_saat: formData.get('rezervasyon_saat') || '',
+      kvkk_onay: formData.get('kvkk_onay') ? 'evet' : 'hayir'
+    });
+  }catch(err){ return Promise.resolve(); }
+}
+trialForm.addEventListener('submit', async (e)=>{
       e.preventDefault();
+      submitTrialRequestToPanel(new FormData(trialForm)).catch(()=>{});
       formStatus.className = 'form-status';
       formStatus.textContent = '';
 
