@@ -105,6 +105,10 @@
         <option value="Web Geliştirme">Web Geliştirme</option>
       </select>
     </div>
+    <div class="field">
+      <label for="customPassword">Şifre (boş bırakırsan otomatik oluşturulur)</label>
+      <input type="text" id="customPassword" placeholder="Örn. atahankayis1001">
+    </div>
     <button type="submit" class="btn" id="submitBtn">Hesap Oluştur</button>
   </form>
 
@@ -151,12 +155,13 @@
     const email = document.getElementById('email').value.trim();
     const age_group = document.getElementById('ageGroup').value;
     const program = document.getElementById('program').value;
+    const password = document.getElementById('customPassword').value.trim();
 
     try {
       const res = await fetch(FUNCTION_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ admin_secret: adminSecret, email, full_name, age_group, program })
+        body: JSON.stringify({ admin_secret: adminSecret, email, full_name, age_group, program, password })
       });
       const data = await res.json();
 
