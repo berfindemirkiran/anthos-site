@@ -212,7 +212,7 @@
     <div class="view active" id="view-students">
       <div class="topbar">
         <h2>Öğrenciler</h2>
-        <input type="text" class="search" id="studentSearch" placeholder="İsim ara...">
+        <input type="text" class="search" id="studentSearch" placeholder="İsim veya numara ara...">
         <button class="btn" id="btnOpenNewStudent">➕ Yeni Öğrenci</button>
       </div>
       <div id="studentListWrap">
@@ -255,7 +255,7 @@
             <div class="field"><label>Son Tarih</label><input type="date" id="asgDue"></div>
             <div class="field">
               <label>Durum</label>
-              <select id="asgStatus"><option value="Bekliyor">Bekliyor</option><option value="Tamamlandı">Tamamlandı</option></select>
+              <select id="asgStatus"><option value="pending">Bekliyor</option><option value="done">Tamamlandı</option></select>
             </div>
             <button class="btn sm" type="submit">Ekle</button>
           </form>
@@ -338,6 +338,7 @@
     <div class="msg error" id="formError"></div>
     <form id="studentForm">
       <div class="field"><label>Öğrenci Adı Soyadı</label><input type="text" id="fullName" required></div>
+      <div class="field"><label>Öğrenci Numarası</label><input type="text" id="studentNumber" placeholder="Örn. 1001"></div>
       <div class="field"><label>E-posta</label><input type="email" id="email" required></div>
       <div class="field">
         <label>Yaş Grubu</label>
@@ -439,7 +440,10 @@
   function renderStudentList() {
     const wrap = document.getElementById('studentListWrap');
     const term = document.getElementById('studentSearch').value.trim().toLowerCase();
-    const filtered = students.filter(s => s.full_name.toLowerCase().includes(term));
+    const filtered = students.filter(s =>
+      s.full_name.toLowerCase().includes(term) ||
+      String(s.student_number || '').toLowerCase().includes(term)
+    );
     if (!filtered.length) {
       wrap.innerHTML = '<div class="empty-state">Henüz öğrenci yok. "Yeni Öğrenci" ile ekleyebilirsin.</div>';
       return;
@@ -447,7 +451,7 @@
     wrap.innerHTML = '<div class="student-grid">' + filtered.map(s => `
       <div class="student-card" data-id="${s.id}">
         <div class="avatar">${s.avatar || '🎓'}</div>
-        <div class="name">${escapeHtml(s.full_name)}</div>
+        <div class="name">${escapeHtml(s.full_name)}${s.student_number ? ' <span style="opacity:0.45; font-weight:600;">#' + escapeHtml(s.student_number) + '</span>' : ''}</div>
         <div class="meta">${escapeHtml(s.age_group || '')} · ${escapeHtml(s.program || '')}</div>
       </div>
     `).join('') + '</div>';
@@ -486,6 +490,7 @@
     try {
       const data = await api('create_student', {
         full_name: document.getElementById('fullName').value.trim(),
+        student_number: document.getElementById('studentNumber').value.trim(),
         email: document.getElementById('email').value.trim(),
         age_group: document.getElementById('ageGroup').value,
         program: document.getElementById('program').value,
@@ -532,7 +537,7 @@
   function renderDetail(data) {
     const s = data.student;
     document.getElementById('detailAvatar').textContent = s.avatar || '🎓';
-    document.getElementById('detailName').textContent = s.full_name;
+    document.getElementById('detailName').textContent = s.full_name + (s.student_number ? ' #' + s.student_number : '');
     document.getElementById('detailMeta').textContent = `${(s.age_group||'').toUpperCase()} · ${(s.program||'').toUpperCase()}`;
 
     // Assignments
@@ -543,7 +548,7 @@
           <div class="item-sub">${a.due_date ? 'Son tarih: ' + a.due_date : 'Tarih yok'}</div>
         </div>
         <div class="item-actions">
-          <span class="badge ${a.status === 'Tamamlandı' ? 'done' : 'pending'}" style="cursor:pointer;" data-toggle-asg="${a.id}" data-status="${a.status}">${escapeHtml(a.status)}</span>
+          <span class="badge ${a.status === 'done' ? 'done' : 'pending'}" style="cursor:pointer;" data-toggle-asg="${a.id}" data-status="${a.status}">${a.status === 'done' ? 'Tamamlandı' : 'Bekliyor'}</span>
           <button class="icon-btn" data-del-asg="${a.id}">🗑</button>
         </div>
       </div>
@@ -608,7 +613,7 @@
   function bindDetailActions() {
     document.querySelectorAll('[data-toggle-asg]').forEach(el => {
       el.onclick = async () => {
-        const newStatus = el.dataset.status === 'Tamamlandı' ? 'Bekliyor' : 'Tamamlandı';
+        const newStatus = el.dataset.status === 'done' ? 'pending' : 'done';
         await api('update_assignment', { id: el.dataset.toggleAsg, status: newStatus });
         openStudentDetail(currentStudentId);
       };

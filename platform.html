@@ -410,7 +410,7 @@
 
   // ---------- OVERVIEW ----------
   function renderOverview(assignments, projects, notes, schedule) {
-    const pending = assignments.filter(a => a.status !== 'Tamamlandı');
+    const pending = assignments.filter(a => a.status !== 'done');
     const activeProjects = projects.filter(p => !p.completed_at);
     document.getElementById('statAssignments').textContent = pending.length;
     document.getElementById('statProjects').textContent = activeProjects.length;
@@ -443,7 +443,7 @@
           <div class="item-title">${escapeHtml(a.title)}</div>
           <div class="item-sub">${a.due_date ? 'Son tarih: ' + formatDate(a.due_date) : 'Tarih belirtilmedi'}</div>
         </div>
-        <span class="badge ${a.status === 'Tamamlandı' ? 'done' : 'pending'}">${escapeHtml(a.status || 'Bekliyor')}</span>
+        <span class="badge ${a.status === 'done' ? 'done' : 'pending'}">${a.status === 'done' ? 'Tamamlandı' : 'Bekliyor'}</span>
       </div>
     `).join('') : '<div class="empty-state">Henüz ödev eklenmedi.</div>';
 
@@ -491,7 +491,7 @@
           <div class="item-title">${escapeHtml(a.title)}</div>
           <div class="item-sub">${a.due_date ? 'Son tarih: ' + formatDate(a.due_date) : 'Tarih belirtilmedi'}</div>
         </div>
-        <span class="badge ${a.status === 'Tamamlandı' ? 'done' : 'pending'}">${escapeHtml(a.status || 'Bekliyor')}</span>
+        <span class="badge ${a.status === 'done' ? 'done' : 'pending'}">${a.status === 'done' ? 'Tamamlandı' : 'Bekliyor'}</span>
       </div>
     `).join('') : '<div class="empty-state">Henüz ödev eklenmedi.</div>';
   }
