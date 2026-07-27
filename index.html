@@ -1989,7 +1989,7 @@
   if(trialForm){
     const ANTHOS_SB_URL = 'https://pqxobhknksylbpesymrg.supabase.co';
 const ANTHOS_SB_ANON_KEY = 'sb_publishable_-AKzWhUgk-wGSjworDMeaw_ZkX8YrXE';
-function submitTrialRequestToPanel(formData){
+async function submitTrialRequestToPanel(formData){
   try{
     const sb = window.supabase.createClient(ANTHOS_SB_URL, ANTHOS_SB_ANON_KEY);
     const cinsiyet = formData.getAll('cocuk_cinsiyet').filter(Boolean)[0] || '';
