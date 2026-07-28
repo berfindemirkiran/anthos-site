@@ -996,11 +996,20 @@
   document.getElementById('trialSearch').addEventListener('input', renderTrialList);
   document.getElementById('btnRefreshTrials').addEventListener('click', loadTrialRequests);
 
+  const TR_DAY_NAMES = ['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'];
+  function trDayName(dateStr) {
+    if (!dateStr) return '';
+    const d = new Date(dateStr + 'T00:00:00');
+    if (isNaN(d.getTime())) return '';
+    return TR_DAY_NAMES[d.getDay()];
+  }
   function waBeforeTcLink(r) {
     let digits = (r.veli_telefon || '').replace(/\D/g, '');
     if (digits.startsWith('0')) digits = digits.slice(1);
     if (!digits.startsWith('90')) digits = '90' + digits;
-    const msg = `Merhaba ${r.veli_ad_soyad || ''}, Anthos Academy'den yazıyoruz. ${r.cocuk_ad || 'Çocuğunuz'} için planladığımız ücretsiz deneme dersini hatırlatmak isteriz: ${r.rezervasyon_tarih || ''} ${r.rezervasyon_saat || ''}. Görüşmek üzere!`;
+    const gun = trDayName(r.rezervasyon_tarih) || (r.rezervasyon_tarih || '');
+    const saat = (r.rezervasyon_saat || '').slice(0,5);
+    const msg = `Sayın ${r.veli_ad_soyad || ''}, 👋 ${r.cocuk_ad || 'Çocuğunuz'} ile ${gun} günü saat ${saat}'de deneme dersimiz bulunmaktadır. 📅 Dersimiz online olarak gerçekleşecek, bağlantıyı ders saatinden önce tarafınıza ileteceğiz. 💻 Ders için kamera ve mikrofonu çalışan bir bilgisayar bulundurulmasını rica ederiz. 🎥🎙️ Herhangi bir sorunuz olursa bizimle iletişime geçebilirsiniz, görüşmek üzere! 😊\nAnthos Academy`;
     return `https://wa.me/${digits}?text=${encodeURIComponent(msg)}`;
   }
 
