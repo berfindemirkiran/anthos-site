@@ -366,6 +366,32 @@
     if(!d) return '';
     return new Date(d).toLocaleDateString('tr-TR', { day:'numeric', month:'long', year:'numeric' });
   }
+  function formatDateTR(d){
+    if(!d) return '';
+    const dd = String(d.getDate()).padStart(2,'0');
+    const mm = String(d.getMonth()+1).padStart(2,'0');
+    return `${dd}.${mm}.${d.getFullYear()}`;
+  }
+  // Verilen gün adı ve saate göre bir sonraki gerçek takvim tarihini bulur (bugün dahil, saati geçtiyse sonraki haftaya atlar)
+  function nextOccurrenceDate(dayName, timeStr) {
+    const dayIndexMap = { 'Pazartesi':1, 'Salı':2, 'Çarşamba':3, 'Perşembe':4, 'Cuma':5, 'Cumartesi':6, 'Pazar':0 };
+    const targetDow = dayIndexMap[dayName];
+    if (targetDow === undefined) return null;
+    const now = new Date();
+    for (let i = 0; i < 8; i++) {
+      const d = new Date(now);
+      d.setDate(now.getDate() + i);
+      if (d.getDay() === targetDow) {
+        if (i === 0) {
+          const parts = (timeStr || '00:00').split(':');
+          const hh = parseInt(parts[0]) || 0, mm = parseInt(parts[1]) || 0;
+          if (hh < now.getHours() || (hh === now.getHours() && mm <= now.getMinutes())) continue;
+        }
+        return d;
+      }
+    }
+    return null;
+  }
 
   // ---------- AUTH ----------
   const authScreen = document.getElementById('authScreen');
@@ -497,22 +523,23 @@
     document.getElementById('lessonProgressFill').style.width = progressPct + '%';
     document.getElementById('statProgress').textContent = '%' + progressPct;
 
-    // Next lesson: soonest upcoming day/time
+    // Next lesson: soonest upcoming day/time, gerçek takvim tarihiyle
     const joinCard = document.getElementById('joinLessonCard');
     if (schedule.length) {
-      const todayIdx = (new Date().getDay() + 6) % 7; // Monday=0
-      const sorted = [...schedule].sort((a,b) => {
-        const da = (DAY_ORDER.indexOf(a.day_of_week) - todayIdx + 7) % 7;
-        const db = (DAY_ORDER.indexOf(b.day_of_week) - todayIdx + 7) % 7;
-        if (da !== db) return da - db;
-        return (a.start_time||'').localeCompare(b.start_time||'');
-      });
-      const next = sorted[0];
-      document.getElementById('statNextLesson').textContent = next ? `${next.day_of_week} ${next.start_time}` : '—';
-      if (next && next.zoom_url) {
+      const withDates = schedule
+        .map(s => ({ s, date: nextOccurrenceDate(s.day_of_week, s.start_time) }))
+        .filter(x => x.date);
+      withDates.sort((a,b) => a.date - b.date);
+      const next = withDates[0];
+      if (next) {
+        document.getElementById('statNextLesson').textContent = `${next.s.day_of_week} ${formatDateTR(next.date)} ${next.s.start_time}`;
+      } else {
+        document.getElementById('statNextLesson').textContent = '—';
+      }
+      if (next && next.s.zoom_url) {
         joinCard.style.display = 'block';
-        document.getElementById('joinLessonText').textContent = `${next.day_of_week} · ${next.start_time}`;
-        document.getElementById('joinLessonBtn').href = next.zoom_url;
+        document.getElementById('joinLessonText').textContent = `${next.s.day_of_week} ${formatDateTR(next.date)} · ${next.s.start_time}`;
+        document.getElementById('joinLessonBtn').href = next.s.zoom_url;
       } else {
         joinCard.style.display = 'none';
       }
