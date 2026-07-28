@@ -185,10 +185,20 @@
   .result-box p{font-size:13.5px; margin-bottom:6px;}
   .result-box strong{color:var(--ink-deep);}
 
+  .mobile-menu-btn{
+    display:none; position:fixed; top:14px; left:14px; z-index:70;
+    width:40px; height:40px; border-radius:10px; border:none; background:var(--ink-deep); color:#fff;
+    font-size:18px; cursor:pointer; align-items:center; justify-content:center;
+  }
+  .sidebar-backdrop{display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:55;}
+  .sidebar-backdrop.active{display:block;}
+
   @media (max-width: 780px){
     #app.active{grid-template-columns:1fr;}
     .sidebar{display:none;}
-    .main{padding:24px 20px;}
+    .sidebar.mobile-open{display:flex; position:fixed; top:0; left:0; bottom:0; width:80%; max-width:280px; z-index:60;}
+    .main{padding:70px 20px 24px;}
+    .mobile-menu-btn{display:flex;}
   }
 </style>
 </head>
@@ -208,13 +218,16 @@
 </div>
 
 <div id="app">
+  <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
   <div class="sidebar">
     <div class="brand">anthos</div>
     <div class="brand-sub">Yönetim Paneli</div>
     <div class="nav-item active" data-view="dashboard">📊 Genel Özet</div>
     <div class="nav-item" data-view="students">👥 Öğrenciler</div>
     <div class="nav-item" id="navNewStudent">➕ Yeni Öğrenci</div>
-    <div class="nav-item" data-view="trials">📝 Deneme Talepleri</div>
+    <div class="nav-item" data-view="trials">📝 TC Rezervasyonları</div>
+    <div class="nav-item" data-view="trialclasses">🗒 Trial Classes</div>
     <div class="nav-item" data-view="finance">💰 Finans</div>
     <div class="sidebar-foot">Anthos Akademi © 2026</div>
   </div>
@@ -246,11 +259,22 @@
     <!-- TRIAL REQUESTS VIEW -->
     <div class="view" id="view-trials">
       <div class="topbar">
-        <h2>Deneme Talepleri</h2>
+        <h2>TC Rezervasyonları</h2>
         <input type="text" class="search" id="trialSearch" placeholder="Veli veya çocuk adı ara...">
         <button class="btn ghost" id="btnRefreshTrials">🔄 Yenile</button>
       </div>
       <div id="trialListWrap">
+        <div class="empty-state">Yükleniyor…</div>
+      </div>
+    </div>
+
+    <!-- TRIAL CLASSES VIEW -->
+    <div class="view" id="view-trialclasses">
+      <div class="topbar">
+        <h2>Trial Classes</h2>
+        <button class="btn ghost" id="btnRefreshTrialClasses">🔄 Yenile</button>
+      </div>
+      <div id="trialClassesListWrap">
         <div class="empty-state">Yükleniyor…</div>
       </div>
     </div>
@@ -342,7 +366,18 @@
             <div class="field"><label>Veli Adı Soyadı</label><input type="text" id="editParentName"></div>
             <div class="field"><label>Veli Telefonu</label><input type="tel" id="editParentPhone"></div>
             <div class="field"><label>Ders Bakiyesi (Toplam Ders)</label><input type="number" id="editTotalLessons" min="1" placeholder="Örn. 24"></div>
+            <div class="field">
+              <label>Ödeme Tipi</label>
+              <select id="editPaymentType">
+                <option value="">Seçiniz</option>
+                <option value="tek_ders">Tek Ders</option>
+                <option value="paket">Paket</option>
+                <option value="taksitli">Taksitli</option>
+              </select>
+            </div>
             <div class="field"><label>Ödeme Tutarı (₺)</label><input type="number" id="editPaymentAmount" min="0" step="0.01"></div>
+            <div class="field"><label>Taksit Sayısı</label><input type="number" id="editInstallmentCount" min="0" placeholder="Örn. 3"></div>
+            <div class="field"><label>Ödenen Taksit</label><input type="number" id="editInstallmentPaid" min="0" placeholder="Örn. 1"></div>
             <div class="field"><label>Paket Başlangıç</label><input type="date" id="editPackageStart"></div>
             <div class="field"><label>Paket Bitiş</label><input type="date" id="editPackageEnd"></div>
             <div class="field"><label>Makbuz Linki</label><input type="url" id="editReceiptUrl" placeholder="https://..."></div>
@@ -361,8 +396,7 @@
         <button class="tab-btn active" data-tab="assignments">📋 Ödevler</button>
         <button class="tab-btn" data-tab="projects">💻 Projeler</button>
         <button class="tab-btn" data-tab="schedule">🗓 Ders Programı</button>
-        <button class="tab-btn" data-tab="lessons">🎥 Ders Kayıtları</button>
-        <button class="tab-btn" data-tab="notes">📈 İlerleme Notları</button>
+        <button class="tab-btn" data-tab="lessons">🎥 Dersler</button>
       </div>
 
       <!-- Assignments -->
@@ -382,6 +416,7 @@
               <input type="file" id="asgFile">
               <div class="upload-status" id="asgUploadStatus" style="font-size:12px; margin-top:6px;"></div>
             </div>
+            <div class="field" style="flex-basis:100%;"><label>Veya Materyal Linki (opsiyonel)</label><input type="url" id="asgLink" placeholder="https://..."></div>
             <button class="btn sm" type="submit" id="asgSubmitBtn">Ekle</button>
           </form>
         </div>
@@ -423,10 +458,10 @@
         <div class="panel"><h3>Haftalık Program</h3><div id="scheduleList"></div></div>
       </div>
 
-      <!-- Lessons (yoklama + zoom) -->
+      <!-- Lessons (yoklama + zoom + feedback + proje) -->
       <div class="tab-pane" data-pane="lessons">
         <div class="panel">
-          <h3>Ders Kaydı Ekle</h3>
+          <h3>Yeni Ders Ekle</h3>
           <form class="inline-form" id="formLesson">
             <div class="field"><label>Tarih</label><input type="date" id="lesDate" required></div>
             <div class="field"><label>Konu</label><input type="text" id="lesTopic" placeholder="Örn. Döngüler"></div>
@@ -443,20 +478,7 @@
             <button class="btn sm" type="submit" id="lesSubmitBtn">Ekle</button>
           </form>
         </div>
-        <div class="panel"><h3>Geçmiş Dersler</h3><div id="lessonsList"></div></div>
-      </div>
-
-      <!-- Notes -->
-      <div class="tab-pane" data-pane="notes">
-        <div class="panel">
-          <h3>İlerleme Notu Ekle</h3>
-          <form class="inline-form" id="formNote">
-            <div class="field" style="flex:2;"><label>Not</label><input type="text" id="noteText" required></div>
-            <div class="field"><label>İlerleme %</label><input type="number" id="notePercent" min="0" max="100"></div>
-            <button class="btn sm" type="submit">Ekle</button>
-          </form>
-        </div>
-        <div class="panel"><h3>Notlar</h3><div id="notesList"></div></div>
+        <div class="panel"><h3>Dersler</h3><div id="lessonsList"></div></div>
       </div>
     </div>
   </div>
@@ -518,6 +540,44 @@
   </div>
 </div>
 
+<!-- Trial Class modal -->
+<div class="modal-overlay" id="trialClassModal">
+  <div class="modal" style="max-width:640px;">
+    <h2>Trial Class Formu</h2>
+    <div class="msg error" id="tcFormError"></div>
+    <form id="trialClassForm">
+      <input type="hidden" id="tcTrialRequestId">
+      <div class="inline-form" style="margin-bottom:0;">
+        <div class="field"><label>Öğrenci Numarası</label><input type="text" id="tcStudentNumber"></div>
+        <div class="field"><label>Program / Class</label><input type="text" id="tcClassProgram" placeholder="Örn. Scratch"></div>
+        <div class="field"><label>TC Practice</label><input type="text" id="tcPractice"></div>
+        <div class="field"><label>Payment</label><input type="text" id="tcPayment" placeholder="Örn. Ödendi / Bekliyor"></div>
+        <div class="field"><label>Cours</label><input type="text" id="tcCours"></div>
+        <div class="field"><label>Ders Günü</label><input type="text" id="tcClassDay"></div>
+        <div class="field"><label>Ders Saati</label><input type="text" id="tcClassHour"></div>
+        <div class="field"><label>Fiyat (₺)</label><input type="number" id="tcPrice" min="0" step="0.01"></div>
+        <div class="field"><label>Ders Sayısı</label><input type="number" id="tcClassCount" min="0"></div>
+        <div class="field"><label>Makbuz Linki</label><input type="url" id="tcReceiptUrl"></div>
+        <div class="field">
+          <label>Sonuç</label>
+          <select id="tcOutcomeStatus">
+            <option value="">Seçiniz</option>
+            <option value="Sold">Satıldı</option>
+            <option value="Lost">Kaybedildi</option>
+            <option value="Pending">Beklemede</option>
+          </select>
+        </div>
+        <div class="field" style="flex-basis:100%;"><label>Özellikler (Features)</label><input type="text" id="tcFeatures"></div>
+        <div class="field" style="flex-basis:100%;"><label>Yorumlar (Comments)</label><textarea id="tcComments"></textarea></div>
+      </div>
+      <div style="display:flex; gap:8px; margin-top:14px;">
+        <button type="submit" class="btn" style="flex:1;">Kaydet</button>
+        <button type="button" class="btn ghost" id="closeTrialClassModalBtn">Kapat</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <script>
   const FUNCTION_URL = 'https://pqxobhknksylbpesymrg.supabase.co/functions/v1/create-student';
   let adminSecret = '';
@@ -561,14 +621,27 @@
     el.addEventListener('click', () => {
       showView(el.dataset.view);
       if (el.dataset.view === 'trials') loadTrialRequests();
+      if (el.dataset.view === 'trialclasses') loadTrialClasses();
       if (el.dataset.view === 'students') loadStudents();
       if (el.dataset.view === 'dashboard') loadDashboard();
       if (el.dataset.view === 'finance') loadFinance();
+      closeMobileSidebar();
     });
   });
-  document.getElementById('navNewStudent').addEventListener('click', () => openNewStudentModal());
+  document.getElementById('navNewStudent').addEventListener('click', () => { openNewStudentModal(); closeMobileSidebar(); });
   document.getElementById('btnOpenNewStudent').addEventListener('click', () => openNewStudentModal());
   document.getElementById('btnBackToList').addEventListener('click', () => showView('students'));
+
+  // ---------- MOBILE MENU ----------
+  function closeMobileSidebar() {
+    document.querySelector('.sidebar').classList.remove('mobile-open');
+    document.getElementById('sidebarBackdrop').classList.remove('active');
+  }
+  document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+    document.querySelector('.sidebar').classList.add('mobile-open');
+    document.getElementById('sidebarBackdrop').classList.add('active');
+  });
+  document.getElementById('sidebarBackdrop').addEventListener('click', closeMobileSidebar);
 
   function showView(name) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -592,6 +665,14 @@
         <div class="stat-card">
           <div class="stat-label">Bugünkü Dersler</div>
           <div class="stat-value">${data.today_lessons}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Tamamlanan Ödev</div>
+          <div class="stat-value">${data.completed_assignments}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Yapılan Proje</div>
+          <div class="stat-value">${data.completed_projects}</div>
         </div>
         <div class="stat-card ${data.low_balance_students > 0 ? 'alert' : ''}">
           <div class="stat-label">Düşük Ders Bakiyesi</div>
@@ -709,6 +790,11 @@
         <div class="avatar">${s.avatar || '🎓'}</div>
         <div class="name">${escapeHtml(s.full_name)}${s.student_number ? ' <span style="opacity:0.45; font-weight:600;">#' + escapeHtml(s.student_number) + '</span>' : ''}</div>
         <div class="meta">${escapeHtml(s.age_group || '')} · ${escapeHtml(s.program || '')}</div>
+        <div style="margin-top:10px; font-size:12px; opacity:0.75; line-height:1.6;">
+          ${s.payment_type ? `<div>📦 ${paymentTypeLabel(s.payment_type)}</div>` : ''}
+          ${s.lessons_remaining != null ? `<div>📊 Kalan ders: <strong>${s.lessons_remaining}</strong> / ${s.total_lessons}</div>` : ''}
+          ${s.next_lesson ? `<div>🗓 Yaklaşan ders: <strong>${s.next_lesson.day} ${formatDateTR(s.next_lesson.date)} ${s.next_lesson.time || ''}</strong></div>` : ''}
+        </div>
       </div>
     `).join('') + '</div>';
     wrap.querySelectorAll('.student-card').forEach(card => {
@@ -716,6 +802,15 @@
     });
   }
   document.getElementById('studentSearch').addEventListener('input', renderStudentList);
+
+  function paymentTypeLabel(v) {
+    return { tek_ders: 'Tek Ders', paket: 'Paket', taksitli: 'Taksitli' }[v] || v;
+  }
+  function formatDateTR(iso) {
+    if (!iso) return '';
+    const parts = iso.split('-');
+    return parts.length === 3 ? `${parts[2]}.${parts[1]}.${parts[0]}` : iso;
+  }
 
   function escapeHtml(str) {
     return String(str || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -837,6 +932,8 @@
               ${TRIAL_STATUSES.map(v => `<option value="${v}" ${(r.status || 'yeni') === v ? 'selected' : ''}>${trialStatusLabel(v)}</option>`).join('')}
             </select>
             <button class="icon-btn" data-toggle-crm="${r.id}">✎ CRM</button>
+            <button class="icon-btn" data-open-tc="${r.id}">📋 Trial Class</button>
+            ${r.veli_telefon ? `<a class="icon-btn" href="${waBeforeTcLink(r)}" target="_blank">💬 Before TC</a>` : ''}
             <button class="icon-btn" data-del-trial="${r.id}">🗑 Sil</button>
           </div>
         </div>
@@ -885,9 +982,133 @@
         }
       });
     });
+    wrap.querySelectorAll('[data-open-tc]').forEach(el => {
+      el.addEventListener('click', () => openTrialClassModal(el.dataset.openTc, trialRequests.find(r => r.id === el.dataset.openTc)));
+    });
   }
   document.getElementById('trialSearch').addEventListener('input', renderTrialList);
   document.getElementById('btnRefreshTrials').addEventListener('click', loadTrialRequests);
+
+  function waBeforeTcLink(r) {
+    let digits = (r.veli_telefon || '').replace(/\D/g, '');
+    if (digits.startsWith('0')) digits = digits.slice(1);
+    if (!digits.startsWith('90')) digits = '90' + digits;
+    const msg = `Merhaba ${r.veli_ad_soyad || ''}, Anthos Academy'den yazıyoruz. ${r.cocuk_ad || 'Çocuğunuz'} için planladığımız ücretsiz deneme dersini hatırlatmak isteriz: ${r.rezervasyon_tarih || ''} ${r.rezervasyon_saat || ''}. Görüşmek üzere!`;
+    return `https://wa.me/${digits}?text=${encodeURIComponent(msg)}`;
+  }
+
+  // ---------- TRIAL CLASS MODAL ----------
+  const trialClassModal = document.getElementById('trialClassModal');
+  let currentTrialRequestId = null;
+  async function openTrialClassModal(trialRequestId, requestData) {
+    currentTrialRequestId = trialRequestId;
+    document.getElementById('tcTrialRequestId').value = trialRequestId;
+    document.getElementById('tcFormError').style.display = 'none';
+    document.getElementById('tcStudentNumber').value = (requestData && requestData.student_number) || '';
+    document.getElementById('tcClassProgram').value = (requestData && requestData.class_program) || '';
+    document.getElementById('tcPractice').value = '';
+    document.getElementById('tcPayment').value = '';
+    document.getElementById('tcCours').value = '';
+    document.getElementById('tcClassDay').value = '';
+    document.getElementById('tcClassHour').value = '';
+    document.getElementById('tcPrice').value = '';
+    document.getElementById('tcClassCount').value = '';
+    document.getElementById('tcReceiptUrl').value = '';
+    document.getElementById('tcOutcomeStatus').value = '';
+    document.getElementById('tcFeatures').value = '';
+    document.getElementById('tcComments').value = '';
+    trialClassModal.classList.add('active');
+    try {
+      const data = await api('get_trial_class', { trial_request_id: trialRequestId });
+      const tc = data.trial_class;
+      if (tc) {
+        document.getElementById('tcPractice').value = tc.tc_practice || '';
+        document.getElementById('tcPayment').value = tc.payment || '';
+        document.getElementById('tcCours').value = tc.cours || '';
+        document.getElementById('tcClassDay').value = tc.class_day || '';
+        document.getElementById('tcClassHour').value = tc.class_hour || '';
+        document.getElementById('tcPrice').value = tc.price || '';
+        document.getElementById('tcClassCount').value = tc.class_count || '';
+        document.getElementById('tcReceiptUrl').value = tc.receipt_url || '';
+        document.getElementById('tcOutcomeStatus').value = tc.outcome_status || '';
+        document.getElementById('tcFeatures').value = tc.features || '';
+        document.getElementById('tcComments').value = tc.comments || '';
+      }
+    } catch (err) {
+      document.getElementById('tcFormError').textContent = 'Hata: ' + err.message;
+      document.getElementById('tcFormError').style.display = 'block';
+    }
+  }
+  document.getElementById('closeTrialClassModalBtn').addEventListener('click', () => trialClassModal.classList.remove('active'));
+  trialClassModal.addEventListener('click', (e) => { if (e.target === trialClassModal) trialClassModal.classList.remove('active'); });
+  document.getElementById('trialClassForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const errEl = document.getElementById('tcFormError');
+    errEl.style.display = 'none';
+    try {
+      await api('update_trial_request_crm', {
+        id: currentTrialRequestId,
+        student_number: document.getElementById('tcStudentNumber').value.trim(),
+        class_program: document.getElementById('tcClassProgram').value.trim()
+      });
+      await api('upsert_trial_class', {
+        trial_request_id: currentTrialRequestId,
+        tc_practice: document.getElementById('tcPractice').value.trim(),
+        payment: document.getElementById('tcPayment').value.trim(),
+        cours: document.getElementById('tcCours').value.trim(),
+        class_day: document.getElementById('tcClassDay').value.trim(),
+        class_hour: document.getElementById('tcClassHour').value.trim(),
+        price: document.getElementById('tcPrice').value || null,
+        class_count: document.getElementById('tcClassCount').value || null,
+        receipt_url: document.getElementById('tcReceiptUrl').value.trim(),
+        features: document.getElementById('tcFeatures').value.trim(),
+        comments: document.getElementById('tcComments').value.trim(),
+        outcome_status: document.getElementById('tcOutcomeStatus').value
+      });
+      trialClassModal.classList.remove('active');
+      loadTrialRequests();
+      loadTrialClasses();
+    } catch (err) {
+      errEl.textContent = 'Hata: ' + err.message;
+      errEl.style.display = 'block';
+    }
+  });
+
+  // ---------- TRIAL CLASSES LIST ----------
+  async function loadTrialClasses() {
+    const wrap = document.getElementById('trialClassesListWrap');
+    wrap.innerHTML = '<div class="empty-state">Yükleniyor…</div>';
+    try {
+      const data = await api('list_trial_classes');
+      const items = data.trial_classes || [];
+      wrap.innerHTML = items.length ? items.map(tc => {
+        const req = tc.trial_requests || {};
+        return `
+        <div class="panel" style="margin-bottom:14px; cursor:pointer;" data-tc-open="${tc.trial_request_id}">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:14px; flex-wrap:wrap;">
+            <div class="item-main">
+              <div class="item-title">${escapeHtml(req.cocuk_ad || '—')} <span style="opacity:0.5; font-weight:600;">· ${escapeHtml(req.veli_ad_soyad || '')}</span></div>
+              <div class="item-sub">📞 ${escapeHtml(req.veli_telefon || '—')} · 🗓 ${escapeHtml(req.rezervasyon_tarih || '—')}</div>
+              <div class="item-sub" style="margin-top:4px;">📚 ${escapeHtml(tc.cours || '—')} · 💳 ${escapeHtml(tc.payment || '—')} · 💰 ${tc.price ? '₺' + Number(tc.price).toLocaleString('tr-TR') : '—'}</div>
+              ${tc.features ? `<div class="item-sub" style="margin-top:4px;">✨ ${escapeHtml(tc.features)}</div>` : ''}
+              ${tc.comments ? `<div class="item-sub" style="margin-top:4px;">💬 ${escapeHtml(tc.comments)}</div>` : ''}
+            </div>
+            <span class="badge ${tc.outcome_status === 'Sold' ? 'done' : tc.outcome_status === 'Lost' ? 'absent' : 'pending'}">${tc.outcome_status || 'Beklemede'}</span>
+          </div>
+        </div>`;
+      }).join('') : '<div class="empty-state">Henüz Trial Class kaydı yok. TC Rezervasyonları sekmesinden "Trial Class" formunu doldur.</div>';
+      wrap.querySelectorAll('[data-tc-open]').forEach(el => {
+        el.addEventListener('click', () => {
+          const id = el.dataset.tcOpen;
+          const req = trialRequests.find(r => r.id === id);
+          openTrialClassModal(id, req);
+        });
+      });
+    } catch (err) {
+      wrap.innerHTML = '<div class="empty-state">Hata: ' + err.message + '</div>';
+    }
+  }
+  document.getElementById('btnRefreshTrialClasses').addEventListener('click', loadTrialClasses);
 
   // ---------- STUDENT DETAIL ----------
   async function openStudentDetail(id) {
@@ -917,7 +1138,10 @@
     document.getElementById('editParentName').value = s.parent_name || '';
     document.getElementById('editParentPhone').value = s.parent_phone || '';
     document.getElementById('editTotalLessons').value = s.total_lessons || 24;
+    document.getElementById('editPaymentType').value = s.payment_type || '';
     document.getElementById('editPaymentAmount').value = s.payment_amount || '';
+    document.getElementById('editInstallmentCount').value = s.installment_count || '';
+    document.getElementById('editInstallmentPaid').value = s.installment_paid || '';
     document.getElementById('editPackageStart').value = s.package_start_date || '';
     document.getElementById('editPackageEnd').value = s.package_end_date || '';
     document.getElementById('editReceiptUrl').value = s.receipt_url || '';
@@ -987,33 +1211,51 @@
       </div>
     `).join('') : '<div class="empty-state">Henüz ders programı eklenmedi.</div>';
 
-    // Lessons
-    document.getElementById('lessonsList').innerHTML = data.lessons.length ? data.lessons.map(l => `
-      <div class="item-row">
-        <div class="item-main">
-          <div class="item-title">${l.lesson_date}${l.topic ? ' · ' + escapeHtml(l.topic) : ''}</div>
-          <div class="item-sub">${l.zoom_url ? `<a class="zoom-link" href="${l.zoom_url}" target="_blank">🎥 Kayıt linki</a>` : 'Kayıt linki yok'}</div>
-        </div>
-        <div class="item-actions">
-          <span class="badge ${l.attended ? 'done' : 'absent'}">${l.attended ? 'Katıldı' : 'Katılmadı'}</span>
-          <button class="icon-btn" data-del-les="${l.id}">🗑</button>
+    // Lessons (numaralı, feedback, kayıt, proje)
+    const lessonsByDateAsc = [...data.lessons].sort((a,b) => (a.lesson_date||'').localeCompare(b.lesson_date||''));
+    document.getElementById('lessonsList').innerHTML = data.lessons.length ? data.lessons.map(l => {
+      const lessonNo = lessonsByDateAsc.findIndex(x => x.id === l.id) + 1;
+      const proj = data.projects.find(p => p.lesson_id === l.id);
+      return `
+      <div class="item-row" style="flex-direction:column; align-items:stretch;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px; width:100%;">
+          <div class="item-main">
+            <div class="item-title">${lessonNo}. Ders — ${l.lesson_date}${l.topic ? ' · ' + escapeHtml(l.topic) : ''}</div>
+            <div class="item-sub">${l.zoom_url ? `<a class="zoom-link" href="${l.zoom_url}" target="_blank">🎥 Kayıt linki</a>` : 'Kayıt linki yok'}</div>
+            ${l.feedback ? `<div class="item-sub" style="margin-top:6px; white-space:pre-wrap;">💬 ${escapeHtml(l.feedback)}</div>` : '<div class="item-sub" style="margin-top:6px; opacity:0.5;">Henüz geri bildirim yok.</div>'}
+            ${proj ? `<div class="item-sub" style="margin-top:6px;">💻 Proje: ${escapeHtml(proj.title)}${proj.file_url ? ` · <a class="zoom-link" href="${proj.file_url}" target="_blank">Dosya</a>` : ''}${proj.link_url ? ` · <a class="zoom-link" href="${proj.link_url}" target="_blank">Link</a>` : ''}</div>` : `
+            <div class="les-proj-form" data-les-proj="${l.id}" style="display:none; margin-top:8px; padding:10px; background:var(--cream-2); border-radius:10px;">
+              <div class="inline-form" style="margin-bottom:0;">
+                <div class="field"><label>Proje Başlığı</label><input type="text" data-proj-title="${l.id}" placeholder="Örn. Kedi-fare oyunu"></div>
+                <div class="field"><label>Proje Linki</label><input type="url" data-proj-link="${l.id}" placeholder="https://scratch.mit.edu/..."></div>
+                <div class="field"><label>Veya Dosya</label><input type="file" data-proj-file="${l.id}"></div>
+                <button type="button" class="btn sm" data-proj-save="${l.id}">Kaydet</button>
+              </div>
+            </div>`}
+            <div class="les-edit-form" data-les-edit="${l.id}" style="display:none; margin-top:8px; padding:10px; background:var(--cream-2); border-radius:10px;">
+              <div class="inline-form" style="margin-bottom:0;">
+                <div class="field"><label>Tarih</label><input type="date" data-edit-date="${l.id}" value="${l.lesson_date || ''}"></div>
+                <div class="field"><label>Konu</label><input type="text" data-edit-topic="${l.id}" value="${escapeHtml(l.topic || '')}"></div>
+                <div class="field">
+                  <label>Katılım</label>
+                  <select data-edit-attended="${l.id}"><option value="true" ${l.attended ? 'selected' : ''}>Katıldı</option><option value="false" ${!l.attended ? 'selected' : ''}>Katılmadı</option></select>
+                </div>
+                <div class="field"><label>Kayıt Linki</label><input type="url" data-les-zoom="${l.id}" value="${escapeHtml(l.zoom_url || '')}"></div>
+                <div class="field" style="flex-basis:100%;"><label>Geri Bildirim</label><textarea data-les-feedback="${l.id}">${escapeHtml(l.feedback || '')}</textarea></div>
+                <button type="button" class="btn sm" data-les-save="${l.id}">Kaydet</button>
+              </div>
+            </div>
+          </div>
+          <div class="item-actions">
+            <span class="badge ${l.attended ? 'done' : 'absent'}">${l.attended ? 'Katıldı' : 'Katılmadı'}</span>
+            <button class="icon-btn" data-toggle-les-edit="${l.id}">✎</button>
+            ${!proj ? `<button class="icon-btn" data-toggle-les-proj="${l.id}">💻+</button>` : ''}
+            <button class="icon-btn" data-del-les="${l.id}">🗑</button>
+          </div>
         </div>
       </div>
-    `).join('') : '<div class="empty-state">Henüz ders kaydı eklenmedi.</div>';
-
-    // Notes
-    document.getElementById('notesList').innerHTML = data.notes.length ? data.notes.map(n => `
-      <div class="item-row">
-        <div class="item-main">
-          <div class="item-title">${escapeHtml(n.note)}</div>
-          <div class="item-sub">${n.created_at ? new Date(n.created_at).toLocaleDateString('tr-TR') : ''}</div>
-        </div>
-        <div class="item-actions">
-          ${n.progress_percent != null ? `<span class="badge done">%${n.progress_percent}</span>` : ''}
-          <button class="icon-btn" data-del-note="${n.id}">🗑</button>
-        </div>
-      </div>
-    `).join('') : '<div class="empty-state">Henüz not eklenmedi.</div>';
+      `;
+    }).join('') : '<div class="empty-state">Henüz ders kaydı eklenmedi.</div>';
 
     bindDetailActions();
   }
@@ -1051,8 +1293,65 @@
     document.querySelectorAll('[data-del-les]').forEach(el => {
       el.onclick = async () => { await api('delete_lesson', { id: el.dataset.delLes }); openStudentDetail(currentStudentId); };
     });
-    document.querySelectorAll('[data-del-note]').forEach(el => {
-      el.onclick = async () => { await api('delete_note', { id: el.dataset.delNote }); openStudentDetail(currentStudentId); };
+    document.querySelectorAll('[data-toggle-les-edit]').forEach(el => {
+      el.onclick = () => {
+        const form = document.querySelector(`[data-les-edit="${el.dataset.toggleLesEdit}"]`);
+        if (form) form.style.display = form.style.display === 'none' ? 'block' : 'none';
+      };
+    });
+    document.querySelectorAll('[data-les-save]').forEach(el => {
+      el.onclick = async () => {
+        const id = el.dataset.lesSave;
+        try {
+          await api('update_lesson', {
+            id,
+            lesson_date: document.querySelector(`[data-edit-date="${id}"]`).value,
+            topic: document.querySelector(`[data-edit-topic="${id}"]`).value.trim(),
+            attended: document.querySelector(`[data-edit-attended="${id}"]`).value === 'true',
+            zoom_url: document.querySelector(`[data-les-zoom="${id}"]`).value.trim(),
+            feedback: document.querySelector(`[data-les-feedback="${id}"]`).value.trim()
+          });
+          openStudentDetail(currentStudentId);
+        } catch (err) {
+          alert('Hata: ' + err.message);
+        }
+      };
+    });
+    document.querySelectorAll('[data-toggle-les-proj]').forEach(el => {
+      el.onclick = () => {
+        const form = document.querySelector(`[data-les-proj="${el.dataset.toggleLesProj}"]`);
+        if (form) form.style.display = form.style.display === 'none' ? 'block' : 'none';
+      };
+    });
+    document.querySelectorAll('[data-proj-save]').forEach(el => {
+      el.onclick = async () => {
+        const id = el.dataset.projSave;
+        const title = document.querySelector(`[data-proj-title="${id}"]`).value.trim();
+        const link = document.querySelector(`[data-proj-link="${id}"]`).value.trim();
+        const fileInput = document.querySelector(`[data-proj-file="${id}"]`);
+        const file = fileInput.files[0];
+        if (!title) { alert('Proje başlığı gerekli.'); return; }
+        let fileUrl = null;
+        try {
+          if (file) {
+            const base64 = await fileToBase64(file);
+            const uploadRes = await api('upload_project_file', { file_base64: base64, file_name: file.name, content_type: file.type });
+            fileUrl = uploadRes.url;
+          }
+          await api('add_project', {
+            student_id: currentStudentId,
+            title,
+            description: null,
+            completed_at: new Date().toISOString().slice(0,10),
+            lesson_id: id,
+            file_url: fileUrl,
+            link_url: link || null
+          });
+          openStudentDetail(currentStudentId);
+        } catch (err) {
+          alert('Hata: ' + err.message);
+        }
+      };
     });
   }
 
@@ -1101,6 +1400,12 @@
         submitBtn.disabled = false;
         return;
       }
+    }
+
+    const linkVal = document.getElementById('asgLink').value.trim();
+    if (!attachmentUrl && linkVal) {
+      attachmentUrl = linkVal;
+      attachmentFilename = 'Materyal Linki';
     }
 
     await api('add_assignment', {
@@ -1199,17 +1504,6 @@
     openStudentDetail(currentStudentId);
   });
 
-  document.getElementById('formNote').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    await api('add_note', {
-      student_id: currentStudentId,
-      note: document.getElementById('noteText').value.trim(),
-      progress_percent: document.getElementById('notePercent').value ? parseInt(document.getElementById('notePercent').value) : null
-    });
-    e.target.reset();
-    openStudentDetail(currentStudentId);
-  });
-
   // Reset password / delete student
   document.getElementById('btnEditStudent').addEventListener('click', () => {
     const form = document.getElementById('formEditStudent');
@@ -1228,7 +1522,10 @@
         parent_name: document.getElementById('editParentName').value.trim(),
         parent_phone: document.getElementById('editParentPhone').value.trim(),
         total_lessons: parseInt(document.getElementById('editTotalLessons').value) || null,
+        payment_type: document.getElementById('editPaymentType').value || null,
         payment_amount: document.getElementById('editPaymentAmount').value ? parseFloat(document.getElementById('editPaymentAmount').value) : null,
+        installment_count: document.getElementById('editInstallmentCount').value ? parseInt(document.getElementById('editInstallmentCount').value) : null,
+        installment_paid: document.getElementById('editInstallmentPaid').value ? parseInt(document.getElementById('editInstallmentPaid').value) : null,
         package_start_date: document.getElementById('editPackageStart').value || null,
         package_end_date: document.getElementById('editPackageEnd').value || null,
         receipt_url: document.getElementById('editReceiptUrl').value.trim() || null,
