@@ -1,0 +1,16 @@
+/* Anthos Academy - ortak renk degiskenleri ve reset (tum sayfalarda paylasilir) */
+:root{
+  --cream: #F7F1E3;
+  --cream-2: #F0E8D4;
+  --ink: #241BC3;
+  --ink-deep: #171050;
+  --charcoal: #1B1A2A;
+  --bloom: #E85C4A;
+  --bloom-soft: #F4B9AE;
+  --sage: #7C9D6F;
+  --sage-soft: #DCE6D3;
+  --gold: #C99A2E;
+  --gold-soft: #F3E3BE;
+  --line: rgba(23,16,80,0.12);
+}
+*{box-sizing:border-box; margin:0; padding:0;}
