@@ -404,6 +404,7 @@
         <button class="tab-btn" data-tab="projects">💻 Projeler</button>
         <button class="tab-btn" data-tab="schedule">🗓 Ders Programı</button>
         <button class="tab-btn" data-tab="lessons">🎥 Dersler</button>
+        <button class="tab-btn" data-tab="trialclass">🔗 Trial Class</button>
       </div>
 
       <!-- Assignments -->
@@ -487,6 +488,22 @@
         </div>
         <div class="panel"><h3>Dersler</h3><div id="lessonsList"></div></div>
       </div>
+
+      <!-- Trial Class (öğrenciye özel deneme dersi linki + After TC raporu) -->
+      <div class="tab-pane" data-pane="trialclass">
+        <div class="panel">
+          <h3>Deneme Dersi Linki</h3>
+          <form class="inline-form" id="formTrialLessonLink" style="margin-bottom:0;">
+            <div class="field" style="flex-basis:100%;"><label>Deneme Dersi (Zoom) Linki</label><input type="url" id="tcsLessonLink" placeholder="https://zoom.us/j/..."></div>
+            <button class="btn sm" type="submit">Kaydet</button>
+          </form>
+        </div>
+        <div class="panel">
+          <h3>After TC Raporu</h3>
+          <div id="afterTcSummary"><div class="empty-state">Yükleniyor…</div></div>
+          <button class="btn ghost sm" type="button" id="btnOpenAfterTc" style="margin-top:12px;">✎ After TC Formunu Doldur / Düzenle</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -557,6 +574,7 @@
       <div class="inline-form" style="margin-bottom:0;">
         <div class="field"><label>Öğrenci Numarası</label><input type="text" id="tcStudentNumber"></div>
         <div class="field"><label>Program / Class</label><input type="text" id="tcClassProgram" placeholder="Örn. Scratch"></div>
+        <div class="field" style="flex-basis:100%;"><label>Deneme Dersi Linki</label><input type="url" id="tcLessonLink" placeholder="https://zoom.us/j/..."></div>
         <div class="field"><label>TC Practice</label><input type="text" id="tcPractice"></div>
         <div class="field"><label>Payment</label><input type="text" id="tcPayment" placeholder="Örn. Ödendi / Bekliyor"></div>
         <div class="field"><label>Cours</label><input type="text" id="tcCours"></div>
@@ -1016,12 +1034,15 @@
   // ---------- TRIAL CLASS MODAL ----------
   const trialClassModal = document.getElementById('trialClassModal');
   let currentTrialRequestId = null;
-  async function openTrialClassModal(trialRequestId, requestData) {
-    currentTrialRequestId = trialRequestId;
-    document.getElementById('tcTrialRequestId').value = trialRequestId;
+  let currentTrialClassStudentId = null;
+  async function _openTrialClassModal({ trialRequestId, studentId, requestData }) {
+    currentTrialRequestId = trialRequestId || null;
+    currentTrialClassStudentId = studentId || null;
+    document.getElementById('tcTrialRequestId').value = trialRequestId || '';
     document.getElementById('tcFormError').style.display = 'none';
     document.getElementById('tcStudentNumber').value = (requestData && requestData.student_number) || '';
-    document.getElementById('tcClassProgram').value = (requestData && requestData.class_program) || '';
+    document.getElementById('tcClassProgram').value = (requestData && (requestData.class_program || requestData.program)) || '';
+    document.getElementById('tcLessonLink').value = '';
     document.getElementById('tcPractice').value = '';
     document.getElementById('tcPayment').value = '';
     document.getElementById('tcCours').value = '';
@@ -1035,9 +1056,10 @@
     document.getElementById('tcComments').value = '';
     trialClassModal.classList.add('active');
     try {
-      const data = await api('get_trial_class', { trial_request_id: trialRequestId });
+      const data = await api('get_trial_class', studentId ? { student_id: studentId } : { trial_request_id: trialRequestId });
       const tc = data.trial_class;
       if (tc) {
+        document.getElementById('tcLessonLink').value = tc.trial_lesson_link || '';
         document.getElementById('tcPractice').value = tc.tc_practice || '';
         document.getElementById('tcPayment').value = tc.payment || '';
         document.getElementById('tcCours').value = tc.cours || '';
@@ -1055,6 +1077,12 @@
       document.getElementById('tcFormError').style.display = 'block';
     }
   }
+  async function openTrialClassModal(trialRequestId, requestData) {
+    await _openTrialClassModal({ trialRequestId, requestData });
+  }
+  async function openTrialClassModalForStudent(studentId, studentData) {
+    await _openTrialClassModal({ studentId, requestData: studentData });
+  }
   document.getElementById('closeTrialClassModalBtn').addEventListener('click', () => trialClassModal.classList.remove('active'));
   trialClassModal.addEventListener('click', (e) => { if (e.target === trialClassModal) trialClassModal.classList.remove('active'); });
   document.getElementById('trialClassForm').addEventListener('submit', async (e) => {
@@ -1062,6 +1090,26 @@
     const errEl = document.getElementById('tcFormError');
     errEl.style.display = 'none';
     try {
+      if (currentTrialClassStudentId) {
+        await api('upsert_trial_class', {
+          student_id: currentTrialClassStudentId,
+          trial_lesson_link: document.getElementById('tcLessonLink').value.trim(),
+          tc_practice: document.getElementById('tcPractice').value.trim(),
+          payment: document.getElementById('tcPayment').value.trim(),
+          cours: document.getElementById('tcCours').value.trim(),
+          class_day: document.getElementById('tcClassDay').value.trim(),
+          class_hour: document.getElementById('tcClassHour').value.trim(),
+          price: document.getElementById('tcPrice').value || null,
+          class_count: document.getElementById('tcClassCount').value || null,
+          receipt_url: document.getElementById('tcReceiptUrl').value.trim(),
+          features: document.getElementById('tcFeatures').value.trim(),
+          comments: document.getElementById('tcComments').value.trim(),
+          outcome_status: document.getElementById('tcOutcomeStatus').value
+        });
+        trialClassModal.classList.remove('active');
+        openStudentDetail(currentStudentId);
+        return;
+      }
       await api('update_trial_request_crm', {
         id: currentTrialRequestId,
         student_number: document.getElementById('tcStudentNumber').value.trim(),
@@ -1069,6 +1117,7 @@
       });
       await api('upsert_trial_class', {
         trial_request_id: currentTrialRequestId,
+        trial_lesson_link: document.getElementById('tcLessonLink').value.trim(),
         tc_practice: document.getElementById('tcPractice').value.trim(),
         payment: document.getElementById('tcPayment').value.trim(),
         cours: document.getElementById('tcCours').value.trim(),
@@ -1272,6 +1321,21 @@
       </div>
       `;
     }).join('') : '<div class="empty-state">Henüz ders kaydı eklenmedi.</div>';
+
+    // Trial Class (deneme dersi linki + After TC raporu)
+    const tc = data.trial_class;
+    document.getElementById('tcsLessonLink').value = (tc && tc.trial_lesson_link) || '';
+    document.getElementById('afterTcSummary').innerHTML = tc ? `
+      <div class="item-row" style="flex-direction:column; align-items:stretch;">
+        <div class="item-sub">📚 TC Practice: <strong>${escapeHtml(tc.tc_practice || '—')}</strong></div>
+        <div class="item-sub" style="margin-top:4px;">💳 Payment: <strong>${escapeHtml(tc.payment || '—')}</strong> · Cours: <strong>${escapeHtml(tc.cours || '—')}</strong></div>
+        <div class="item-sub" style="margin-top:4px;">🗓 ${escapeHtml(tc.class_day || '—')} · ${escapeHtml(tc.class_hour || '—')} · 💰 ${tc.price ? '₺' + Number(tc.price).toLocaleString('tr-TR') : '—'} · Ders Sayısı: ${tc.class_count ?? '—'}</div>
+        ${tc.receipt_url ? `<div class="item-sub" style="margin-top:4px;">🧾 <a class="zoom-link" href="${tc.receipt_url}" target="_blank">Makbuz</a></div>` : ''}
+        ${tc.features ? `<div class="item-sub" style="margin-top:4px;">✨ ${escapeHtml(tc.features)}</div>` : ''}
+        ${tc.comments ? `<div class="item-sub" style="margin-top:4px;">💬 ${escapeHtml(tc.comments)}</div>` : ''}
+        <div style="margin-top:6px;"><span class="badge ${tc.outcome_status === 'Sold' ? 'done' : tc.outcome_status === 'Lost' ? 'absent' : 'pending'}">${tc.outcome_status || 'Beklemede'}</span></div>
+      </div>
+    ` : '<div class="empty-state">Henüz After TC raporu doldurulmadı.</div>';
 
     bindDetailActions();
   }
@@ -1518,6 +1582,21 @@
     e.target.reset();
     statusEl.textContent = '';
     openStudentDetail(currentStudentId);
+  });
+
+  // Trial Class (öğrenciye özel): deneme dersi linki
+  document.getElementById('formTrialLessonLink').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    await api('upsert_trial_class', {
+      student_id: currentStudentId,
+      trial_lesson_link: document.getElementById('tcsLessonLink').value.trim()
+    });
+    openStudentDetail(currentStudentId);
+  });
+
+  document.getElementById('btnOpenAfterTc').addEventListener('click', () => {
+    const s = currentStudentDetail && currentStudentDetail.student;
+    openTrialClassModalForStudent(currentStudentId, s);
   });
 
   // Reset password / delete student
