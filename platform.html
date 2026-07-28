@@ -200,13 +200,21 @@
   .upload-status.error{color:var(--bloom);}
   .upload-status.success{color:var(--sage);}
 
+  .brand-logo-img{height:34px; width:auto; display:block;}
+  .auth-logo-img{height:44px; width:auto; display:block; margin-bottom:10px;}
+  .mobile-top-bar{display:none;}
+
   @media (max-width: 800px){
     #app.active{grid-template-columns:1fr;}
     .sidebar{position:fixed; bottom:0; left:0; right:0; z-index:20; flex-direction:row; align-items:center;
       padding:12px 14px; border-right:none; border-top:1.5px solid var(--line); overflow-x:auto;}
     .sidebar .brand, .sidebar .brand-sub, .sb-profile, .sidebar-foot{display:none;}
     .nav-item{flex-direction:column; font-size:10.5px; gap:4px; padding:8px 12px; white-space:nowrap;}
-    .main{padding:24px 20px 100px;}
+    .main{padding:70px 20px 100px;}
+    .mobile-top-bar{
+      display:flex; align-items:center; position:fixed; top:0; left:0; right:0; z-index:21;
+      background:#fff; border-bottom:1.5px solid var(--line); padding:12px 20px;
+    }
   }
 </style>
 </head>
@@ -215,7 +223,7 @@
 <!-- ============ AUTH SCREEN ============ -->
 <div id="authScreen">
   <div class="auth-card">
-    <div class="auth-logo">anthos<span>.</span></div>
+    <img class="auth-logo-img" src="logo.png" alt="Anthos">
     <div class="auth-sub">Öğrenci Platformu</div>
     <div class="msg error" id="loginError"></div>
     <form id="loginForm">
@@ -229,8 +237,9 @@
 
 <!-- ============ APP ============ -->
 <div id="app">
+  <div class="mobile-top-bar"><img class="brand-logo-img" src="logo.png" alt="Anthos"></div>
   <div class="sidebar">
-    <div class="brand">anthos<span>.</span></div>
+    <div class="brand"><img class="brand-logo-img" src="logo.png" alt="Anthos"></div>
     <div class="brand-sub">Öğrenci Platformu</div>
 
     <div class="sb-profile">
@@ -243,10 +252,9 @@
 
     <div class="nav-item active" data-page="overview">🏠 <span>Özet</span></div>
     <div class="nav-item" data-page="schedule">🗓 <span>Ders Programı</span></div>
-    <div class="nav-item" data-page="lessons">🎥 <span>Ders Kayıtları</span></div>
+    <div class="nav-item" data-page="lessons">🎥 <span>Dersler</span></div>
     <div class="nav-item" data-page="assignments">📋 <span>Ödevler</span></div>
     <div class="nav-item" data-page="projects">💻 <span>Projeler</span></div>
-    <div class="nav-item" data-page="notes">📈 <span>İlerleme Notları</span></div>
     <div class="nav-item" data-page="profile">👤 <span>Profil</span></div>
 
     <div class="sidebar-foot">
@@ -263,9 +271,15 @@
       </div>
       <div class="stat-grid">
         <div class="stat-card"><div class="stat-icon">📋</div><div class="stat-value" id="statAssignments">0</div><div class="stat-label">Bekleyen Ödev</div></div>
-        <div class="stat-card"><div class="stat-icon">💻</div><div class="stat-value" id="statProjects">0</div><div class="stat-label">Aktif Proje</div></div>
+        <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-value" id="statDoneAssignments">0</div><div class="stat-label">Tamamlanan Ödev</div></div>
+        <div class="stat-card"><div class="stat-icon">💻</div><div class="stat-value" id="statProjects">0</div><div class="stat-label">Yapılan Proje</div></div>
         <div class="stat-card"><div class="stat-icon">🗓</div><div class="stat-value" id="statNextLesson">—</div><div class="stat-label">Sıradaki Ders</div></div>
         <div class="stat-card"><div class="stat-icon">📈</div><div class="stat-value" id="statProgress">—</div><div class="stat-label">Genel İlerleme</div></div>
+      </div>
+      <div class="card" id="joinLessonCard" style="display:none; background:var(--ink-deep); border-color:var(--ink-deep);">
+        <h3 style="color:#fff;">🎥 Yaklaşan Dersin</h3>
+        <div id="joinLessonText" style="font-size:14px; font-weight:700; color:#fff; margin-bottom:14px;">—</div>
+        <a class="btn" id="joinLessonBtn" href="#" target="_blank" rel="noopener" style="background:var(--bloom);">Derse Katıl 🎥</a>
       </div>
       <div class="card">
         <h3>📊 Ders İlerlemesi</h3>
@@ -276,10 +290,6 @@
         <h3>📋 Son Ödevler</h3>
         <div id="overviewAssignments"><div class="empty-state">Yükleniyor…</div></div>
       </div>
-      <div class="card">
-        <h3>📈 Son Not</h3>
-        <div id="overviewNote"><div class="empty-state">Yükleniyor…</div></div>
-      </div>
     </div>
 
     <!-- SCHEDULE -->
@@ -288,9 +298,9 @@
       <div class="card"><div id="weekGrid" class="week-grid"></div></div>
     </div>
 
-    <!-- LESSONS (attendance + zoom) -->
+    <!-- LESSONS -->
     <div class="page" id="page-lessons">
-      <div class="page-head"><h1>Ders Kayıtları</h1><p>Geçmiş derslerin, yoklama durumun ve Zoom kayıtların.</p></div>
+      <div class="page-head"><h1>Dersler</h1><p>Geçmiş derslerin, eğitmen geri bildirimlerin, kayıtların ve projelerin.</p></div>
       <div class="card"><div id="lessonsList"><div class="empty-state">Yükleniyor…</div></div></div>
     </div>
 
@@ -304,12 +314,6 @@
     <div class="page" id="page-projects">
       <div class="page-head"><h1>Projeler</h1><p>Üzerinde çalıştığın ve tamamladığın projeler.</p></div>
       <div class="card"><div id="projectsList"><div class="empty-state">Yükleniyor…</div></div></div>
-    </div>
-
-    <!-- NOTES -->
-    <div class="page" id="page-notes">
-      <div class="page-head"><h1>İlerleme Notları</h1><p>Eğitmeninin senin için yazdığı notlar.</p></div>
-      <div class="card"><div id="notesList"><div class="empty-state">Yükleniyor…</div></div></div>
     </div>
 
     <!-- PROFILE -->
@@ -393,16 +397,26 @@
   });
 
   // ---------- NAV ----------
+  const VALID_PAGES = ['overview','schedule','lessons','assignments','projects','profile'];
   document.querySelectorAll('.nav-item[data-page]').forEach(el => {
     el.addEventListener('click', () => showPage(el.dataset.page));
   });
-  function showPage(name) {
+  function showPage(name, pushState) {
+    if (!VALID_PAGES.includes(name)) name = 'overview';
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById('page-' + name).classList.add('active');
     document.querySelectorAll('.nav-item[data-page]').forEach(el => {
       el.classList.toggle('active', el.dataset.page === name);
     });
+    document.querySelector('.main').scrollTop = 0;
+    if (pushState !== false) {
+      history.pushState({ page: name }, '', '#' + name);
+    }
   }
+  window.addEventListener('popstate', (e) => {
+    const page = (e.state && e.state.page) || 'overview';
+    showPage(page, false);
+  });
 
   // ---------- BOOT ----------
   async function boot() {
@@ -423,21 +437,20 @@
 
     renderProfileHeader(student);
     setupAvatarPicker(student);
+    history.replaceState({ page: 'overview' }, '', '#overview');
 
-    const [assignmentsRes, projectsRes, notesRes, scheduleRes, lessonsRes] = await Promise.all([
-      sb.from('assignments').select('*').eq('student_id', student.id).order('due_date', { ascending: true }),
+    const [assignmentsRes, projectsRes, scheduleRes, lessonsRes] = await Promise.all([
+      sb.from('assignments').select('*').eq('student_id', student.id).order('created_at', { ascending: false }),
       sb.from('projects').select('*').eq('student_id', student.id).order('created_at', { ascending: false }),
-      sb.from('progress_notes').select('*').eq('student_id', student.id).order('created_at', { ascending: false }),
       sb.from('schedule').select('*').eq('student_id', student.id),
       sb.from('lessons').select('*').eq('student_id', student.id).order('lesson_date', { ascending: false }),
     ]);
 
-    renderOverview(assignmentsRes.data || [], projectsRes.data || [], notesRes.data || [], scheduleRes.data || [], lessonsRes.data || [], student);
+    renderOverview(assignmentsRes.data || [], projectsRes.data || [], scheduleRes.data || [], lessonsRes.data || [], student);
     renderSchedule(scheduleRes.data || []);
-    renderLessons(lessonsRes.data || []);
+    renderLessons(lessonsRes.data || [], projectsRes.data || []);
     renderAssignments(assignmentsRes.data || []);
     renderProjects(projectsRes.data || []);
-    renderNotes(notesRes.data || []);
   }
 
   function renderProfileHeader(student) {
@@ -468,11 +481,13 @@
   }
 
   // ---------- OVERVIEW ----------
-  function renderOverview(assignments, projects, notes, schedule, lessons, student) {
+  function renderOverview(assignments, projects, schedule, lessons, student) {
     const pending = assignments.filter(a => a.status !== 'done');
-    const activeProjects = projects.filter(p => !p.completed_at);
+    const doneAssignments = assignments.filter(a => a.status === 'done');
+    const doneProjects = projects.filter(p => p.completed_at);
     document.getElementById('statAssignments').textContent = pending.length;
-    document.getElementById('statProjects').textContent = activeProjects.length;
+    document.getElementById('statDoneAssignments').textContent = doneAssignments.length;
+    document.getElementById('statProjects').textContent = doneProjects.length;
 
     // Ders ilerlemesi (otomatik hesaplanır)
     const totalLessonsCount = (student && student.total_lessons) || 24;
@@ -483,6 +498,7 @@
     document.getElementById('statProgress').textContent = '%' + progressPct;
 
     // Next lesson: soonest upcoming day/time
+    const joinCard = document.getElementById('joinLessonCard');
     if (schedule.length) {
       const todayIdx = (new Date().getDay() + 6) % 7; // Monday=0
       const sorted = [...schedule].sort((a,b) => {
@@ -493,8 +509,16 @@
       });
       const next = sorted[0];
       document.getElementById('statNextLesson').textContent = next ? `${next.day_of_week} ${next.start_time}` : '—';
+      if (next && next.zoom_url) {
+        joinCard.style.display = 'block';
+        document.getElementById('joinLessonText').textContent = `${next.day_of_week} · ${next.start_time}`;
+        document.getElementById('joinLessonBtn').href = next.zoom_url;
+      } else {
+        joinCard.style.display = 'none';
+      }
     } else {
       document.getElementById('statNextLesson').textContent = '—';
+      joinCard.style.display = 'none';
     }
 
     const recentAssignments = assignments.slice(0, 4);
@@ -508,42 +532,48 @@
       </div>
     `).join('') : '<div class="empty-state">Henüz ödev eklenmedi.</div>';
     bindAssignmentClicks('overviewAssignments');
-
-    document.getElementById('overviewNote').innerHTML = notes.length ? `
-      <div class="item-title">${escapeHtml(notes[0].note)}</div>
-      <div class="item-sub">${formatDate(notes[0].created_at)}</div>
-      ${notes[0].progress_percent != null ? `<div class="progress-bar-track"><div class="progress-bar-fill" style="width:${notes[0].progress_percent}%"></div></div>` : ''}
-    ` : '<div class="empty-state">Henüz not eklenmedi.</div>';
   }
 
   // ---------- SCHEDULE ----------
   function renderSchedule(schedule) {
     const byDay = {};
     schedule.forEach(s => { byDay[s.day_of_week] = s; });
-    document.getElementById('weekGrid').innerHTML = DAY_ORDER.map(day => {
+    const activeDays = DAY_ORDER.filter(day => byDay[day]);
+    document.getElementById('weekGrid').innerHTML = activeDays.length ? activeDays.map(day => {
       const s = byDay[day];
       return `
-        <div class="day-card ${s ? '' : 'empty'}">
+        <div class="day-card">
           <div class="day-name">${day}</div>
-          <div class="day-time">${s ? s.start_time : '—'}</div>
-          ${s && s.note ? `<div class="day-note">${escapeHtml(s.note)}</div>` : ''}
-          ${s && s.zoom_url ? `<div style="margin-top:8px;"><a class="zoom-link" href="${s.zoom_url}" target="_blank" rel="noopener">🎥 Derse Katıl</a></div>` : ''}
+          <div class="day-time">${s.start_time}</div>
+          ${s.note ? `<div class="day-note">${escapeHtml(s.note)}</div>` : ''}
+          ${s.zoom_url ? `<div style="margin-top:8px;"><a class="zoom-link" href="${s.zoom_url}" target="_blank" rel="noopener">🎥 Derse Katıl</a></div>` : ''}
         </div>
       `;
-    }).join('');
+    }).join('') : '<div class="empty-state">Henüz ders programı belirlenmedi.</div>';
   }
 
   // ---------- LESSONS ----------
-  function renderLessons(lessons) {
-    document.getElementById('lessonsList').innerHTML = lessons.length ? lessons.map(l => `
+  function renderLessons(lessons, projects) {
+    projects = projects || [];
+    // En eski ders 1. ders olacak şekilde numaralandır
+    const chronological = [...lessons].sort((a,b) => new Date(a.lesson_date) - new Date(b.lesson_date));
+    const numberById = {};
+    chronological.forEach((l, i) => { numberById[l.id] = i + 1; });
+
+    document.getElementById('lessonsList').innerHTML = lessons.length ? lessons.map(l => {
+      const proj = projects.find(p => p.lesson_id === l.id);
+      return `
       <div class="item-row">
         <div class="item-main">
-          <div class="item-title">${formatDate(l.lesson_date)}${l.topic ? ' · ' + escapeHtml(l.topic) : ''}</div>
+          <div class="item-title">${numberById[l.id]}. Ders · ${formatDate(l.lesson_date)}${l.topic ? ' · ' + escapeHtml(l.topic) : ''}</div>
           <div class="item-sub">${l.zoom_url ? `<a class="zoom-link" href="${l.zoom_url}" target="_blank" rel="noopener">🎥 Kayda git</a>` : 'Kayıt eklenmedi'}</div>
+          ${l.feedback ? `<div class="item-sub" style="margin-top:6px; color:var(--ink-deep); opacity:0.85;">💬 ${escapeHtml(l.feedback)}</div>` : ''}
+          ${proj ? `<div class="item-sub" style="margin-top:6px;">💻 Proje: ${escapeHtml(proj.title)} ${proj.file_url ? `· <a class="zoom-link" href="${proj.file_url}" target="_blank" rel="noopener">Dosya</a>` : ''}${proj.link_url ? `· <a class="zoom-link" href="${proj.link_url}" target="_blank" rel="noopener">Link</a>` : ''}</div>` : ''}
         </div>
         <span class="badge ${l.attended ? 'done' : 'absent'}">${l.attended ? 'Katıldın' : 'Katılmadın'}</span>
       </div>
-    `).join('') : '<div class="empty-state">Henüz ders kaydı eklenmedi.</div>';
+    `;
+    }).join('') : '<div class="empty-state">Henüz ders kaydı eklenmedi.</div>';
   }
 
   // ---------- ASSIGNMENTS ----------
@@ -690,6 +720,7 @@
     statusEl.textContent = 'Ödevin başarıyla teslim edildi! ✓';
     statusEl.className = 'upload-status success';
     fileInput.value = '';
+    fireConfetti();
   });
 
   // ---------- PROJECTS ----------
@@ -705,18 +736,57 @@
     `).join('') : '<div class="empty-state">Henüz proje eklenmedi.</div>';
   }
 
-  // ---------- NOTES ----------
-  function renderNotes(notes) {
-    document.getElementById('notesList').innerHTML = notes.length ? notes.map(n => `
-      <div class="item-row">
-        <div class="item-main">
-          <div class="item-title">${escapeHtml(n.note)}</div>
-          <div class="item-sub">${formatDate(n.created_at)}</div>
-          ${n.progress_percent != null ? `<div class="progress-bar-track" style="max-width:220px;"><div class="progress-bar-fill" style="width:${n.progress_percent}%"></div></div>` : ''}
-        </div>
-        ${n.progress_percent != null ? `<span class="badge done">%${n.progress_percent}</span>` : ''}
-      </div>
-    `).join('') : '<div class="empty-state">Henüz not eklenmedi.</div>';
+  // ---------- FIREWORKS (ödev teslim animasyonu) ----------
+  function fireConfetti() {
+    const canvas = document.createElement('canvas');
+    canvas.style.cssText = 'position:fixed; inset:0; width:100vw; height:100vh; pointer-events:none; z-index:999;';
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    document.body.appendChild(canvas);
+    const ctx = canvas.getContext('2d');
+    const colors = ['#E85C4A', '#C99A2E', '#7C9D6F', '#241BC3', '#F3E3BE'];
+    const particles = [];
+    const bursts = [
+      { x: canvas.width * 0.3, y: canvas.height * 0.35 },
+      { x: canvas.width * 0.7, y: canvas.height * 0.3 },
+      { x: canvas.width * 0.5, y: canvas.height * 0.45 },
+    ];
+    bursts.forEach(origin => {
+      for (let i = 0; i < 45; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 2 + Math.random() * 6;
+        particles.push({
+          x: origin.x, y: origin.y,
+          vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
+          size: 3 + Math.random() * 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          life: 1,
+        });
+      }
+    });
+    let frame = 0;
+    function tick() {
+      frame++;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.12;
+        p.life -= 0.012;
+        ctx.globalAlpha = Math.max(p.life, 0);
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      ctx.globalAlpha = 1;
+      if (frame < 130) {
+        requestAnimationFrame(tick);
+      } else {
+        canvas.remove();
+      }
+    }
+    tick();
   }
 
   // ---------- INIT ----------

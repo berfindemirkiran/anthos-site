@@ -192,13 +192,19 @@
   }
   .sidebar-backdrop{display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:55;}
   .sidebar-backdrop.active{display:block;}
+  .brand-logo-img{height:32px; width:auto; display:block;}
+  .mobile-top-bar{display:none;}
 
   @media (max-width: 780px){
     #app.active{grid-template-columns:1fr;}
     .sidebar{display:none;}
     .sidebar.mobile-open{display:flex; position:fixed; top:0; left:0; bottom:0; width:80%; max-width:280px; z-index:60;}
-    .main{padding:70px 20px 24px;}
+    .main{padding:78px 20px 24px;}
     .mobile-menu-btn{display:flex;}
+    .mobile-top-bar{
+      display:flex; align-items:center; justify-content:center; position:fixed; top:0; left:0; right:0;
+      height:64px; background:#fff; border-bottom:1.5px solid var(--line); z-index:65;
+    }
   }
 </style>
 </head>
@@ -219,9 +225,10 @@
 
 <div id="app">
   <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+  <div class="mobile-top-bar"><img class="brand-logo-img" src="logo.png" alt="Anthos"></div>
   <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
   <div class="sidebar">
-    <div class="brand">anthos</div>
+    <div class="brand"><img class="brand-logo-img" src="logo.png" alt="Anthos" style="height:36px;"></div>
     <div class="brand-sub">Yönetim Paneli</div>
     <div class="nav-item active" data-view="dashboard">📊 Genel Özet</div>
     <div class="nav-item" data-view="students">👥 Öğrenciler</div>
