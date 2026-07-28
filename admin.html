@@ -438,6 +438,7 @@
           <form class="inline-form" id="formProject">
             <div class="field"><label>Başlık</label><input type="text" id="projTitle" required></div>
             <div class="field"><label>Açıklama</label><input type="text" id="projDesc"></div>
+            <div class="field"><label>Proje Linki</label><input type="url" id="projLink" placeholder="https://..."></div>
             <div class="field"><label>Tamamlanma Tarihi</label><input type="date" id="projCompleted"></div>
             <button class="btn sm" type="submit">Ekle</button>
           </form>
@@ -1253,9 +1254,11 @@
         <div class="item-main">
           <div class="item-title">${escapeHtml(p.title)}</div>
           <div class="item-sub">${escapeHtml(p.description || '')}</div>
+          <div class="item-sub">${p.link_url ? `<a class="zoom-link" href="${p.link_url}" target="_blank" rel="noopener">🔗 Proje Linki</a>` : 'Link eklenmedi'}</div>
         </div>
         <div class="item-actions">
           <span class="badge ${p.completed_at ? 'done' : 'pending'}">${p.completed_at ? 'Tamamlandı: ' + p.completed_at : 'Devam ediyor'}</span>
+          <button class="icon-btn" data-edit-proj-link="${p.id}" data-current-link="${escapeHtml(p.link_url || '')}">✎</button>
           <button class="icon-btn" data-del-proj="${p.id}">🗑</button>
         </div>
       </div>
@@ -1353,6 +1356,19 @@
     });
     document.querySelectorAll('[data-del-proj]').forEach(el => {
       el.onclick = async () => { await api('delete_project', { id: el.dataset.delProj }); openStudentDetail(currentStudentId); };
+    });
+    document.querySelectorAll('[data-edit-proj-link]').forEach(el => {
+      el.onclick = async () => {
+        const current = el.dataset.currentLink || '';
+        const linkUrl = prompt('Proje linki:', current);
+        if (linkUrl === null) return;
+        try {
+          await api('update_project', { id: el.dataset.editProjLink, link_url: linkUrl.trim() });
+          openStudentDetail(currentStudentId);
+        } catch (err) {
+          alert('Hata: ' + err.message);
+        }
+      };
     });
     document.querySelectorAll('[data-del-sch]').forEach(el => {
       el.onclick = async () => { await api('delete_schedule', { id: el.dataset.delSch }); openStudentDetail(currentStudentId); };
@@ -1509,6 +1525,7 @@
       student_id: currentStudentId,
       title: document.getElementById('projTitle').value.trim(),
       description: document.getElementById('projDesc').value.trim(),
+      link_url: document.getElementById('projLink').value.trim() || null,
       completed_at: document.getElementById('projCompleted').value || null
     });
     e.target.reset();
