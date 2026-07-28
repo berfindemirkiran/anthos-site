@@ -1527,28 +1527,36 @@
 
   document.getElementById('formProject').addEventListener('submit', async (e) => {
     e.preventDefault();
-    await api('add_project', {
-      student_id: currentStudentId,
-      title: document.getElementById('projTitle').value.trim(),
-      description: document.getElementById('projDesc').value.trim(),
-      link_url: document.getElementById('projLink').value.trim() || null,
-      completed_at: document.getElementById('projCompleted').value || null
-    });
-    e.target.reset();
-    openStudentDetail(currentStudentId);
+    try {
+      await api('add_project', {
+        student_id: currentStudentId,
+        title: document.getElementById('projTitle').value.trim(),
+        description: document.getElementById('projDesc').value.trim(),
+        link_url: document.getElementById('projLink').value.trim() || null,
+        completed_at: document.getElementById('projCompleted').value || null
+      });
+      e.target.reset();
+      openStudentDetail(currentStudentId);
+    } catch (err) {
+      alert('Hata: ' + err.message);
+    }
   });
 
   document.getElementById('formSchedule').addEventListener('submit', async (e) => {
     e.preventDefault();
-    await api('add_schedule', {
-      student_id: currentStudentId,
-      day_of_week: document.getElementById('schDay').value,
-      start_time: document.getElementById('schTime').value,
-      note: document.getElementById('schNote').value.trim(),
-      zoom_url: document.getElementById('schZoom').value.trim()
-    });
-    e.target.reset();
-    openStudentDetail(currentStudentId);
+    try {
+      await api('add_schedule', {
+        student_id: currentStudentId,
+        day_of_week: document.getElementById('schDay').value,
+        start_time: document.getElementById('schTime').value,
+        note: document.getElementById('schNote').value.trim(),
+        zoom_url: document.getElementById('schZoom').value.trim()
+      });
+      e.target.reset();
+      openStudentDetail(currentStudentId);
+    } catch (err) {
+      alert('Hata: ' + err.message);
+    }
   });
 
   function fileToBase64(file) {
