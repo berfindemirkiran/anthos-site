@@ -496,8 +496,9 @@
           <h3>Deneme Dersi Linki</h3>
           <form class="inline-form" id="formTrialLessonLink" style="margin-bottom:0;">
             <div class="field" style="flex-basis:100%;"><label>Deneme Dersi (Zoom) Linki</label><input type="url" id="tcsLessonLink" placeholder="https://zoom.us/j/..."></div>
-            <button class="btn sm" type="submit">Kaydet</button>
+            <button class="btn sm" type="submit" id="btnSaveTcsLink">Kaydet</button>
           </form>
+          <div id="tcsLessonLinkStatus" style="font-size:12.5px; margin-top:8px; min-height:16px;"></div>
         </div>
         <div class="panel">
           <h3>After TC Raporu</h3>
@@ -1604,11 +1605,28 @@
   // Trial Class (öğrenciye özel): deneme dersi linki
   document.getElementById('formTrialLessonLink').addEventListener('submit', async (e) => {
     e.preventDefault();
-    await api('upsert_trial_class', {
-      student_id: currentStudentId,
-      trial_lesson_link: document.getElementById('tcsLessonLink').value.trim()
-    });
-    openStudentDetail(currentStudentId);
+    const btn = document.getElementById('btnSaveTcsLink');
+    const statusEl = document.getElementById('tcsLessonLinkStatus');
+    btn.disabled = true;
+    const origText = btn.textContent;
+    btn.textContent = 'Kaydediliyor…';
+    statusEl.textContent = '';
+    statusEl.style.color = '';
+    try {
+      await api('upsert_trial_class', {
+        student_id: currentStudentId,
+        trial_lesson_link: document.getElementById('tcsLessonLink').value.trim()
+      });
+      statusEl.textContent = 'Kaydedildi ✓';
+      statusEl.style.color = 'var(--sage, #7c9d6f)';
+      await openStudentDetail(currentStudentId);
+    } catch (err) {
+      statusEl.textContent = 'Hata: ' + err.message;
+      statusEl.style.color = 'var(--bloom, #e85c4a)';
+    } finally {
+      btn.disabled = false;
+      btn.textContent = origText;
+    }
   });
 
   document.getElementById('btnOpenAfterTc').addEventListener('click', () => {
