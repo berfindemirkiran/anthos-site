@@ -939,7 +939,7 @@
               ${TRIAL_STATUSES.map(v => `<option value="${v}" ${(r.status || 'yeni') === v ? 'selected' : ''}>${trialStatusLabel(v)}</option>`).join('')}
             </select>
             <button class="icon-btn" data-toggle-crm="${r.id}">✎ CRM</button>
-            <button class="icon-btn" data-open-tc="${r.id}">📋 Trial Class</button>
+            <button class="icon-btn" data-open-tc="${r.id}">📋 After TC</button>
             ${r.veli_telefon ? `<a class="icon-btn" href="${waBeforeTcLink(r)}" target="_blank">💬 Before TC</a>` : ''}
             <button class="icon-btn" data-del-trial="${r.id}">🗑 Sil</button>
           </div>
@@ -1103,7 +1103,7 @@
             <span class="badge ${tc.outcome_status === 'Sold' ? 'done' : tc.outcome_status === 'Lost' ? 'absent' : 'pending'}">${tc.outcome_status || 'Beklemede'}</span>
           </div>
         </div>`;
-      }).join('') : '<div class="empty-state">Henüz Trial Class kaydı yok. TC Rezervasyonları sekmesinden "Trial Class" formunu doldur.</div>';
+      }).join('') : '<div class="empty-state">Henüz Trial Class kaydı yok. TC Rezervasyonları sekmesinden "After TC" formunu doldur.</div>';
       wrap.querySelectorAll('[data-tc-open]').forEach(el => {
         el.addEventListener('click', () => {
           const id = el.dataset.tcOpen;
