@@ -358,6 +358,7 @@
   let currentStudent = null;
   let currentUserId = null;
   let currentAssignments = [];
+  let currentProjects = [];
 
   function escapeHtml(str){
     return String(str || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -752,15 +753,67 @@
 
   // ---------- PROJECTS ----------
   function renderProjects(projects) {
+    currentProjects = projects;
     document.getElementById('projectsList').innerHTML = projects.length ? projects.map(p => `
-      <div class="item-row">
-        <div class="item-main">
-          <div class="item-title">${escapeHtml(p.title)}</div>
-          <div class="item-sub">${escapeHtml(p.description || '')}</div>
+      <div class="item-row" style="flex-direction:column; align-items:stretch;">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+          <div class="item-main">
+            <div class="item-title">${escapeHtml(p.title)}</div>
+            <div class="item-sub">${escapeHtml(p.description || '')}</div>
+          </div>
+          <span class="badge ${p.completed_at ? 'done' : 'pending'}">${p.completed_at ? 'Tamamlandı' : 'Devam ediyor'}</span>
         </div>
-        <span class="badge ${p.completed_at ? 'done' : 'pending'}">${p.completed_at ? 'Tamamlandı' : 'Devam ediyor'}</span>
+        <div style="display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;">
+          <input type="url" class="proj-link-input" data-project-id="${p.id}" placeholder="Proje linkini buraya yapıştır (Scratch, GitHub, Google Drive vb.)" value="${escapeHtml(p.link_url || '')}" style="flex:1; min-width:180px; padding:11px 14px; border-radius:12px; border:1.5px solid var(--line); font-family:inherit; font-size:13px; background:var(--cream);">
+          <button type="button" class="btn proj-link-save" data-project-id="${p.id}" style="padding:11px 20px; font-size:13px;">Kaydet</button>
+          ${p.link_url ? `<a class="zoom-link" href="${p.link_url}" target="_blank" rel="noopener" style="align-self:center;">Linki Aç ↗</a>` : ''}
+        </div>
+        <div class="proj-link-status" data-project-id="${p.id}" style="font-size:12px; margin-top:6px; min-height:14px;"></div>
       </div>
     `).join('') : '<div class="empty-state">Henüz proje eklenmedi.</div>';
+    bindProjectLinkSave();
+  }
+
+  function bindProjectLinkSave() {
+    document.querySelectorAll('.proj-link-save').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id = btn.dataset.projectId;
+        const input = document.querySelector(`.proj-link-input[data-project-id="${id}"]`);
+        const statusEl = document.querySelector(`.proj-link-status[data-project-id="${id}"]`);
+        const link = input.value.trim();
+        btn.disabled = true;
+        const origText = btn.textContent;
+        btn.textContent = 'Kaydediliyor…';
+        const { error } = await sb.from('projects').update({ link_url: link || null }).eq('id', id);
+        btn.disabled = false;
+        btn.textContent = origText;
+        if (error) {
+          statusEl.textContent = 'Hata: ' + error.message;
+          statusEl.style.color = 'var(--bloom)';
+        } else {
+          const p = currentProjects.find(x => String(x.id) === String(id));
+          if (p) p.link_url = link || null;
+          statusEl.textContent = 'Kaydedildi ✓';
+          statusEl.style.color = 'var(--sage)';
+          const rowActions = input.parentElement;
+          let openLink = rowActions.querySelector('a.zoom-link');
+          if (link) {
+            if (!openLink) {
+              openLink = document.createElement('a');
+              openLink.className = 'zoom-link';
+              openLink.target = '_blank';
+              openLink.rel = 'noopener';
+              openLink.style.alignSelf = 'center';
+              openLink.textContent = 'Linki Aç ↗';
+              rowActions.appendChild(openLink);
+            }
+            openLink.href = link;
+          } else if (openLink) {
+            openLink.remove();
+          }
+        }
+      });
+    });
   }
 
   // ---------- FIREWORKS (ödev teslim animasyonu) ----------

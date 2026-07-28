@@ -1027,7 +1027,7 @@
     if (!digits.startsWith('90')) digits = '90' + digits;
     const gun = trDayName(r.rezervasyon_tarih) || (r.rezervasyon_tarih || '');
     const saat = (r.rezervasyon_saat || '').slice(0,5);
-    const msg = `Sayın ${r.veli_ad_soyad || ''}, 👋 ${r.cocuk_ad || 'Çocuğunuz'} ile ${gun} günü saat ${saat}'de deneme dersimiz bulunmaktadır. 📅 Dersimiz online olarak gerçekleşecek, bağlantıyı ders saatinden önce tarafınıza ileteceğiz. 💻 Ders için kamera ve mikrofonu çalışan bir bilgisayar bulundurulmasını rica ederiz. 🎥🎙️ Herhangi bir sorunuz olursa bizimle iletişime geçebilirsiniz, görüşmek üzere! 😊\nAnthos Academy`;
+    const msg = `Sayın ${r.veli_ad_soyad || ''}, ${r.cocuk_ad || 'Çocuğunuz'} ile ${gun} günü saat ${saat}'de deneme dersimiz bulunmaktadır. Dersimiz online olarak gerçekleşecek, bağlantıyı ders saatinden önce tarafınıza ileteceğiz. Ders için kamera ve mikrofonu çalışan bir bilgisayar bulundurulmasını rica ederiz. Herhangi bir sorunuz olursa bizimle iletişime geçebilirsiniz, görüşmek üzere!\nAnthos Academy`;
     return `https://wa.me/${digits}?text=${encodeURIComponent(msg)}`;
   }
 
