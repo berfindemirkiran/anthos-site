@@ -116,7 +116,7 @@ src="https://www.facebook.com/tr?id=1638263877260464&ev=PageView&noscript=1"
   }
 
   .datetime-row{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:12px;}
-  .datetime-row input{min-width:0; width:100%;}
+  .datetime-row input, .datetime-row select{min-width:0; width:100%;}
   @media(max-width:420px){ .datetime-row{grid-template-columns:minmax(0,1fr);} }
 
   .form-hint{font-size:12px; color:var(--charcoal); opacity:0.6;}
@@ -294,7 +294,7 @@ src="https://www.facebook.com/tr?id=1638263877260464&ev=PageView&noscript=1"
           <label>Rezervasyon için uygun gün ve saat<span class="req">*</span></label>
           <div class="datetime-row">
             <input type="date" id="rezervTarih" name="rezervasyon_tarih" required aria-label="Tarih">
-            <input type="time" id="rezervSaat" name="rezervasyon_saat" required aria-label="Saat">
+            <select id="rezervSaat" name="rezervasyon_saat" required aria-label="Saat"><option value="" disabled selected>Saat seçin</option><option value="09:00">09:00</option><option value="09:30">09:30</option><option value="10:00">10:00</option><option value="10:30">10:30</option><option value="11:00">11:00</option><option value="11:30">11:30</option><option value="12:00">12:00</option><option value="12:30">12:30</option><option value="13:00">13:00</option><option value="13:30">13:30</option><option value="14:00">14:00</option><option value="14:30">14:30</option><option value="15:00">15:00</option><option value="15:30">15:30</option><option value="16:00">16:00</option><option value="16:30">16:30</option><option value="17:00">17:00</option><option value="17:30">17:30</option><option value="18:00">18:00</option><option value="18:30">18:30</option><option value="19:00">19:00</option><option value="19:30">19:30</option><option value="20:00">20:00</option><option value="20:30">20:30</option><option value="21:00">21:00</option><option value="21:30">21:30</option><option value="22:00">22:00</option></select>
           </div>
           <span class="form-hint">Belirttiğiniz tarih/saat kesin değildir, size en yakın uygun zamanı planlamak için kullanılır.</span>
         </div>
