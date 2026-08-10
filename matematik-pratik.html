@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anthos — Matematik Seviye Testi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream: #F7F1E3;
+    --cream-2: #F0E8D4;
+    --ink: #241BC3;
+    --ink-deep: #171050;
+    --charcoal: #1B1A2A;
+    --bloom: #E85C4A;
+    --bloom-soft: #F4B9AE;
+    --sage: #7C9D6F;
+    --sage-soft: #DCE6D3;
+    --gold: #C99A2E;
+    --gold-soft: #F3E3BE;
+    --line: rgba(23,16,80,0.12);
+    --radius: 22px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--cream);
+    color:var(--charcoal);
+    font-family:'Plus Jakarta Sans', sans-serif;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:32px 16px 60px;
+  }
+  h1,h2,h3{font-family:'Fraunces', serif; color:var(--ink-deep); font-weight:600; letter-spacing:-0.01em;}
+
+  .top{
+    width:100%; max-width:640px; display:flex; flex-direction:column; align-items:center;
+    text-align:center; margin-bottom:22px;
+  }
+  .top h1{font-size:clamp(24px,4vw,32px); margin-bottom:8px;}
+  .top p{font-size:15.5px; color:var(--charcoal); opacity:0.78; max-width:460px;}
+  .badge{
+    display:inline-block; background:var(--gold-soft); color:#7a5c14; font-family:'JetBrains Mono', monospace;
+    font-size:11.5px; font-weight:600; letter-spacing:0.04em; text-transform:uppercase;
+    padding:6px 14px; border-radius:100px; margin-bottom:14px;
+  }
+
+  .stage{
+    width:100%; max-width:640px;
+    background:#fff; border-radius:24px; padding:32px 28px;
+    box-shadow:0 20px 46px rgba(23,16,80,0.14);
+  }
+  .hidden{display:none !important;}
+
+  /* --- Grade picker --- */
+  .kademe-group{margin-bottom:22px;}
+  .kademe-group:last-child{margin-bottom:0;}
+  .kademe-title{
+    font-family:'JetBrains Mono', monospace; font-size:12px; font-weight:600;
+    color:var(--ink); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:10px;
+  }
+  .grade-grid{display:flex; flex-wrap:wrap; gap:9px;}
+  .grade-btn{
+    border:1.5px solid var(--line); background:var(--cream); color:var(--ink-deep);
+    font-family:'Plus Jakarta Sans', sans-serif; font-weight:600; font-size:14px;
+    padding:12px 16px; border-radius:14px; cursor:pointer; transition:all 0.15s ease;
+  }
+  .grade-btn:hover{border-color:var(--ink); transform:translateY(-1px);}
+
+  /* --- Quiz --- */
+  .quiz-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:18px;}
+  .quiz-level{font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--ink); font-weight:600;}
+  .quiz-progress-text{font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--charcoal); opacity:0.6;}
+  .progress-track{width:100%; height:6px; background:var(--cream-2); border-radius:100px; overflow:hidden; margin-bottom:26px;}
+  .progress-fill{height:100%; background:var(--bloom); border-radius:100px; transition:width 0.3s ease; width:0%;}
+
+  .question-text{font-size:19px; font-weight:600; color:var(--ink-deep); margin-bottom:20px; line-height:1.4;}
+  .options{display:flex; flex-direction:column; gap:10px;}
+  .option-btn{
+    text-align:left; border:1.5px solid var(--line); background:var(--cream);
+    color:var(--charcoal); font-family:'Plus Jakarta Sans', sans-serif; font-size:15px; font-weight:500;
+    padding:14px 16px; border-radius:14px; cursor:pointer; transition:all 0.15s ease;
+  }
+  .option-btn:hover:not(:disabled){border-color:var(--ink); transform:translateY(-1px);}
+  .option-btn:disabled{cursor:default;}
+  .option-btn.correct{background:var(--sage-soft); border-color:var(--sage); color:#2f4a26;}
+  .option-btn.wrong{background:var(--bloom-soft); border-color:var(--bloom); color:#7a2a1f;}
+
+  .feedback{
+    margin-top:16px; padding:12px 14px; border-radius:14px; font-size:14px; font-weight:500;
+    display:none;
+  }
+  .feedback.show{display:block;}
+  .feedback.ok{background:var(--sage-soft); color:#2f4a26;}
+  .feedback.no{background:var(--bloom-soft); color:#7a2a1f;}
+
+  .next-btn{
+    margin-top:20px; width:100%; padding:14px 20px; border:none; border-radius:100px;
+    background:var(--ink); color:#fff; font-family:'Plus Jakarta Sans', sans-serif;
+    font-weight:700; font-size:15px; cursor:pointer; display:none;
+  }
+  .next-btn.show{display:block;}
+
+  /* --- Result --- */
+  .result-score{
+    text-align:center; margin-bottom:22px;
+  }
+  .result-score .big{font-family:'Fraunces', serif; font-size:44px; color:var(--ink-deep); font-weight:700;}
+  .result-score .label{font-family:'JetBrains Mono', monospace; font-size:12.5px; color:var(--charcoal); opacity:0.65; text-transform:uppercase; letter-spacing:0.04em;}
+
+  .reveal-box{
+    background:var(--gold-soft); border-radius:18px; padding:20px 20px; margin-bottom:18px;
+  }
+  .reveal-box .tag{font-family:'JetBrains Mono', monospace; font-size:11.5px; font-weight:700; color:#7a5c14; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px; display:block;}
+  .reveal-box p{font-size:14.5px; line-height:1.55; color:#4a3a10;}
+
+  .parent-box{
+    background:var(--ink-deep); border-radius:18px; padding:22px 20px; margin-bottom:24px;
+  }
+  .parent-box .tag{font-family:'JetBrains Mono', monospace; font-size:11.5px; font-weight:700; color:var(--bloom-soft); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:10px; display:block;}
+  .parent-box p{font-size:15px; line-height:1.6; color:#fff; font-style:italic;}
+
+  .cta-btn{
+    display:block; width:100%; text-align:center; padding:16px 20px; border:none; border-radius:100px;
+    background:var(--bloom); color:#fff; text-decoration:none; font-family:'Plus Jakarta Sans', sans-serif;
+    font-weight:700; font-size:16px; cursor:pointer; box-shadow:0 10px 24px rgba(232,92,74,0.35);
+    transition:transform 0.15s ease; margin-bottom:12px;
+  }
+  .cta-btn:hover{transform:translateY(-1px);}
+  .retry-link{
+    display:block; text-align:center; font-size:13px; color:var(--ink-deep); opacity:0.65;
+    text-decoration:none; font-family:'JetBrains Mono', monospace; cursor:pointer;
+  }
+  .retry-link:hover{opacity:1; text-decoration:underline;}
+
+  .back-link{
+    margin-top:28px; font-size:13px; color:var(--ink-deep); opacity:0.7;
+    text-decoration:none; font-family:'JetBrains Mono', monospace;
+  }
+  .back-link:hover{opacity:1; text-decoration:underline;}
+
+  @media(max-width:600px){
+    .stage{padding:24px 18px;}
+    .grade-btn{padding:11px 14px; font-size:13.5px;}
+  }
+</style>
+</head>
+<body>
+
+  <div class="top">
+    <span class="badge">Ücretsiz Seviye Testi</span>
+    <h1>Matematik Seviyeni Ölç</h1>
+    <p>3 soruluk kısa bir pratikle nerede olduğunu gör. Anaokulundan 12. sınıfa (YKS) kadar her seviye için hazır.</p>
+  </div>
+
+  <div class="stage">
+
+    <!-- STEP 1: Grade picker -->
+    <div id="step-grade">
+      <div class="kademe-group">
+        <div class="kademe-title">Okul Öncesi</div>
+        <div class="grade-grid">
+          <button class="grade-btn" data-level="anaokulu">Anaokulu (4–6 yaş)</button>
+        </div>
+      </div>
+      <div class="kademe-group">
+        <div class="kademe-title">İlkokul</div>
+        <div class="grade-grid">
+          <button class="grade-btn" data-level="ilkokul1">1. Sınıf</button>
+          <button class="grade-btn" data-level="ilkokul2">2. Sınıf</button>
+          <button class="grade-btn" data-level="ilkokul3">3. Sınıf</button>
+          <button class="grade-btn" data-level="ilkokul4">4. Sınıf</button>
+        </div>
+      </div>
+      <div class="kademe-group">
+        <div class="kademe-title">Ortaokul</div>
+        <div class="grade-grid">
+          <button class="grade-btn" data-level="ortaokul5">5. Sınıf</button>
+          <button class="grade-btn" data-level="ortaokul6">6. Sınıf</button>
+          <button class="grade-btn" data-level="ortaokul7">7. Sınıf</button>
+          <button class="grade-btn" data-level="ortaokul8">8. Sınıf (LGS)</button>
+        </div>
+      </div>
+      <div class="kademe-group">
+        <div class="kademe-title">Lise</div>
+        <div class="grade-grid">
+          <button class="grade-btn" data-level="lise9">9. Sınıf</button>
+          <button class="grade-btn" data-level="lise10">10. Sınıf</button>
+          <button class="grade-btn" data-level="lise11">11. Sınıf</button>
+          <button class="grade-btn" data-level="lise12">12. Sınıf (YKS)</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2: Quiz -->
+    <div id="step-quiz" class="hidden">
+      <div class="quiz-head">
+        <span class="quiz-level" id="quiz-level-label"></span>
+        <span class="quiz-progress-text" id="quiz-progress-text"></span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+      <div class="question-text" id="question-text"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="next-btn" id="next-btn">Devam Et →</button>
+    </div>
+
+    <!-- STEP 3: Result -->
+    <div id="step-result" class="hidden">
+      <div class="result-score">
+        <div class="big" id="score-big"></div>
+        <div class="label" id="score-label"></div>
+      </div>
+      <div class="reveal-box">
+        <span class="tag">Bonus — Vay Be Anı</span>
+        <p id="reveal-text"></p>
+      </div>
+      <div class="parent-box">
+        <span class="tag">Anthos Notu</span>
+        <p id="parent-text"></p>
+      </div>
+      <a class="cta-btn" href="deneme-formu.html" id="cta-btn">Ücretsiz Deneme Dersine Katıl</a>
+      <span class="retry-link" id="retry-btn">Başka bir seviyeyi dene</span>
+    </div>
+
+  </div>
+
+  <a class="back-link" href="index.html">← Anthos Academy'ye dön</a>
+
+<script>
+const LEVELS = {
+  anaokulu: {
+    label: "Anaokulu (4–6 yaş)",
+    questions: [
+      { q: "🍎🍎🍎🍎🍎 mi yoksa 🍎🍎🍎 mi daha çok?", options: ["5 elma","3 elma","İkisi eşit","Bilmiyorum"], correct: 0 },
+      { q: "2 elman var, 1 tane daha aldın. Kaç elman oldu?", options: ["3","2","4","1"], correct: 0 },
+      { q: "1'den 10'a kadar sayarken 7'den sonra hangisi gelir?", options: ["8","6","9","10"], correct: 0 }
+    ],
+    reveal: "Küçük yaşta sayıları parmakla değil gözle 'görerek' tanımak (5'i tek tek saymadan tanımak gibi) ileride hızlı işlem yapmanın temelini atıyor.",
+    parent: "Bugün [çocuğunuz] ile sayı-nicelik ilişkisini çalıştık. Bu yaşta kurulan sağlam sayı algısı, ilkokulda işlem hızını ve ortaokulda LGS'ye giden yolda kavramsal anlamayı doğrudan besliyor. Düzenli çalışmayla bu farkı birkaç ay içinde net görebilirsiniz."
+  },
+  ilkokul1: {
+    label: "1. Sınıf",
+    questions: [
+      { q: "7 + 5 = ?", options: ["12","11","13","10"], correct: 0 },
+      { q: "14 − 6 = ?", options: ["8","7","9","6"], correct: 0 },
+      { q: "23'ten sonra gelen sayı hangisidir?", options: ["24","22","25","20"], correct: 0 }
+    ],
+    reveal: "Onluk geçişli toplama-çıkarmada parmak saymak yerine '10'a tamamlama' tekniğini gösterdik — işlemi 3-4 kat hızlandırıyor.",
+    parent: "Bugün [çocuğunuz] ile toplama-çıkarma üzerinde çalıştık. Onluk bozup-kurma mantığını erken kavramak, ileriki sınıflarda büyük sayılarla işlemi ve LGS'de zamana karşı hız kazanmayı doğrudan etkiliyor. Bizimle düzenli çalışırsa bu farkı birkaç ay içinde görebilirsiniz."
+  },
+  ilkokul2: {
+    label: "2. Sınıf",
+    questions: [
+      { q: "48 + 27 = ?", options: ["75","65","74","85"], correct: 0 },
+      { q: "63 − 29 = ?", options: ["34","44","36","24"], correct: 0 },
+      { q: "4 sırada 5'er top var, toplam kaç top eder?", options: ["20","9","15","25"], correct: 0 }
+    ],
+    reveal: "Toplamayı basamak basamak değil, sayıyı 'yuvarlayıp geri düzeltme' yöntemiyle zihinden yapmayı gösterdik (48+27 = 50+27−2 gibi).",
+    parent: "Bugün [çocuğunuz] ile eldeli işlemler ve gruplama mantığını (çarpmanın temeli) çalıştık. Bu temel sağlam kurulursa 3. ve 4. sınıfta çarpım tablosuna geçiş çok daha kolay oluyor, bu da LGS'ye giden yolda zaman kazandırıyor."
+  },
+  ilkokul3: {
+    label: "3. Sınıf",
+    questions: [
+      { q: "7 × 6 = ?", options: ["42","36","48","40"], correct: 0 },
+      { q: "36 ÷ 4 = ?", options: ["9","8","6","12"], correct: 0 },
+      { q: "8 dilime bölünmüş bir pastanın yarısı kaç dilimdir?", options: ["4","2","8","3"], correct: 0 }
+    ],
+    reveal: "7×6 gibi 'zor' çarpımları 7×5+7 şeklinde parçalayarak hatırlamayı gösterdik — çarpım tablosunu ezber değil mantıkla öğretiyoruz.",
+    parent: "Bugün [çocuğunuz] ile çarpım tablosu ve bölme kavramını çalıştık. Çarpım tablosunda sağlam bir temel, kesirlere ve orantıya geçişte (5.-6. sınıf) ve nihayetinde LGS matematik sorularında büyük fark yaratıyor."
+  },
+  ilkokul4: {
+    label: "4. Sınıf",
+    questions: [
+      { q: "1258 + 976 = ?", options: ["2234","2224","2134","2244"], correct: 0 },
+      { q: "3/8 + 2/8 = ?", options: ["5/8","1/8","6/8","5/16"], correct: 0 },
+      { q: "0,4 ondalık kesri hangi kesire eşittir?", options: ["4/10","4/100","40/10","1/4"], correct: 0 }
+    ],
+    reveal: "Aynı paydalı kesirleri pasta dilimi gibi görselleştirerek göstermek, kesir korkusunu daha ilk günden ortadan kaldırıyor.",
+    parent: "Bugün [çocuğunuz] ile kesir ve ondalık sayı ilişkisini çalıştık. Bu konu 5. ve 6. sınıfın (dolayısıyla LGS'nin) en çok soru gelen konularından biri — burada atılan sağlam temel ileride ciddi zaman kazandırıyor."
+  },
+  ortaokul5: {
+    label: "5. Sınıf",
+    questions: [
+      { q: "2/3 × 3/4 = ?", options: ["1/2","5/12","3/4","2/3"], correct: 0 },
+      { q: "Bir sayının %25'i 80 ise, sayı kaçtır?", options: ["320","300","200","100"], correct: 0 },
+      { q: "(−5) + 8 = ?", options: ["3","−3","13","−13"], correct: 0 }
+    ],
+    reveal: "Yüzde problemlerini '%25 = çeyrek' gibi günlük hayat karşılıklarıyla çözmeyi gösterdik — ezbersiz, kalıcı bir yöntem.",
+    parent: "Bugün [çocuğunuz] ile kesirli işlemler ve yüzde-oran kavramını çalıştık. Bu konular LGS matematik sorularının önemli bir kısmını oluşturuyor; burada güçlenmek 8. sınıfa çok daha rahat girmesini sağlıyor."
+  },
+  ortaokul6: {
+    label: "6. Sınıf",
+    questions: [
+      { q: "(−6) × (−3) = ?", options: ["18","−18","9","−9"], correct: 0 },
+      { q: "3a + 2 ifadesinde a = 4 ise sonuç kaçtır?", options: ["14","12","9","20"], correct: 0 },
+      { q: "4 kalem 12 TL ise 7 kalem kaç TL'dir?", options: ["21","28","24","18"], correct: 0 }
+    ],
+    reveal: "Negatif sayı çarpımını 'iki olumsuzun bir olumluyu getirmesi' hikayesiyle anlattık — çocuklar bu kuralı bir daha unutmuyor.",
+    parent: "Bugün [çocuğunuz] ile tam sayılarla işlemler ve cebire giriş yaptık. Cebirsel ifadeleri erken ve doğru kavramak, 7.-8. sınıfta denklemlere ve LGS'nin en kritik konularından birine sağlam bir zemin hazırlıyor."
+  },
+  ortaokul7: {
+    label: "7. Sınıf",
+    questions: [
+      { q: "−3/4 + 1/2 = ?", options: ["−1/4","1/4","−5/4","1/2"], correct: 0 },
+      { q: "(x + 3)² ifadesinin açılımı nedir?", options: ["x² + 6x + 9","x² + 9","x² + 3x + 9","x² + 6x + 6"], correct: 0 },
+      { q: "Bir ürün %20 indirimle 240 TL oluyorsa, orijinal fiyatı kaçtır?", options: ["300","288","260","320"], correct: 0 }
+    ],
+    reveal: "Özdeşlikleri ezberletmeden, alan modeliyle (kare çizerek) görsel olarak ispatlamayı gösterdik — LGS'de en çok şaşırtan konulardan biri.",
+    parent: "Bugün [çocuğunuz] ile rasyonel sayılar ve cebirsel özdeşlikleri çalıştık. Bu, LGS yılı olan 8. sınıfa girmeden önce sağlamlaştırılması gereken en kritik konu başlıklarından biri."
+  },
+  ortaokul8: {
+    label: "8. Sınıf (LGS Yılı)",
+    questions: [
+      { q: "2³ × 2⁴ = ?", options: ["2⁷ = 128","2¹²","4⁷","2⁶ = 64"], correct: 0 },
+      { q: "√48 sayısının en sade hâli nedir?", options: ["4√3","2√12","6√2","√48"], correct: 0 },
+      { q: "24 ve 36'nın EBOB'u kaçtır?", options: ["12","6","24","4"], correct: 0 }
+    ],
+    reveal: "Üslü sayılarda taban aynıysa üslerin toplandığını, kareköklü sayılarda ise 'içindeki tam kare çarpanı dışarı çıkarma' tekniğini gösterdik — LGS'de doğrudan puan getiren bir kısayol.",
+    parent: "Bugün [çocuğunuz] ile LGS'nin en yoğun sorulduğu konulardan üslü/köklü sayılar ve EBOB-EKOK'u çalıştık. Sınava kalan süre içinde bu tür konularda düzenli, hedefli tekrar; net artışını doğrudan etkiliyor."
+  },
+  lise9: {
+    label: "9. Sınıf",
+    questions: [
+      { q: "A={1,2,3,4}, B={3,4,5,6} ise A∩B kümesi nedir?", options: ["{3,4}","{1,2,5,6}","{1,2,3,4,5,6}","{ }"], correct: 0 },
+      { q: "2x + 3 ≤ 11 eşitsizliğinin çözümü nedir?", options: ["x ≤ 4","x ≥ 4","x ≤ 7","x ≤ 8"], correct: 0 },
+      { q: "Bir üçgenin iki açısı 50° ve 60°'dir. Üçüncü açı kaç derecedir?", options: ["70","60","80","90"], correct: 0 }
+    ],
+    reveal: "Kümelerde kesişim-birleşimi Venn şemasıyla gözle görünür hale getirdik — TYT'de saniyeler içinde çözülen bir soru tipine dönüşüyor.",
+    parent: "Bugün [çocuğunuz] ile kümeler ve temel eşitsizlikleri çalıştık. Lise matematiğinin temel dili olan bu konular, YKS'ye giden 4 yıllık sürecin ilk sağlam adımı."
+  },
+  lise10: {
+    label: "10. Sınıf",
+    questions: [
+      { q: "x² − 5x + 6 = 0 denkleminin köklerinden biri hangisidir?", options: ["2 ve 3","1 ve 6","−2 ve −3","2 ve −3"], correct: 0 },
+      { q: "P(x) = 2x² + 3x − 1 ise P(2) kaçtır?", options: ["13","9","15","11"], correct: 0 },
+      { q: "sin 30° kaçtır?", options: ["1/2","√3/2","1","√2/2"], correct: 0 }
+    ],
+    reveal: "İkinci dereceden denklemleri çarpanlara ayırırken 'toplamı-çarpımı' kısayolunu gösterdik — formülsüz, saniyeler içinde kök bulma.",
+    parent: "Bugün [çocuğunuz] ile ikinci dereceden denklemler ve trigonometriye giriş yaptık. Bu iki konu YKS'nin (özellikle AYT matematik) en çok soru gelen başlıkları arasında."
+  },
+  lise11: {
+    label: "11. Sınıf",
+    questions: [
+      { q: "log₂8 kaçtır?", options: ["3","4","2","8"], correct: 0 },
+      { q: "Bir aritmetik dizide a₁=3, ortak fark d=4 ise a₅ kaçtır?", options: ["19","15","23","16"], correct: 0 },
+      { q: "5 kişiden 2 kişilik bir komite kaç farklı şekilde seçilebilir?", options: ["10","20","5","25"], correct: 0 }
+    ],
+    reveal: "Logaritmayı 'kaçıncı kuvvet' sorusu olarak yeniden çerçeveledik — ezbersiz, sezgisel bir bakış açısı kazandırıyor.",
+    parent: "Bugün [çocuğunuz] ile logaritma, diziler ve olasılığın temellerini çalıştık. Bunlar AYT matematikte en yüksek ağırlıklı konulardan; 12. sınıfa güçlü girmek için kritik."
+  },
+  lise12: {
+    label: "12. Sınıf (YKS Yılı)",
+    questions: [
+      { q: "f(x) = 3x² − 2x + 1 fonksiyonunun türevi nedir?", options: ["6x − 2","3x − 2","6x² − 2","6x + 1"], correct: 0 },
+      { q: "∫(2x + 3) dx = ?", options: ["x² + 3x + C","2x² + 3x + C","x² + 3 + C","x² + 3x"], correct: 0 },
+      { q: "A(2,3) ve B(6,7) noktaları arasındaki uzaklık kaçtır?", options: ["4√2","4","8","2√2"], correct: 0 }
+    ],
+    reveal: "Türev almayı 'üssü öne çarp, üssü bir azalt' kısayoluyla saniyelik işleme indirdik — sınavda zaman kazandıran en temel teknik.",
+    parent: "Bugün [çocuğunuz] ile türev-integral ve analitik geometriyi çalıştık. Bu, YKS'ye giden son yılın en yüksek net getirisi olan konu başlıkları. Sınava kalan süreyi doğru hedeflerle kullanmak fark yaratıyor."
+  }
+};
+
+let currentLevel = null;
+let currentIndex = 0;
+let score = 0;
+
+const stepGrade = document.getElementById('step-grade');
+const stepQuiz = document.getElementById('step-quiz');
+const stepResult = document.getElementById('step-result');
+
+document.querySelectorAll('.grade-btn').forEach(btn => {
+  btn.addEventListener('click', () => startQuiz(btn.dataset.level));
+});
+
+function startQuiz(levelKey){
+  currentLevel = LEVELS[levelKey];
+  currentIndex = 0;
+  score = 0;
+  stepGrade.classList.add('hidden');
+  stepResult.classList.add('hidden');
+  stepQuiz.classList.remove('hidden');
+  document.getElementById('quiz-level-label').textContent = currentLevel.label;
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const total = currentLevel.questions.length;
+  const q = currentLevel.questions[currentIndex];
+  document.getElementById('quiz-progress-text').textContent = (currentIndex+1) + " / " + total;
+  document.getElementById('progress-fill').style.width = Math.round(((currentIndex)/total)*100) + "%";
+  document.getElementById('question-text').textContent = q.q;
+  const optionsEl = document.getElementById('options');
+  optionsEl.innerHTML = "";
+  const feedback = document.getElementById('feedback');
+  feedback.className = 'feedback';
+  feedback.textContent = '';
+  document.getElementById('next-btn').classList.remove('show');
+
+  q.options.forEach((opt, i) => {
+    const b = document.createElement('button');
+    b.className = 'option-btn';
+    b.textContent = opt;
+    b.addEventListener('click', () => selectAnswer(i));
+    optionsEl.appendChild(b);
+  });
+}
+
+function selectAnswer(i){
+  const q = currentLevel.questions[currentIndex];
+  const buttons = document.querySelectorAll('.option-btn');
+  buttons.forEach(b => b.disabled = true);
+  const feedback = document.getElementById('feedback');
+
+  if(i === q.correct){
+    buttons[i].classList.add('correct');
+    feedback.classList.add('show','ok');
+    feedback.textContent = "Doğru! 🎉";
+    score++;
+  } else {
+    buttons[i].classList.add('wrong');
+    buttons[q.correct].classList.add('correct');
+    feedback.classList.add('show','no');
+    feedback.textContent = "Doğru cevap: " + q.options[q.correct];
+  }
+  document.getElementById('progress-fill').style.width = Math.round(((currentIndex+1)/currentLevel.questions.length)*100) + "%";
+  document.getElementById('next-btn').classList.add('show');
+}
+
+document.getElementById('next-btn').addEventListener('click', () => {
+  currentIndex++;
+  if(currentIndex < currentLevel.questions.length){
+    renderQuestion();
+  } else {
+    showResult();
+  }
+});
+
+function showResult(){
+  stepQuiz.classList.add('hidden');
+  stepResult.classList.remove('hidden');
+  const total = currentLevel.questions.length;
+  document.getElementById('score-big').textContent = score + "/" + total;
+  document.getElementById('score-label').textContent = currentLevel.label + " Sonucu";
+  document.getElementById('reveal-text').textContent = currentLevel.reveal;
+  document.getElementById('parent-text').textContent = currentLevel.parent;
+}
+
+document.getElementById('retry-btn').addEventListener('click', () => {
+  stepResult.classList.add('hidden');
+  stepGrade.classList.remove('hidden');
+});
+</script>
+
+</body>
+</html>
