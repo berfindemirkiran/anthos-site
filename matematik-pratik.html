@@ -23,17 +23,15 @@
 
   #gameRoot{position:fixed; inset:0; overflow:hidden;}
 
-  /* ---------- Scenes ---------- */
-  .scene{
-    position:absolute; inset:0; display:flex; align-items:flex-end; justify-content:center;
-    opacity:0; pointer-events:none; transition:opacity 0.35s ease; overflow:hidden;
-  }
+  .scene{position:absolute; inset:0; display:flex; align-items:flex-end; justify-content:center; opacity:0; pointer-events:none; transition:opacity 0.35s ease; overflow:hidden;}
   .scene.active{opacity:1; pointer-events:auto;}
 
   .scene-bg-welcome{background:linear-gradient(180deg,#FCF3DC 0%, #F7F1E3 55%, #EFE3C4 100%);}
   .scene-bg-library{background:linear-gradient(180deg,#F1DCC2 0%, #E7C7A3 55%, #D8B287 100%);}
   .scene-bg-vault{background:linear-gradient(180deg,#241BC3 0%, #171050 55%, #14102f 100%);}
   .scene-bg-plaza{background:linear-gradient(180deg,#F7F1E3 0%, #E4EBDB 55%, #C9D9BE 100%);}
+  .scene-bg-arena{background:linear-gradient(180deg,#FCE0D2 0%, #F6B69C 55%, #E2775E 100%);}
+  .scene-bg-garden{background:linear-gradient(180deg,#F3E3BE 0%, #E7EAD3 55%, #C9D9BE 100%);}
   .scene-bg-result{background:linear-gradient(180deg,#F8E9C4 0%, #F7F1E3 50%, #F6C7BA 100%);}
 
   .scene-deco{position:absolute; inset:0; pointer-events:none; z-index:0;}
@@ -42,13 +40,9 @@
   .deco-star{position:absolute; width:5px; height:5px; background:var(--gold-soft); border-radius:50%; box-shadow:0 0 6px 1px rgba(243,227,190,0.7);}
   .deco-ground{position:absolute; bottom:-60px; left:50%; transform:translateX(-50%); width:140%; height:160px; border-radius:50%; background:var(--sage-soft); opacity:0.6;}
   .deco-dot{position:absolute; width:8px; height:8px; border-radius:50%;}
+  .deco-ray{position:absolute; top:50%; left:50%; width:2px; height:160%; background:rgba(255,255,255,0.25); transform-origin:top center;}
 
-  /* ---------- Top chrome: home + arrows ---------- */
-  .home-btn, .nav-arrow{
-    position:fixed; z-index:30; width:46px; height:46px; border-radius:50%; border:none;
-    background:rgba(255,255,255,0.85); backdrop-filter:blur(4px); box-shadow:0 8px 20px rgba(23,16,80,0.18);
-    display:flex; align-items:center; justify-content:center; cursor:pointer; transition:transform 0.15s ease;
-  }
+  .home-btn, .nav-arrow{position:fixed; z-index:30; width:46px; height:46px; border-radius:50%; border:none; background:rgba(255,255,255,0.85); backdrop-filter:blur(4px); box-shadow:0 8px 20px rgba(23,16,80,0.18); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:transform 0.15s ease;}
   .home-btn:hover, .nav-arrow:hover:not(:disabled){transform:scale(1.08);}
   .nav-arrow:disabled{opacity:0.25; cursor:default;}
   .home-btn{top:18px; left:18px;}
@@ -56,71 +50,40 @@
   .nav-arrow.right{top:50%; right:14px; transform:translateY(-50%);}
   .nav-arrow svg, .home-btn svg{width:20px; height:20px;}
 
-  /* ---------- Scene inner layout ---------- */
-  .scene-inner{
-    position:relative; z-index:2; width:100%; max-width:1080px; display:flex; align-items:flex-end;
-    justify-content:center; gap:18px; padding:70px 70px 26px; flex-wrap:wrap;
-  }
+  .scene-inner{position:relative; z-index:2; width:100%; max-width:1080px; display:flex; align-items:flex-end; justify-content:center; gap:18px; padding:70px 70px 26px; flex-wrap:wrap;}
   .mascot-wrap{flex:0 0 auto; display:flex; flex-direction:column; align-items:center; position:relative;}
-  .mascot-wrap.pair{flex-direction:row; align-items:flex-end; gap:6px;}
-  .mascot{width:120px; height:auto; filter:drop-shadow(0 14px 14px rgba(23,16,80,0.18));}
-  .mascot.small{width:92px;}
+  .mascot{width:120px; height:auto; filter:drop-shadow(0 14px 14px rgba(23,16,80,0.18)); animation:bob 3.2s ease-in-out infinite;}
+  .mascot.small{width:88px;}
 
-  .panel{
-    flex:1 1 420px; max-width:560px; background:rgba(255,255,255,0.95); backdrop-filter:blur(6px);
-    border-radius:26px; padding:28px 26px; box-shadow:0 30px 60px rgba(23,16,80,0.28);
-    max-height:76vh; overflow-y:auto;
-  }
+  .panel{flex:1 1 420px; max-width:560px; background:rgba(255,255,255,0.96); backdrop-filter:blur(6px); border-radius:26px; padding:24px 24px; box-shadow:0 30px 60px rgba(23,16,80,0.28); max-height:80vh; overflow-y:auto;}
 
-  .bubble{
-    position:relative; background:#fff; border-radius:18px; padding:14px 18px; font-size:15px;
-    line-height:1.5; color:var(--ink-deep); font-weight:600; box-shadow:0 14px 30px rgba(23,16,80,0.16);
-    margin-bottom:10px; max-width:340px;
-  }
-  .bubble:after{
-    content:""; position:absolute; left:26px; bottom:-8px; width:16px; height:16px; background:#fff;
-    clip-path:polygon(0 0, 100% 0, 0 100%);
-  }
+  .bubble{position:relative; background:#fff; border-radius:18px; padding:14px 18px; font-size:15px; line-height:1.5; color:var(--ink-deep); font-weight:600; box-shadow:0 14px 30px rgba(23,16,80,0.16); margin-bottom:10px; max-width:340px;}
+  .bubble:after{content:""; position:absolute; left:26px; bottom:-8px; width:16px; height:16px; background:#fff; clip-path:polygon(0 0, 100% 0, 0 100%);}
 
-  .badge{
-    display:inline-block; background:var(--gold-soft); color:#7a5c14; font-family:'JetBrains Mono', monospace;
-    font-size:11px; font-weight:700; letter-spacing:0.04em; text-transform:uppercase;
-    padding:5px 13px; border-radius:100px; margin-bottom:10px;
-  }
-  .panel h1{font-size:clamp(20px,3vw,26px); margin-bottom:6px;}
-  .panel p.sub{font-size:14px; opacity:0.75; margin-bottom:16px; line-height:1.5;}
+  .badge{display:inline-block; background:var(--gold-soft); color:#7a5c14; font-family:'JetBrains Mono', monospace; font-size:11px; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; padding:5px 13px; border-radius:100px; margin-bottom:10px;}
 
   .hidden{display:none !important;}
 
-  /* ---------- Grade picker ---------- */
   .kademe-group{margin-bottom:16px;}
   .kademe-group:last-child{margin-bottom:0;}
   .kademe-title{font-family:'JetBrains Mono', monospace; font-size:11px; font-weight:700; color:var(--ink); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px;}
   .grade-grid{display:flex; flex-wrap:wrap; gap:8px;}
-  .grade-btn{
-    border:1.5px solid var(--line); background:var(--cream); color:var(--ink-deep);
-    font-family:'Plus Jakarta Sans', sans-serif; font-weight:700; font-size:13.5px;
-    padding:10px 14px; border-radius:12px; cursor:pointer; transition:all 0.15s ease;
-  }
+  .grade-btn{border:1.5px solid var(--line); background:var(--cream); color:var(--ink-deep); font-family:'Plus Jakarta Sans', sans-serif; font-weight:700; font-size:13.5px; padding:10px 14px; border-radius:12px; cursor:pointer; transition:all 0.15s ease;}
   .grade-btn:hover{border-color:var(--ink); background:#fff; transform:translateY(-2px);}
 
-  .start-btn, .cta-btn, .next-btn, .check-btn{
-    display:block; width:100%; text-align:center; padding:14px 20px; border:none; border-radius:100px;
-    background:var(--ink); color:#fff; text-decoration:none; font-family:'Plus Jakarta Sans', sans-serif;
-    font-weight:700; font-size:15px; cursor:pointer; transition:transform 0.15s ease; box-shadow:0 10px 22px rgba(36,27,195,0.3);
-    margin-top:6px;
-  }
+  .start-btn, .cta-btn, .next-btn, .check-btn{display:block; width:100%; text-align:center; padding:14px 20px; border:none; border-radius:100px; background:var(--ink); color:#fff; text-decoration:none; font-family:'Plus Jakarta Sans', sans-serif; font-weight:700; font-size:15px; cursor:pointer; transition:transform 0.15s ease; box-shadow:0 10px 22px rgba(36,27,195,0.3); margin-top:6px;}
   .start-btn:hover, .next-btn:hover, .check-btn:hover{transform:translateY(-2px);}
   .cta-btn{background:var(--bloom); box-shadow:0 10px 24px rgba(232,92,74,0.35); margin-bottom:8px;}
 
   .level-pill{display:inline-block; background:var(--ink-deep); color:#fff; font-family:'JetBrains Mono', monospace; font-size:11.5px; font-weight:700; padding:5px 14px; border-radius:100px; margin-bottom:8px;}
 
-  /* ---------- Challenge ---------- */
-  .stars-row{display:flex; justify-content:center; gap:8px; margin-bottom:14px;}
-  .star{width:22px; height:22px; opacity:0.25; transition:all 0.25s ease;}
-  .star.filled{opacity:1; transform:scale(1.15);}
-  .challenge-tag{display:inline-flex; align-items:center; gap:6px; font-family:'JetBrains Mono', monospace; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--ink); margin-bottom:10px;}
-  .challenge-title{font-size:17px; font-weight:700; color:var(--ink-deep); margin-bottom:18px; text-align:center; line-height:1.4;}
+  .progress-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;}
+  .progress-text{font-family:'JetBrains Mono', monospace; font-size:11px; color:var(--charcoal); opacity:0.6; font-weight:700;}
+  .progress-track{width:100%; height:6px; background:var(--cream-2); border-radius:100px; overflow:hidden; margin-bottom:14px;}
+  .progress-fill{height:100%; background:var(--bloom); border-radius:100px; transition:width 0.3s ease;}
+
+  .challenge-tag{display:inline-flex; align-items:center; gap:6px; font-family:'JetBrains Mono', monospace; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--ink); margin-bottom:6px;}
+  .challenge-title{font-size:17px; font-weight:700; color:var(--ink-deep); margin-bottom:16px; text-align:center; line-height:1.4;}
 
   .digit-boxes{display:flex; gap:7px; justify-content:center; margin-bottom:16px; flex-wrap:wrap;}
   .digit-box{width:42px; height:52px; border:2px solid var(--line); border-radius:11px; background:var(--cream); text-align:center; font-size:22px; font-weight:800; color:var(--ink-deep); font-family:'JetBrains Mono', monospace;}
@@ -143,8 +106,32 @@
   .opt-pill{min-width:60px; padding:12px 18px; border-radius:100px; border:2px solid var(--line); background:var(--cream); color:var(--ink-deep); font-family:'Plus Jakarta Sans', sans-serif; font-weight:700; font-size:14px; cursor:pointer; transition:all 0.15s ease;}
   .opt-pill:hover:not(:disabled){border-color:var(--ink); transform:translateY(-2px);}
   .opt-pill:disabled{cursor:default;}
-  .opt-pill.correct{background:var(--sage-soft); border-color:var(--sage); color:#2f4a26;}
+  .opt-pill.correct{background:var(--sage-soft); border-color:var(--sage); color:#2f4a26; animation:pop 0.3s ease;}
   .opt-pill.wrong{background:var(--bloom-soft); border-color:var(--bloom); color:#7a2a1f; animation:shake 0.4s;}
+
+  /* hiz testi (speed pick) */
+  .timer-track{width:100%; height:8px; background:var(--cream-2); border-radius:100px; overflow:hidden; margin-bottom:16px;}
+  .timer-fill{height:100%; width:100%; background:linear-gradient(90deg,var(--bloom),var(--gold)); border-radius:100px;}
+  .timer-fill.running{animation:shrink 8s linear forwards;}
+  @keyframes shrink{from{width:100%;} to{width:0%;}}
+  .bubble-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:8px;}
+  .bubble-opt{padding:16px 10px; border-radius:18px; border:2px solid var(--line); background:var(--cream); color:var(--ink-deep); font-family:'Plus Jakarta Sans', sans-serif; font-weight:800; font-size:15px; cursor:pointer; animation:floaty 2.2s ease-in-out infinite;}
+  .bubble-opt:hover:not(:disabled){border-color:var(--bloom); transform:scale(1.04);}
+  .bubble-opt:disabled{cursor:default;}
+  .bubble-opt.correct{background:var(--sage-soft); border-color:var(--sage); color:#2f4a26; animation:pop 0.3s ease;}
+  .bubble-opt.wrong{background:var(--bloom-soft); border-color:var(--bloom); color:#7a2a1f; animation:shake 0.4s;}
+  @keyframes floaty{0%,100%{transform:translateY(0);} 50%{transform:translateY(-6px);}}
+
+  /* eslestir (memory match) */
+  .match-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:8px;}
+  .match-card{height:64px; cursor:pointer; perspective:600px;}
+  .match-card-inner{position:relative; width:100%; height:100%; transition:transform 0.4s; transform-style:preserve-3d;}
+  .match-card.flipped .match-card-inner, .match-card.matched .match-card-inner{transform:rotateY(180deg);}
+  .match-face{position:absolute; inset:0; backface-visibility:hidden; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:13px; padding:4px; text-align:center;}
+  .match-front{background:var(--ink); color:#fff; font-size:22px;}
+  .match-back{background:var(--cream); border:2px solid var(--line); color:var(--ink-deep); transform:rotateY(180deg);}
+  .match-card.matched .match-back{background:var(--sage-soft); border-color:var(--sage); color:#2f4a26;}
+  .match-card.wrongflash .match-back{background:var(--bloom-soft); border-color:var(--bloom); animation:shake 0.4s;}
 
   .feedback-msg{text-align:center; font-size:13.5px; font-weight:700; margin:10px 0; min-height:18px;}
   .feedback-msg.ok{color:#3d6b2e;}
@@ -156,7 +143,10 @@
   @keyframes pop{0%{transform:scale(0.85); opacity:0;} 100%{transform:scale(1); opacity:1;}}
   .pop-in{animation:pop 0.3s ease;}
   @keyframes bob{0%,100%{transform:translateY(0);} 50%{transform:translateY(-8px);}}
-  .mascot{animation:bob 3.2s ease-in-out infinite;}
+
+  .stars-row{display:flex; justify-content:center; gap:6px; margin-bottom:14px;}
+  .star{width:24px; height:24px; opacity:0.25; transition:all 0.25s ease;}
+  .star.filled{opacity:1; transform:scale(1.1);}
 
   .result-score{text-align:center; margin-bottom:16px;}
   .result-score .big{font-family:'Fraunces', serif; font-size:34px; color:var(--ink-deep); font-weight:700;}
@@ -179,9 +169,10 @@
   @media(max-width:760px){
     .scene-inner{flex-direction:column; align-items:center; padding:76px 16px 20px; gap:8px;}
     .mascot{width:88px;}
-    .panel{max-width:440px; padding:22px 18px; max-height:64vh;}
+    .panel{max-width:440px; padding:20px 16px; max-height:68vh;}
     .nav-arrow{width:38px; height:38px;}
     .home-btn{width:38px; height:38px;}
+    .match-card{height:54px;}
   }
 </style>
 </head>
@@ -192,57 +183,39 @@
   <button class="home-btn" id="homeBtn" title="Başa dön">
     <svg viewBox="0 0 24 24" fill="none" stroke="#171050" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9h14v-9"/><path d="M10 19v-6h4v6"/></svg>
   </button>
-  <button class="nav-arrow left" id="navLeft" title="Geri">
-    <svg viewBox="0 0 24 24" fill="none" stroke="#171050" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-  </button>
-  <button class="nav-arrow right" id="navRight" title="İleri">
-    <svg viewBox="0 0 24 24" fill="none" stroke="#171050" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
-  </button>
+  <button class="nav-arrow left" id="navLeft" title="Geri"><svg viewBox="0 0 24 24" fill="none" stroke="#171050" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+  <button class="nav-arrow right" id="navRight" title="İleri"><svg viewBox="0 0 24 24" fill="none" stroke="#171050" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
 
-  <!-- SCENE: grade picker -->
   <div class="scene scene-bg-welcome active" id="scene-grade">
     <div class="scene-deco" id="decoWelcome1"></div>
     <div class="scene-inner">
       <div class="mascot-wrap"><div class="mascot" id="mascotGrade"></div></div>
       <div class="panel">
         <span class="badge">Ücretsiz Matematik Macerası</span>
-        <div class="bubble">Merhaba maceracı! Hangi sınıftasın? Sana uygun bulmacaları hazırlayayım. 🎒</div>
-        <div class="kademe-group">
-          <div class="kademe-title">Okul Öncesi</div>
-          <div class="grade-grid"><button class="grade-btn" data-level="anaokulu">Anaokulu (4–6 yaş)</button></div>
-        </div>
-        <div class="kademe-group">
-          <div class="kademe-title">İlkokul</div>
-          <div class="grade-grid">
-            <button class="grade-btn" data-level="ilkokul1">1. Sınıf</button>
-            <button class="grade-btn" data-level="ilkokul2">2. Sınıf</button>
-            <button class="grade-btn" data-level="ilkokul3">3. Sınıf</button>
-            <button class="grade-btn" data-level="ilkokul4">4. Sınıf</button>
-          </div>
-        </div>
-        <div class="kademe-group">
-          <div class="kademe-title">Ortaokul</div>
-          <div class="grade-grid">
-            <button class="grade-btn" data-level="ortaokul5">5. Sınıf</button>
-            <button class="grade-btn" data-level="ortaokul6">6. Sınıf</button>
-            <button class="grade-btn" data-level="ortaokul7">7. Sınıf</button>
-            <button class="grade-btn" data-level="ortaokul8">8. Sınıf (LGS)</button>
-          </div>
-        </div>
-        <div class="kademe-group">
-          <div class="kademe-title">Lise</div>
-          <div class="grade-grid">
-            <button class="grade-btn" data-level="lise9">9. Sınıf</button>
-            <button class="grade-btn" data-level="lise10">10. Sınıf</button>
-            <button class="grade-btn" data-level="lise11">11. Sınıf</button>
-            <button class="grade-btn" data-level="lise12">12. Sınıf (YKS)</button>
-          </div>
-        </div>
+        <div class="bubble">Merhaba maceracı! Hangi sınıftasın? Her seviyede 10 farklı bulmaca ve oyun var! 🎮</div>
+        <div class="kademe-group"><div class="kademe-title">Okul Öncesi</div><div class="grade-grid"><button class="grade-btn" data-level="anaokulu">Anaokulu (4–6 yaş)</button></div></div>
+        <div class="kademe-group"><div class="kademe-title">İlkokul</div><div class="grade-grid">
+          <button class="grade-btn" data-level="ilkokul1">1. Sınıf</button>
+          <button class="grade-btn" data-level="ilkokul2">2. Sınıf</button>
+          <button class="grade-btn" data-level="ilkokul3">3. Sınıf</button>
+          <button class="grade-btn" data-level="ilkokul4">4. Sınıf</button>
+        </div></div>
+        <div class="kademe-group"><div class="kademe-title">Ortaokul</div><div class="grade-grid">
+          <button class="grade-btn" data-level="ortaokul5">5. Sınıf</button>
+          <button class="grade-btn" data-level="ortaokul6">6. Sınıf</button>
+          <button class="grade-btn" data-level="ortaokul7">7. Sınıf</button>
+          <button class="grade-btn" data-level="ortaokul8">8. Sınıf (LGS)</button>
+        </div></div>
+        <div class="kademe-group"><div class="kademe-title">Lise</div><div class="grade-grid">
+          <button class="grade-btn" data-level="lise9">9. Sınıf</button>
+          <button class="grade-btn" data-level="lise10">10. Sınıf</button>
+          <button class="grade-btn" data-level="lise11">11. Sınıf</button>
+          <button class="grade-btn" data-level="lise12">12. Sınıf (YKS)</button>
+        </div></div>
       </div>
     </div>
   </div>
 
-  <!-- SCENE: intro -->
   <div class="scene scene-bg-welcome" id="scene-intro">
     <div class="scene-deco" id="decoWelcome2"></div>
     <div class="scene-inner">
@@ -255,44 +228,20 @@
     </div>
   </div>
 
-  <!-- SCENE: hesapla -->
-  <div class="scene scene-bg-library" id="scene-hesapla">
-    <div class="scene-deco" id="decoLibrary"></div>
-    <div class="scene-inner">
-      <div class="mascot-wrap"><div class="mascot small" id="mascotHesapla"></div></div>
-      <div class="panel" id="panelHesapla"></div>
-    </div>
-  </div>
+  <div class="scene scene-bg-library" id="scene-hesapla"><div class="scene-deco" id="decoLibrary"></div><div class="scene-inner"><div class="mascot-wrap"><div class="mascot small" id="mascotHesapla"></div></div><div class="panel" id="panelHesapla"></div></div></div>
+  <div class="scene scene-bg-vault" id="scene-kilit"><div class="scene-deco" id="decoVault"></div><div class="scene-inner"><div class="mascot-wrap"><div class="mascot small" id="mascotKilit"></div></div><div class="panel" id="panelKilit"></div></div></div>
+  <div class="scene scene-bg-plaza" id="scene-bulmaca"><div class="scene-deco" id="decoPlaza"></div><div class="scene-inner"><div class="mascot-wrap"><div class="mascot small" id="mascotBulmaca"></div></div><div class="panel" id="panelBulmaca"></div></div></div>
+  <div class="scene scene-bg-arena" id="scene-hiz"><div class="scene-deco" id="decoArena"></div><div class="scene-inner"><div class="mascot-wrap"><div class="mascot small" id="mascotHiz"></div></div><div class="panel" id="panelHiz"></div></div></div>
+  <div class="scene scene-bg-garden" id="scene-eslestir"><div class="scene-deco" id="decoGarden"></div><div class="scene-inner"><div class="mascot-wrap"><div class="mascot small" id="mascotEslestir"></div></div><div class="panel" id="panelEslestir"></div></div></div>
 
-  <!-- SCENE: kilit -->
-  <div class="scene scene-bg-vault" id="scene-kilit">
-    <div class="scene-deco" id="decoVault"></div>
-    <div class="scene-inner">
-      <div class="mascot-wrap"><div class="mascot small" id="mascotKilit"></div></div>
-      <div class="panel" id="panelKilit"></div>
-    </div>
-  </div>
-
-  <!-- SCENE: bulmaca -->
-  <div class="scene scene-bg-plaza" id="scene-bulmaca">
-    <div class="scene-deco" id="decoPlaza"></div>
-    <div class="scene-inner">
-      <div class="mascot-wrap"><div class="mascot small" id="mascotBulmaca"></div></div>
-      <div class="panel" id="panelBulmaca"></div>
-    </div>
-  </div>
-
-  <!-- SCENE: result -->
   <div class="scene scene-bg-result" id="scene-result">
     <div class="scene-deco" id="decoResult"></div>
     <div class="scene-inner">
       <div class="mascot-wrap"><div class="mascot" id="mascotResult"></div></div>
       <div class="panel" style="text-align:center;">
         <div class="bubble" id="resultBubble" style="margin:0 auto 14px;"></div>
-        <div class="result-score">
-          <div class="big" id="scoreBig"></div>
-          <div class="label" id="scoreLabel"></div>
-        </div>
+        <div class="stars-row" id="resultStars"></div>
+        <div class="result-score"><div class="big" id="scoreBig"></div><div class="label" id="scoreLabel"></div></div>
         <div class="reveal-box"><span class="tag">Bonus — Vay Be Anı</span><p id="revealText"></p></div>
         <div class="parent-box"><span class="tag">Anthos Notu</span><p id="parentText"></p></div>
         <a class="cta-btn" href="deneme-formu.html">Ücretsiz Deneme Dersine Katıl</a>
@@ -304,36 +253,29 @@
 </div>
 
 <script>
-/* ---------- Mascot (full body) ---------- */
 const MASCOT_SVG = `<svg viewBox="0 0 160 320" xmlns="http://www.w3.org/2000/svg">
   <ellipse cx="80" cy="308" rx="52" ry="10" fill="rgba(23,16,80,0.15)"/>
-  <rect x="55" y="222" width="20" height="76" rx="8" fill="#D8C9A3"/>
-  <rect x="85" y="222" width="20" height="76" rx="8" fill="#D8C9A3"/>
-  <rect x="50" y="290" width="30" height="14" rx="7" fill="#5b4636"/>
-  <rect x="80" y="290" width="30" height="14" rx="7" fill="#5b4636"/>
+  <rect x="55" y="222" width="20" height="76" rx="8" fill="#D8C9A3"/><rect x="85" y="222" width="20" height="76" rx="8" fill="#D8C9A3"/>
+  <rect x="50" y="290" width="30" height="14" rx="7" fill="#5b4636"/><rect x="80" y="290" width="30" height="14" rx="7" fill="#5b4636"/>
   <path d="M35 235 Q35 150 80 150 Q125 150 125 235 Z" fill="#E85C4A"/>
   <path d="M35 175 Q15 190 20 224" stroke="#E85C4A" stroke-width="18" fill="none" stroke-linecap="round"/>
   <path d="M125 175 Q145 190 140 224" stroke="#E85C4A" stroke-width="18" fill="none" stroke-linecap="round"/>
-  <circle cx="20" cy="227" r="10" fill="#F4B9AE"/>
-  <circle cx="140" cy="227" r="10" fill="#F4B9AE"/>
+  <circle cx="20" cy="227" r="10" fill="#F4B9AE"/><circle cx="140" cy="227" r="10" fill="#F4B9AE"/>
   <circle cx="80" cy="108" r="48" fill="#F4B9AE"/>
   <path d="M30 98 Q38 53 80 56 Q122 53 130 98 Q130 63 80 61 Q34 63 30 98Z" fill="#171050"/>
-  <circle cx="62" cy="110" r="6" fill="#1B1A2A"/>
-  <circle cx="98" cy="110" r="6" fill="#1B1A2A"/>
-  <circle cx="46" cy="120" r="7" fill="#F49E8C" opacity="0.6"/>
-  <circle cx="114" cy="120" r="7" fill="#F49E8C" opacity="0.6"/>
+  <circle cx="62" cy="110" r="6" fill="#1B1A2A"/><circle cx="98" cy="110" r="6" fill="#1B1A2A"/>
+  <circle cx="46" cy="120" r="7" fill="#F49E8C" opacity="0.6"/><circle cx="114" cy="120" r="7" fill="#F49E8C" opacity="0.6"/>
   <path d="M62 130 Q80 143 98 130" stroke="#1B1A2A" stroke-width="4" fill="none" stroke-linecap="round"/>
 </svg>`;
 function mountMascots(){ document.querySelectorAll('.mascot').forEach(el => el.innerHTML = MASCOT_SVG); }
 
-/* ---------- Lock SVGs ---------- */
 const LOCK_CLOSED = `<svg viewBox="0 0 100 100"><rect x="24" y="46" width="52" height="42" rx="9" fill="#F3E3BE"/><path d="M34 46 V32 a16 16 0 0 1 32 0 V46" stroke="#F3E3BE" stroke-width="8" fill="none" stroke-linecap="round"/><circle cx="50" cy="63" r="6" fill="#171050"/><rect x="47" y="66" width="6" height="12" rx="3" fill="#171050"/></svg>`;
 const LOCK_OPEN = `<svg viewBox="0 0 100 100"><rect x="24" y="46" width="52" height="42" rx="9" fill="#7C9D6F"/><path d="M34 46 V32 a16 16 0 0 1 32 0" stroke="#7C9D6F" stroke-width="8" fill="none" stroke-linecap="round" transform="rotate(-28 34 46)"/><path d="M42 66 l6 7 l12 -14" stroke="#F7F1E3" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
-/* ---------- Confetti ---------- */
-function burstConfetti(){
+function burstConfetti(count){
+  count = count || 28;
   const colors = ['#E85C4A','#241BC3','#7C9D6F','#C99A2E','#F4B9AE'];
-  for(let i=0;i<28;i++){
+  for(let i=0;i<count;i++){
     const el = document.createElement('div');
     el.className = 'confetti-piece';
     el.style.left = Math.random()*100+'vw';
@@ -344,156 +286,217 @@ function burstConfetti(){
   }
 }
 
-/* ---------- Scene decorations (pure CSS/SVG, no images) ---------- */
 function buildDeco(){
-  const w1 = document.getElementById('decoWelcome1');
-  const w2 = document.getElementById('decoWelcome2');
-  [w1,w2].forEach(w=>{
-    if(!w) return;
-    for(let i=0;i<4;i++){
-      const c = document.createElement('div');
-      c.className='deco-cloud';
-      const size = 60+Math.random()*70;
-      c.style.width=size+'px'; c.style.height=(size*0.5)+'px';
-      c.style.top=(10+Math.random()*30)+'%'; c.style.left=(Math.random()*90)+'%';
-      w.appendChild(c);
-    }
-  });
+  const w1 = document.getElementById('decoWelcome1'), w2 = document.getElementById('decoWelcome2');
+  [w1,w2].forEach(w=>{ if(!w) return; for(let i=0;i<4;i++){ const c=document.createElement('div'); c.className='deco-cloud'; const size=60+Math.random()*70; c.style.width=size+'px'; c.style.height=(size*0.5)+'px'; c.style.top=(10+Math.random()*30)+'%'; c.style.left=(Math.random()*90)+'%'; w.appendChild(c);} });
   const lib = document.getElementById('decoLibrary');
-  for(let i=0;i<5;i++){
-    const s = document.createElement('div');
-    s.className='deco-shelf';
-    s.style.top=(14+i*15)+'%';
-    lib.appendChild(s);
-  }
+  for(let i=0;i<5;i++){ const s=document.createElement('div'); s.className='deco-shelf'; s.style.top=(14+i*15)+'%'; lib.appendChild(s); }
   const vault = document.getElementById('decoVault');
-  for(let i=0;i<40;i++){
-    const st = document.createElement('div');
-    st.className='deco-star';
-    st.style.top=Math.random()*90+'%'; st.style.left=Math.random()*100+'%';
-    st.style.opacity = 0.3+Math.random()*0.7;
-    vault.appendChild(st);
-  }
+  for(let i=0;i<40;i++){ const st=document.createElement('div'); st.className='deco-star'; st.style.top=Math.random()*90+'%'; st.style.left=Math.random()*100+'%'; st.style.opacity=0.3+Math.random()*0.7; vault.appendChild(st); }
   const plaza = document.getElementById('decoPlaza');
-  const ground = document.createElement('div'); ground.className='deco-ground'; plaza.appendChild(ground);
-  const goldBloom = ['#C99A2E','#E85C4A','#F3E3BE'];
-  for(let i=0;i<14;i++){
-    const d = document.createElement('div');
-    d.className='deco-dot';
-    d.style.background = goldBloom[i%3];
-    d.style.top=(60+Math.random()*35)+'%'; d.style.left=(Math.random()*100)+'%';
-    plaza.appendChild(d);
-  }
+  plaza.appendChild(Object.assign(document.createElement('div'),{className:'deco-ground'}));
+  const gb = ['#C99A2E','#E85C4A','#F3E3BE'];
+  for(let i=0;i<14;i++){ const d=document.createElement('div'); d.className='deco-dot'; d.style.background=gb[i%3]; d.style.top=(60+Math.random()*35)+'%'; d.style.left=(Math.random()*100)+'%'; plaza.appendChild(d); }
+  const arena = document.getElementById('decoArena');
+  for(let i=0;i<16;i++){ const r=document.createElement('div'); r.className='deco-ray'; r.style.transform='translate(-50%,-100%) rotate('+(i*22.5)+'deg)'; arena.appendChild(r); }
+  const garden = document.getElementById('decoGarden');
+  garden.appendChild(Object.assign(document.createElement('div'),{className:'deco-ground'}));
+  const gc=['#C99A2E','#7C9D6F','#E85C4A'];
+  for(let i=0;i<12;i++){ const d=document.createElement('div'); d.className='deco-dot'; d.style.background=gc[i%3]; d.style.top=(55+Math.random()*38)+'%'; d.style.left=(Math.random()*100)+'%'; garden.appendChild(d); }
   const res = document.getElementById('decoResult');
-  const colors=['#C99A2E','#E85C4A','#7C9D6F','#241BC3'];
-  for(let i=0;i<26;i++){
-    const d = document.createElement('div');
-    d.className='deco-dot';
-    d.style.background = colors[i%4];
-    d.style.top=(Math.random()*90)+'%'; d.style.left=(Math.random()*100)+'%';
-    d.style.opacity=0.5+Math.random()*0.5;
-    res.appendChild(d);
-  }
+  const rc=['#C99A2E','#E85C4A','#7C9D6F','#241BC3'];
+  for(let i=0;i<26;i++){ const d=document.createElement('div'); d.className='deco-dot'; d.style.background=rc[i%4]; d.style.top=(Math.random()*90)+'%'; d.style.left=(Math.random()*100)+'%'; d.style.opacity=0.5+Math.random()*0.5; res.appendChild(d); }
 }
 
-/* ---------- Level data ---------- */
+/* ---------- Level data: 10 challenges per level (2x hesapla, kilit, bulmaca, hiz, eslestir) ---------- */
 const LEVELS = {
-  anaokulu: { label:"Anaokulu (4–6 yaş)", intro:"Seviye 1'e hoş geldin! Küçük bulmacalarla sayıları birlikte keşfedeceğiz. Hazır mısın?",
-    challenges:[
-      {type:'hesapla', expr:['2','+','3'], answer:'5'},
-      {type:'kilit', l1:'3 + 2', a1:'5', l2:'4 + 4', a2:'8'},
-      {type:'bulmaca', q:'🍎🍎🍎🍎🍎 mi yoksa 🍎🍎🍎 mü daha çok?', options:['5 elma','3 elma','Eşit','Bilmiyorum'], correct:0}
-    ], reveal:"Küçük yaşta sayıları parmakla değil gözle 'görerek' tanımak, ileride hızlı işlem yapmanın temelini atıyor.",
-    parent:"Bugün [çocuğunuz] ile sayı-nicelik ilişkisini oyunlaştırarak çalıştık. Bu yaşta kurulan sağlam sayı algısı, ilkokulda işlem hızını ve ortaokulda LGS'ye giden yolda kavramsal anlamayı doğrudan besliyor."},
-  ilkokul1: { label:"1. Sınıf", intro:"Seviye 2'ye hoş geldin! Toplama ve çıkarma bulmacaları seni bekliyor.",
-    challenges:[
-      {type:'hesapla', expr:['7','+','5'], answer:'12'},
-      {type:'kilit', l1:'14 - 6', a1:'8', l2:'9 + 3', a2:'12'},
-      {type:'bulmaca', q:"23'ten sonra gelen sayı hangisidir?", options:['24','22','25','20'], correct:0}
-    ], reveal:"Onluk geçişli toplama-çıkarmada parmak saymak yerine '10'a tamamlama' tekniğini gösterdik — işlemi 3-4 kat hızlandırıyor.",
-    parent:"Bugün [çocuğunuz] ile toplama-çıkarma üzerinde çalıştık. Onluk bozup-kurma mantığını erken kavramak, ileriki sınıflarda büyük sayılarla işlemi ve LGS'de zamana karşı hız kazanmayı doğrudan etkiliyor."},
-  ilkokul2: { label:"2. Sınıf", intro:"Seviye 3'e hoş geldin! Bu sefer sayılar biraz büyüyor.",
-    challenges:[
-      {type:'hesapla', expr:['48','+','27'], answer:'75'},
-      {type:'kilit', l1:'63 - 29', a1:'34', l2:'50 - 14', a2:'36'},
-      {type:'bulmaca', q:"4 sırada 5'er top var, toplam kaç top eder?", options:['20','9','15','25'], correct:0}
-    ], reveal:"Toplamayı basamak basamak değil, sayıyı 'yuvarlayıp geri düzeltme' yöntemiyle zihinden yapmayı gösterdik.",
-    parent:"Bugün [çocuğunuz] ile eldeli işlemler ve gruplama mantığını (çarpmanın temeli) çalıştık. Bu temel sağlam kurulursa çarpım tablosuna geçiş çok daha kolay oluyor."},
-  ilkokul3: { label:"3. Sınıf", intro:"Seviye 4'e hoş geldin! Çarpım tablosu bulmacaları başlıyor.",
-    challenges:[
-      {type:'hesapla', expr:['7','×','6'], answer:'42'},
-      {type:'kilit', l1:'36 ÷ 4', a1:'9', l2:'5 × 5', a2:'25'},
-      {type:'bulmaca', q:'8 dilime bölünmüş bir pastanın yarısı kaç dilimdir?', options:['4','2','8','3'], correct:0}
-    ], reveal:"7×6 gibi 'zor' çarpımları 7×5+7 şeklinde parçalayarak hatırlamayı gösterdik.",
-    parent:"Bugün [çocuğunuz] ile çarpım tablosu ve bölme kavramını çalıştık. Bu, kesirlere ve LGS matematik sorularına giden yolda büyük fark yaratıyor."},
-  ilkokul4: { label:"4. Sınıf", intro:"Seviye 5'e hoş geldin! Büyük sayılar ve kesirler seni bekliyor.",
-    challenges:[
-      {type:'hesapla', expr:['1258','+','976'], answer:'2234'},
-      {type:'kilit', l1:'144 ÷ 12', a1:'12', l2:'9 × 9', a2:'81'},
-      {type:'bulmaca', q:'3/8 + 2/8 = ?', options:['5/8','1/8','6/8','5/16'], correct:0}
-    ], reveal:"Aynı paydalı kesirleri pasta dilimi gibi görselleştirerek göstermek, kesir korkusunu daha ilk günden ortadan kaldırıyor.",
-    parent:"Bugün [çocuğunuz] ile kesir ve ondalık sayı ilişkisini çalıştık. Bu konu 5.-6. sınıfın (dolayısıyla LGS'nin) en çok soru gelen konularından biri."},
-  ortaokul5: { label:"5. Sınıf", intro:"Seviye 6'ya hoş geldin! Yüzde ve kesir bulmacaları zamanı.",
-    challenges:[
-      {type:'hesapla', expr:[], answer:'320', display:"Bir sayının %25'i 80 ise sayı kaçtır?"},
-      {type:'kilit', l1:'15 × 4', a1:'60', l2:'100 - 37', a2:'63'},
-      {type:'bulmaca', q:'2/3 × 3/4 = ?', options:['1/2','5/12','3/4','2/3'], correct:0}
-    ], reveal:"Yüzde problemlerini '%25 = çeyrek' gibi günlük hayat karşılıklarıyla çözmeyi gösterdik — ezbersiz, kalıcı bir yöntem.",
-    parent:"Bugün [çocuğunuz] ile kesirli işlemler ve yüzde-oran kavramını çalıştık. Bu konular LGS matematik sorularının önemli bir kısmını oluşturuyor."},
-  ortaokul6: { label:"6. Sınıf", intro:"Seviye 7'ye hoş geldin! Negatif sayılar ve cebire giriş yapıyoruz.",
-    challenges:[
-      {type:'hesapla', expr:['(-6)','×','(-3)'], answer:'18'},
-      {type:'kilit', l1:'9 × 9', a1:'81', l2:'144 ÷ 12', a2:'12'},
-      {type:'bulmaca', q:'3a + 2 ifadesinde a = 4 ise sonuç kaçtır?', options:['14','12','9','20'], correct:0}
-    ], reveal:"Negatif sayı çarpımını 'iki olumsuzun bir olumluyu getirmesi' hikayesiyle anlattık — çocuklar bu kuralı bir daha unutmuyor.",
-    parent:"Bugün [çocuğunuz] ile tam sayılarla işlemler ve cebire giriş yaptık. Cebirsel ifadeleri erken kavramak, LGS'nin en kritik konularından birine zemin hazırlıyor."},
-  ortaokul7: { label:"7. Sınıf", intro:"Seviye 8'e hoş geldin! Rasyonel sayılar ve özdeşlikler zamanı.",
-    challenges:[
-      {type:'hesapla', expr:[], answer:'300', display:"Bir ürün %20 indirimle 240 TL oluyorsa, orijinal fiyatı kaçtır?"},
-      {type:'kilit', l1:'13 × 13', a1:'169', l2:'225 ÷ 15', a2:'15'},
-      {type:'bulmaca', q:'(x + 3)² ifadesinin açılımı nedir?', options:['x² + 6x + 9','x² + 9','x² + 3x + 9','x² + 6x + 6'], correct:0}
-    ], reveal:"Özdeşlikleri ezberletmeden, alan modeliyle (kare çizerek) görsel olarak ispatlamayı gösterdik.",
-    parent:"Bugün [çocuğunuz] ile rasyonel sayılar ve cebirsel özdeşlikleri çalıştık. LGS yılı olan 8. sınıfa girmeden önce sağlamlaştırılması gereken en kritik konulardan biri."},
-  ortaokul8: { label:"8. Sınıf (LGS Yılı)", intro:"Seviye 9'a hoş geldin! LGS'nin en sevilen konuları burada.",
-    challenges:[
-      {type:'hesapla', expr:[], answer:'12', display:"24 ve 36'nın EBOB'u kaçtır?"},
-      {type:'kilit', l1:'2⁴', a1:'16', l2:'√64', a2:'8'},
-      {type:'bulmaca', q:'√48 sayısının en sade hâli nedir?', options:['4√3','2√12','6√2','√48'], correct:0}
-    ], reveal:"Üslü sayılarda taban aynıysa üslerin toplandığını, kareköklü sayılarda 'içindeki tam kare çarpanı dışarı çıkarma' tekniğini gösterdik — LGS'de doğrudan puan getiren bir kısayol.",
-    parent:"Bugün [çocuğunuz] ile LGS'nin en yoğun sorulduğu konulardan üslü/köklü sayılar ve EBOB-EKOK'u çalıştık. Sınava kalan sürede hedefli tekrar, net artışını doğrudan etkiliyor."},
-  lise9: { label:"9. Sınıf", intro:"Seviye 10'a hoş geldin! Kümeler ve temel denklemler seni bekliyor.",
-    challenges:[
-      {type:'hesapla', expr:[], answer:'70', display:"Bir üçgenin iki açısı 50° ve 60°'dir. Üçüncü açı kaç derecedir?"},
-      {type:'kilit', l1:'4 × 5', a1:'20', l2:'9²', a2:'81'},
-      {type:'bulmaca', q:'A={1,2,3,4}, B={3,4,5,6} ise A∩B kümesi nedir?', options:['{3,4}','{1,2,5,6}','{1,2,3,4,5,6}','{ }'], correct:0}
-    ], reveal:"Kümelerde kesişim-birleşimi Venn şemasıyla gözle görünür hale getirdik — TYT'de saniyeler içinde çözülen bir soru tipine dönüşüyor.",
-    parent:"Bugün [çocuğunuz] ile kümeler ve temel eşitsizlikleri çalıştık. Lise matematiğinin temel dili olan bu konular, YKS'ye giden 4 yıllık sürecin ilk sağlam adımı."},
-  lise10: { label:"10. Sınıf", intro:"Seviye 11'e hoş geldin! İkinci dereceden denklemler zamanı.",
-    challenges:[
-      {type:'hesapla', expr:[], answer:'13', display:"P(x) = 2x² + 3x − 1 ise P(2) kaçtır?"},
-      {type:'kilit', l1:'6 × 7', a1:'42', l2:'100 ÷ 4', a2:'25'},
-      {type:'bulmaca', q:'x² − 5x + 6 = 0 denkleminin köklerinden biri hangisidir?', options:['2 ve 3','1 ve 6','−2 ve −3','2 ve −3'], correct:0}
-    ], reveal:"İkinci dereceden denklemleri çarpanlara ayırırken 'toplamı-çarpımı' kısayolunu gösterdik — formülsüz, saniyeler içinde kök bulma.",
-    parent:"Bugün [çocuğunuz] ile ikinci dereceden denklemler ve fonksiyonları çalıştık. Bu konu YKS'nin (özellikle AYT matematik) en çok soru gelen başlıklarından."},
-  lise11: { label:"11. Sınıf", intro:"Seviye 12'ye hoş geldin! Diziler ve olasılık zamanı.",
-    challenges:[
-      {type:'hesapla', expr:[], answer:'19', display:"Bir aritmetik dizide a₁=3, ortak fark d=4 ise a₅ kaçtır?"},
-      {type:'kilit', l1:'log₂8', a1:'3', l2:'log₃9', a2:'2'},
-      {type:'bulmaca', q:'5 kişiden 2 kişilik bir komite kaç farklı şekilde seçilebilir?', options:['10','20','5','25'], correct:0}
-    ], reveal:"Logaritmayı 'kaçıncı kuvvet' sorusu olarak yeniden çerçeveledik — ezbersiz, sezgisel bir bakış açısı kazandırıyor.",
-    parent:"Bugün [çocuğunuz] ile logaritma, diziler ve olasılığın temellerini çalıştık. Bunlar AYT matematikte en yüksek ağırlıklı konulardan; 12. sınıfa güçlü girmek için kritik."},
-  lise12: { label:"12. Sınıf (YKS Yılı)", intro:"Seviye 13'e hoş geldin! Son seviye — türev ve integral.",
-    challenges:[
-      {type:'hesapla', expr:[], answer:'10', display:"f(x) = 3x² − 2x + 1 fonksiyonunun x=2 için türevi f'(2) kaçtır?"},
-      {type:'kilit', l1:'6 × 4 - 2', a1:'22', l2:'3 × 8 - 4', a2:'20'},
-      {type:'bulmaca', q:"f(x) = 3x² − 2x + 1 fonksiyonunun türevi nedir?", options:["6x − 2","3x − 2","6x² − 2","6x + 1"], correct:0}
-    ], reveal:"Türev almayı 'üssü öne çarp, üssü bir azalt' kısayoluyla saniyelik işleme indirdik — sınavda zaman kazandıran en temel teknik.",
-    parent:"Bugün [çocuğunuz] ile türev-integral konusunu çalıştık. Bu, YKS'ye giden son yılın en yüksek net getirisi olan konu başlıklarından. Sınava kalan süreyi doğru hedeflerle kullanmak fark yaratıyor."}
+anaokulu:{label:"Anaokulu (4–6 yaş)",intro:"Seviye 1'e hoş geldin! Küçük bulmacalarla sayıları birlikte keşfedeceğiz. Hazır mısın?",
+ challenges:[
+  {type:'hesapla',expr:['2','+','3'],answer:'5'},
+  {type:'kilit',l1:'3 + 2',a1:'5',l2:'4 + 4',a2:'8'},
+  {type:'bulmaca',q:'🍎🍎🍎🍎🍎 mi yoksa 🍎🍎🍎 mü daha çok?',options:['5 elma','3 elma','Eşit','Bilmiyorum'],correct:0},
+  {type:'hiz',q:'3 + 1 = ?',options:['4','5','3','6'],correct:0},
+  {type:'eslestir',pairs:[['1+1','2'],['2+1','3'],['3+1','4']]},
+  {type:'hesapla',expr:['3','+','3'],answer:'6'},
+  {type:'kilit',l1:'5 + 1',a1:'6',l2:'2 + 2',a2:'4'},
+  {type:'bulmaca',q:'Hangisi en küçük sayıdır?',options:['2','7','5','9'],correct:0},
+  {type:'hiz',q:'Hangisi çift sayıdır?',options:['3','4','7','9'],correct:1},
+  {type:'eslestir',pairs:[['5-1','4'],['4-1','3'],['3-1','2']]}
+ ],reveal:"Küçük yaşta sayıları parmakla değil gözle 'görerek' tanımak, ileride hızlı işlem yapmanın temelini atıyor.",
+ parent:"Bugün [çocuğunuz] ile sayı-nicelik ilişkisini oyunlaştırarak çalıştık. Bu yaşta kurulan sağlam sayı algısı, ilkokulda işlem hızını ve ortaokulda LGS'ye giden yolda kavramsal anlamayı doğrudan besliyor."},
+ilkokul1:{label:"1. Sınıf",intro:"Seviye 2'ye hoş geldin! Toplama ve çıkarma bulmacaları seni bekliyor.",
+ challenges:[
+  {type:'hesapla',expr:['7','+','5'],answer:'12'},
+  {type:'kilit',l1:'14 - 6',a1:'8',l2:'9 + 3',a2:'12'},
+  {type:'bulmaca',q:"23'ten sonra gelen sayı hangisidir?",options:['24','22','25','20'],correct:0},
+  {type:'hiz',q:'9 + 6 = ?',options:['15','14','16','13'],correct:0},
+  {type:'eslestir',pairs:[['6+6','12'],['9+2','11'],['7+7','14']]},
+  {type:'hesapla',expr:['15','-','8'],answer:'7'},
+  {type:'kilit',l1:'6 + 7',a1:'13',l2:'18 - 9',a2:'9'},
+  {type:'bulmaca',q:'10 + 10 = ?',options:['20','19','21','18'],correct:0},
+  {type:'hiz',q:'20 - 5 = ?',options:['15','16','14','17'],correct:0},
+  {type:'eslestir',pairs:[['13-4','9'],['12-5','7'],['16-9','7']]}
+ ],reveal:"Onluk geçişli toplama-çıkarmada parmak saymak yerine '10'a tamamlama' tekniğini gösterdik — işlemi 3-4 kat hızlandırıyor.",
+ parent:"Bugün [çocuğunuz] ile toplama-çıkarma üzerinde çalıştık. Onluk bozup-kurma mantığını erken kavramak, ileriki sınıflarda büyük sayılarla işlemi ve LGS'de zamana karşı hız kazanmayı doğrudan etkiliyor."},
+ilkokul2:{label:"2. Sınıf",intro:"Seviye 3'e hoş geldin! Bu sefer sayılar biraz büyüyor.",
+ challenges:[
+  {type:'hesapla',expr:['48','+','27'],answer:'75'},
+  {type:'kilit',l1:'63 - 29',a1:'34',l2:'50 - 14',a2:'36'},
+  {type:'bulmaca',q:"4 sırada 5'er top var, toplam kaç top eder?",options:['20','9','15','25'],correct:0},
+  {type:'hiz',q:'6 × 3 = ?',options:['18','15','21','12'],correct:0},
+  {type:'eslestir',pairs:[['9×2','18'],['3×3','9'],['4×2','8']]},
+  {type:'hesapla',expr:['56','-','19'],answer:'37'},
+  {type:'kilit',l1:'27 + 35',a1:'62',l2:'44 - 17',a2:'27'},
+  {type:'bulmaca',q:'En küçük 3 basamaklı sayı hangisidir?',options:['100','999','010','099'],correct:0},
+  {type:'hiz',q:'4 × 5 = ?',options:['20','16','24','18'],correct:0},
+  {type:'eslestir',pairs:[['70-25','45'],['38+16','54'],['81-36','45']]}
+ ],reveal:"Toplamayı basamak basamak değil, sayıyı 'yuvarlayıp geri düzeltme' yöntemiyle zihinden yapmayı gösterdik.",
+ parent:"Bugün [çocuğunuz] ile eldeli işlemler ve gruplama mantığını (çarpmanın temeli) çalıştık. Bu temel sağlam kurulursa çarpım tablosuna geçiş çok daha kolay oluyor."},
+ilkokul3:{label:"3. Sınıf",intro:"Seviye 4'e hoş geldin! Çarpım tablosu bulmacaları başlıyor.",
+ challenges:[
+  {type:'hesapla',expr:['7','×','6'],answer:'42'},
+  {type:'kilit',l1:'36 ÷ 4',a1:'9',l2:'5 × 5',a2:'25'},
+  {type:'bulmaca',q:'8 dilime bölünmüş bir pastanın yarısı kaç dilimdir?',options:['4','2','8','3'],correct:0},
+  {type:'hiz',q:'9 × 9 = ?',options:['81','72','90','63'],correct:0},
+  {type:'eslestir',pairs:[['6×6','36'],['7×3','21'],['8×4','32']]},
+  {type:'hesapla',expr:['8','×','7'],answer:'56'},
+  {type:'kilit',l1:'9 × 4',a1:'36',l2:'63 ÷ 9',a2:'7'},
+  {type:'bulmaca',q:'3/4 kesrinde payda kaçtır?',options:['4','3','7','1'],correct:0},
+  {type:'hiz',q:'48 ÷ 6 = ?',options:['8','7','9','6'],correct:0},
+  {type:'eslestir',pairs:[['45÷5','9'],['54÷6','9'],['32÷4','8']]}
+ ],reveal:"7×6 gibi 'zor' çarpımları 7×5+7 şeklinde parçalayarak hatırlamayı gösterdik.",
+ parent:"Bugün [çocuğunuz] ile çarpım tablosu ve bölme kavramını çalıştık. Bu, kesirlere ve LGS matematik sorularına giden yolda büyük fark yaratıyor."},
+ilkokul4:{label:"4. Sınıf",intro:"Seviye 5'e hoş geldin! Büyük sayılar ve kesirler seni bekliyor.",
+ challenges:[
+  {type:'hesapla',expr:['1258','+','976'],answer:'2234'},
+  {type:'kilit',l1:'144 ÷ 12',a1:'12',l2:'9 × 9',a2:'81'},
+  {type:'bulmaca',q:'3/8 + 2/8 = ?',options:['5/8','1/8','6/8','5/16'],correct:0},
+  {type:'hiz',q:'125 × 4 = ?',options:['500','520','480','450'],correct:0},
+  {type:'eslestir',pairs:[['2/6+1/6','3/6'],['4/9-1/9','3/9'],['5/8+2/8','7/8']]},
+  {type:'hesapla',expr:['3456','-','1789'],answer:'1667'},
+  {type:'kilit',l1:'15 × 6',a1:'90',l2:'200 - 45',a2:'155'},
+  {type:'bulmaca',q:"0,7 ondalık kesri hangi kesire eşittir?",options:['7/10','7/100','17/10','7/1'],correct:0},
+  {type:'hiz',q:'1000 - 357 = ?',options:['643','653','633','647'],correct:0},
+  {type:'eslestir',pairs:[['0,2+0,3','0,5'],['0,9-0,4','0,5'],['0,6+0,1','0,7']]}
+ ],reveal:"Aynı paydalı kesirleri pasta dilimi gibi görselleştirerek göstermek, kesir korkusunu daha ilk günden ortadan kaldırıyor.",
+ parent:"Bugün [çocuğunuz] ile kesir ve ondalık sayı ilişkisini çalıştık. Bu konu 5.-6. sınıfın (dolayısıyla LGS'nin) en çok soru gelen konularından biri."},
+ortaokul5:{label:"5. Sınıf",intro:"Seviye 6'ya hoş geldin! Yüzde ve kesir bulmacaları zamanı.",
+ challenges:[
+  {type:'hesapla',expr:[],display:"Bir sayının %25'i 80 ise sayı kaçtır?",answer:'320'},
+  {type:'kilit',l1:'15 × 4',a1:'60',l2:'100 - 37',a2:'63'},
+  {type:'bulmaca',q:'2/3 × 3/4 = ?',options:['1/2','5/12','3/4','2/3'],correct:0},
+  {type:'hiz',q:'7 + (-3) = ?',options:['4','-4','10','-10'],correct:0},
+  {type:'eslestir',pairs:[['1/4+2/4','3/4'],['3/5-1/5','2/5'],['2/6+3/6','5/6']]},
+  {type:'hesapla',expr:[],display:"48 sayısının %50'si kaçtır?",answer:'24'},
+  {type:'kilit',l1:'12 × 5',a1:'60',l2:'144 ÷ 4',a2:'36'},
+  {type:'bulmaca',q:'-4 sayısının mutlak değeri kaçtır?',options:['4','-4','0','8'],correct:0},
+  {type:'hiz',q:'(-2) + (-5) = ?',options:['-7','7','-3','3'],correct:0},
+  {type:'eslestir',pairs:[['%10 × 50','5'],['%20 × 30','6'],['%50 × 90','45']]}
+ ],reveal:"Yüzde problemlerini '%25 = çeyrek' gibi günlük hayat karşılıklarıyla çözmeyi gösterdik — ezbersiz, kalıcı bir yöntem.",
+ parent:"Bugün [çocuğunuz] ile kesirli işlemler ve yüzde-oran kavramını çalıştık. Bu konular LGS matematik sorularının önemli bir kısmını oluşturuyor."},
+ortaokul6:{label:"6. Sınıf",intro:"Seviye 7'ye hoş geldin! Negatif sayılar ve cebire giriş yapıyoruz.",
+ challenges:[
+  {type:'hesapla',expr:['(-6)','×','(-3)'],answer:'18'},
+  {type:'kilit',l1:'9 × 9',a1:'81',l2:'144 ÷ 12',a2:'12'},
+  {type:'bulmaca',q:'3a + 2 ifadesinde a = 4 ise sonuç kaçtır?',options:['14','12','9','20'],correct:0},
+  {type:'hiz',q:'(-3) × 4 = ?',options:['-12','12','-7','7'],correct:0},
+  {type:'eslestir',pairs:[['6×7','42'],['9×8','72'],['12×4','48']]},
+  {type:'hesapla',expr:['12','×','6'],answer:'72'},
+  {type:'kilit',l1:'15 × 15',a1:'225',l2:'13 × 3',a2:'39'},
+  {type:'bulmaca',q:'4 kalem 12 TL ise 7 kalem kaç TL\'dir?',options:['21','28','24','18'],correct:0},
+  {type:'hiz',q:'(-10) ÷ (-2) = ?',options:['5','-5','8','-8'],correct:0},
+  {type:'eslestir',pairs:[['(-2)×(-6)','12'],['(-9)+3','-6'],['5-(-4)','9']]}
+ ],reveal:"Negatif sayı çarpımını 'iki olumsuzun bir olumluyu getirmesi' hikayesiyle anlattık — çocuklar bu kuralı bir daha unutmuyor.",
+ parent:"Bugün [çocuğunuz] ile tam sayılarla işlemler ve cebire giriş yaptık. Cebirsel ifadeleri erken kavramak, LGS'nin en kritik konularından birine zemin hazırlıyor."},
+ortaokul7:{label:"7. Sınıf",intro:"Seviye 8'e hoş geldin! Rasyonel sayılar ve özdeşlikler zamanı.",
+ challenges:[
+  {type:'hesapla',expr:[],display:"Bir ürün %20 indirimle 240 TL oluyorsa, orijinal fiyatı kaçtır?",answer:'300'},
+  {type:'kilit',l1:'13 × 13',a1:'169',l2:'225 ÷ 15',a2:'15'},
+  {type:'bulmaca',q:'(x + 3)² ifadesinin açılımı nedir?',options:['x² + 6x + 9','x² + 9','x² + 3x + 9','x² + 6x + 6'],correct:0},
+  {type:'hiz',q:'x=5 için (x-2)² kaçtır?',options:['9','3','25','6'],correct:0},
+  {type:'eslestir',pairs:[['(x+1)² , x=2','9'],['(x-1)² , x=4','9'],['x² , x=6','36']]},
+  {type:'hesapla',expr:[],display:"18 ve 24'ün EKOK'u kaçtır?",answer:'72'},
+  {type:'kilit',l1:'17 × 17',a1:'289',l2:'121 ÷ 11',a2:'11'},
+  {type:'bulmaca',q:'-3/4 + 1/2 = ?',options:['-1/4','1/4','-5/4','1/2'],correct:0},
+  {type:'hiz',q:'2/5 + 1/5 = ?',options:['3/5','1/5','4/5','2/5'],correct:0},
+  {type:'eslestir',pairs:[['1/3+1/3','2/3'],['3/4-1/4','1/2'],['2/5+2/5','4/5']]}
+ ],reveal:"Özdeşlikleri ezberletmeden, alan modeliyle (kare çizerek) görsel olarak ispatlamayı gösterdik.",
+ parent:"Bugün [çocuğunuz] ile rasyonel sayılar ve cebirsel özdeşlikleri çalıştık. LGS yılı olan 8. sınıfa girmeden önce sağlamlaştırılması gereken en kritik konulardan biri."},
+ortaokul8:{label:"8. Sınıf (LGS Yılı)",intro:"Seviye 9'a hoş geldin! LGS'nin en sevilen konuları burada.",
+ challenges:[
+  {type:'hesapla',expr:[],display:"24 ve 36'nın EBOB'u kaçtır?",answer:'12'},
+  {type:'kilit',l1:'2⁴',a1:'16',l2:'√64',a2:'8'},
+  {type:'bulmaca',q:'√48 sayısının en sade hâli nedir?',options:['4√3','2√12','6√2','√48'],correct:0},
+  {type:'hiz',q:'2³ × 2² = ?',options:['32','16','64','8'],correct:0},
+  {type:'eslestir',pairs:[['2²','4'],['3²','9'],['4²','16']]},
+  {type:'hesapla',expr:[],display:"3² + 4² kaçtır?",answer:'25'},
+  {type:'kilit',l1:'3³',a1:'27',l2:'√81',a2:'9'},
+  {type:'bulmaca',q:'5⁰ kaçtır?',options:['1','0','5','tanımsız'],correct:0},
+  {type:'hiz',q:'√100 = ?',options:['10','50','20','25'],correct:0},
+  {type:'eslestir',pairs:[['EBOB(12,18)','6'],['EKOK(4,6)','12'],['EBOB(20,30)','10']]}
+ ],reveal:"Üslü sayılarda taban aynıysa üslerin toplandığını, kareköklü sayılarda 'içindeki tam kare çarpanı dışarı çıkarma' tekniğini gösterdik — LGS'de doğrudan puan getiren bir kısayol.",
+ parent:"Bugün [çocuğunuz] ile LGS'nin en yoğun sorulduğu konulardan üslü/köklü sayılar ve EBOB-EKOK'u çalıştık. Sınava kalan sürede hedefli tekrar, net artışını doğrudan etkiliyor."},
+lise9:{label:"9. Sınıf",intro:"Seviye 10'a hoş geldin! Kümeler ve temel denklemler seni bekliyor.",
+ challenges:[
+  {type:'hesapla',expr:[],display:"Bir üçgenin iki açısı 50° ve 60°'dir. Üçüncü açı kaç derecedir?",answer:'70'},
+  {type:'kilit',l1:'4 × 5',a1:'20',l2:'9²',a2:'81'},
+  {type:'bulmaca',q:'A={1,2,3,4}, B={3,4,5,6} ise A∩B kümesi nedir?',options:['{3,4}','{1,2,5,6}','{1,2,3,4,5,6}','{ }'],correct:0},
+  {type:'hiz',q:'x + 5 = 12, x = ?',options:['7','17','5','-7'],correct:0},
+  {type:'eslestir',pairs:[['A∪B, A={1,2} B={2,3}','{1,2,3}'],['A∩B, A={1,2,3} B={2,3,4}','{2,3}'],['A-B, A={1,2,3} B={2}','{1,3}']]},
+  {type:'hesapla',expr:[],display:"Bir dikdörtgenin kısa kenarı 6, uzun kenarı 9 ise alanı kaçtır?",answer:'54'},
+  {type:'kilit',l1:'6²',a1:'36',l2:'100 ÷ 5',a2:'20'},
+  {type:'bulmaca',q:'2x + 3 ≤ 11 eşitsizliğinin çözümü nedir?',options:['x≤4','x≥4','x≤7','x≤8'],correct:0},
+  {type:'hiz',q:'3x = 21, x = ?',options:['7','63','18','3'],correct:0},
+  {type:'eslestir',pairs:[['2x=10','x=5'],['x-4=1','x=5'],['3x=15','x=5']]}
+ ],reveal:"Kümelerde kesişim-birleşimi Venn şemasıyla gözle görünür hale getirdik — TYT'de saniyeler içinde çözülen bir soru tipine dönüşüyor.",
+ parent:"Bugün [çocuğunuz] ile kümeler ve temel eşitsizlikleri çalıştık. Lise matematiğinin temel dili olan bu konular, YKS'ye giden 4 yıllık sürecin ilk sağlam adımı."},
+lise10:{label:"10. Sınıf",intro:"Seviye 11'e hoş geldin! İkinci dereceden denklemler zamanı.",
+ challenges:[
+  {type:'hesapla',expr:[],display:"P(x) = 2x² + 3x − 1 ise P(2) kaçtır?",answer:'13'},
+  {type:'kilit',l1:'6 × 7',a1:'42',l2:'100 ÷ 4',a2:'25'},
+  {type:'bulmaca',q:'x² − 5x + 6 = 0 denkleminin köklerinden biri hangisidir?',options:['2 ve 3','1 ve 6','−2 ve −3','2 ve −3'],correct:0},
+  {type:'hiz',q:'x² = 49, x = ?',options:['±7','7 sadece','49','±14'],correct:0},
+  {type:'eslestir',pairs:[['P(x)=x+1, P(3)','4'],['P(x)=2x, P(5)','10'],['P(x)=x², P(4)','16']]},
+  {type:'hesapla',expr:[],display:"f(x) = x² − 4, f(3) kaçtır?",answer:'5'},
+  {type:'kilit',l1:'8²',a1:'64',l2:'12 × 5',a2:'60'},
+  {type:'bulmaca',q:'sin 30° kaçtır?',options:['1/2','√3/2','1','√2/2'],correct:0},
+  {type:'hiz',q:'cos 60° = ?',options:['1/2','√3/2','0','1'],correct:0},
+  {type:'eslestir',pairs:[['sin90°','1'],['cos0°','1'],['sin0°','0']]}
+ ],reveal:"İkinci dereceden denklemleri çarpanlara ayırırken 'toplamı-çarpımı' kısayolunu gösterdik — formülsüz, saniyeler içinde kök bulma.",
+ parent:"Bugün [çocuğunuz] ile ikinci dereceden denklemler ve fonksiyonları çalıştık. Bu konu YKS'nin (özellikle AYT matematik) en çok soru gelen başlıklarından."},
+lise11:{label:"11. Sınıf",intro:"Seviye 12'ye hoş geldin! Diziler ve olasılık zamanı.",
+ challenges:[
+  {type:'hesapla',expr:[],display:"Bir aritmetik dizide a₁=3, ortak fark d=4 ise a₅ kaçtır?",answer:'19'},
+  {type:'kilit',l1:'log₂8',a1:'3',l2:'log₃9',a2:'2'},
+  {type:'bulmaca',q:'5 kişiden 2 kişilik bir komite kaç farklı şekilde seçilebilir?',options:['10','20','5','25'],correct:0},
+  {type:'hiz',q:'log₁₀100 = ?',options:['2','10','100','1'],correct:0},
+  {type:'eslestir',pairs:[['log₂4','2'],['log₃27','3'],['log₄16','2']]},
+  {type:'hesapla',expr:[],display:"a₁=5, d=3 ise a₄ kaçtır?",answer:'14'},
+  {type:'kilit',l1:'log₅25',a1:'2',l2:'log₂16',a2:'4'},
+  {type:'bulmaca',q:'4! (4 faktöriyel) kaçtır?',options:['24','12','16','8'],correct:0},
+  {type:'hiz',q:'3 kişi kaç farklı şekilde sıralanır? (3!)',options:['6','3','9','12'],correct:0},
+  {type:'eslestir',pairs:[['a1=2,d=5,a3','12'],['a1=1,d=2,a4','7'],['a1=0,d=3,a3','6']]}
+ ],reveal:"Logaritmayı 'kaçıncı kuvvet' sorusu olarak yeniden çerçeveledik — ezbersiz, sezgisel bir bakış açısı kazandırıyor.",
+ parent:"Bugün [çocuğunuz] ile logaritma, diziler ve olasılığın temellerini çalıştık. Bunlar AYT matematikte en yüksek ağırlıklı konulardan; 12. sınıfa güçlü girmek için kritik."},
+lise12:{label:"12. Sınıf (YKS Yılı)",intro:"Seviye 13'e hoş geldin! Son seviye — türev ve integral.",
+ challenges:[
+  {type:'hesapla',expr:[],display:"f(x) = 3x² − 2x + 1 fonksiyonunun x=2 için türevi f'(2) kaçtır?",answer:'10'},
+  {type:'kilit',l1:'6 × 4 - 2',a1:'22',l2:'3 × 8 - 4',a2:'20'},
+  {type:'bulmaca',q:"f(x) = 3x² − 2x + 1 fonksiyonunun türevi nedir?",options:["6x − 2","3x − 2","6x² − 2","6x + 1"],correct:0},
+  {type:'hiz',q:"f(x)=x², f'(x) = ?",options:['2x','x','2','x²'],correct:0},
+  {type:'eslestir',pairs:[["f(x)=x², f'(3)","6"],["f(x)=2x², f'(2)","8"],["f(x)=4x, f'(x)","4"]]},
+  {type:'hesapla',expr:[],display:"f(x) = x³ fonksiyonunun türevinin x=2'deki değeri kaçtır?",answer:'12'},
+  {type:'kilit',l1:'5 × 5 - 3',a1:'22',l2:'4 × 9 - 2',a2:'34'},
+  {type:'bulmaca',q:'∫2x dx = ?',options:['x² + C','2x² + C','x²','2x'],correct:0},
+  {type:'hiz',q:'∫3 dx = ?',options:['3x + C','3 + C','x + C','3x'],correct:0},
+  {type:'eslestir',pairs:[['∫1 dx','x+C'],['∫x dx','x²/2+C'],['∫4 dx','4x+C']]}
+ ],reveal:"Türev almayı 'üssü öne çarp, üssü bir azalt' kısayoluyla saniyelik işleme indirdik — sınavda zaman kazandıran en temel teknik.",
+ parent:"Bugün [çocuğunuz] ile türev-integral konusunu çalıştık. Bu, YKS'ye giden son yılın en yüksek net getirisi olan konu başlıklarından. Sınava kalan süreyi doğru hedeflerle kullanmak fark yaratıyor."}
 };
 
 /* ---------- State machine ---------- */
-const SCENES = ['scene-grade','scene-intro','scene-hesapla','scene-kilit','scene-bulmaca','scene-result'];
-let currentLevelKey=null, currentLevel=null, chIndex=0, stars=0, attempts=0, currentSceneId='scene-grade', solvedCurrent=false;
+const SCENES = ['scene-grade','scene-intro','scene-hesapla','scene-kilit','scene-bulmaca','scene-hiz','scene-eslestir','scene-result'];
+let currentLevelKey=null, currentLevel=null, chIndex=0, correctCount=0, attempts=0, currentSceneId='scene-grade', solvedCurrent=false, hizTimeout=null;
 
 function goScene(id){
   SCENES.forEach(s=> document.getElementById(s).classList.remove('active'));
@@ -502,31 +505,25 @@ function goScene(id){
   currentSceneId = id;
   updateNav();
 }
-
 function updateNav(){
-  const left = document.getElementById('navLeft');
-  const right = document.getElementById('navRight');
+  const left = document.getElementById('navLeft'), right = document.getElementById('navRight');
   left.disabled = (currentSceneId === 'scene-grade');
-  if(currentSceneId === 'scene-grade'){ right.disabled = true; }
-  else if(currentSceneId === 'scene-intro'){ right.disabled = false; }
-  else if(['scene-hesapla','scene-kilit','scene-bulmaca'].includes(currentSceneId)){ right.disabled = !solvedCurrent; }
-  else if(currentSceneId === 'scene-result'){ right.disabled = true; }
+  const chScenes = ['scene-hesapla','scene-kilit','scene-bulmaca','scene-hiz','scene-eslestir'];
+  if(currentSceneId === 'scene-grade') right.disabled = true;
+  else if(currentSceneId === 'scene-intro') right.disabled = false;
+  else if(chScenes.includes(currentSceneId)) right.disabled = !solvedCurrent;
+  else if(currentSceneId === 'scene-result') right.disabled = true;
 }
-
 document.getElementById('homeBtn').addEventListener('click', ()=> goScene('scene-grade'));
-
 document.getElementById('navRight').addEventListener('click', ()=>{
   if(currentSceneId === 'scene-intro'){ beginLevel(); }
-  else if(['scene-hesapla','scene-kilit','scene-bulmaca'].includes(currentSceneId) && solvedCurrent){ advanceChallenge(); }
+  else if(solvedCurrent){ advanceChallenge(); }
 });
 document.getElementById('navLeft').addEventListener('click', ()=>{
   if(currentSceneId === 'scene-intro'){ goScene('scene-grade'); }
-  else if(['scene-hesapla','scene-kilit','scene-bulmaca'].includes(currentSceneId)){
-    if(chIndex === 0){ goScene('scene-intro'); }
-    else { chIndex--; renderChallenge(); }
-  } else if(currentSceneId === 'scene-result'){ goScene('scene-grade'); }
+  else if(currentSceneId === 'scene-result'){ goScene('scene-grade'); }
+  else { if(chIndex === 0){ goScene('scene-intro'); } else { chIndex--; renderChallenge(); } }
 });
-
 document.querySelectorAll('.grade-btn').forEach(btn=>{
   btn.addEventListener('click', ()=>{
     currentLevelKey = btn.dataset.level;
@@ -537,73 +534,73 @@ document.querySelectorAll('.grade-btn').forEach(btn=>{
   });
 });
 document.getElementById('startLevelBtn').addEventListener('click', beginLevel);
-
-function beginLevel(){
-  chIndex = 0; stars = 0;
-  renderChallenge();
-}
-
-function sceneForType(type){
-  return {hesapla:'scene-hesapla', kilit:'scene-kilit', bulmaca:'scene-bulmaca'}[type];
-}
-
-function renderStars(container){
-  container.innerHTML = '';
-  for(let i=0;i<3;i++){
-    const s = document.createElement('span');
-    s.className = 'star' + (i < stars ? ' filled' : '');
-    s.innerHTML = `<svg viewBox="0 0 24 24" fill="${i<stars?'#C99A2E':'#171050'}"><path d="M12 2l2.9 6.9 7.1.6-5.4 4.7 1.7 7-6.3-4-6.3 4 1.7-7L1.9 9.5l7.1-.6z"/></svg>`;
-    container.appendChild(s);
-  }
-}
+function beginLevel(){ chIndex = 0; correctCount = 0; renderChallenge(); }
+function sceneForType(type){ return {hesapla:'scene-hesapla', kilit:'scene-kilit', bulmaca:'scene-bulmaca', hiz:'scene-hiz', eslestir:'scene-eslestir'}[type]; }
+function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
 
 function renderChallenge(){
   attempts = 0; solvedCurrent = false;
+  if(hizTimeout){ clearTimeout(hizTimeout); hizTimeout=null; }
   const ch = currentLevel.challenges[chIndex];
   const sceneId = sceneForType(ch.type);
-  const panel = document.getElementById(
-    ch.type==='hesapla' ? 'panelHesapla' : ch.type==='kilit' ? 'panelKilit' : 'panelBulmaca'
-  );
+  const panelId = {hesapla:'panelHesapla',kilit:'panelKilit',bulmaca:'panelBulmaca',hiz:'panelHiz',eslestir:'panelEslestir'}[ch.type];
+  const panel = document.getElementById(panelId);
+  const total = currentLevel.challenges.length;
+  const progressHtml = `<div class="progress-head"><span class="challenge-tag" id="tagSlot"></span><span class="progress-text">Soru ${chIndex+1}/${total}</span></div><div class="progress-track"><div class="progress-fill" style="width:${Math.round((chIndex)/total*100)}%"></div></div>`;
 
-  let starsHtml = `<div class="stars-row" id="starsRow_${ch.type}"></div>`;
-  let tagHtml, bodyHtml;
+  let tagText, bodyHtml;
 
   if(ch.type === 'hesapla'){
-    tagHtml = '🧮 Hesaplayalım!';
+    tagText = '🧮 Hesaplayalım!';
     const title = ch.display || ch.expr.join(' ') + ' = ?';
-    let boxes = '';
-    for(let i=0;i<ch.answer.length;i++) boxes += `<input class="digit-box" maxlength="1" inputmode="numeric" data-i="${i}">`;
+    let boxes = ''; for(let i=0;i<ch.answer.length;i++) boxes += `<input class="digit-box" maxlength="1" inputmode="numeric" data-i="${i}">`;
     bodyHtml = `<div class="challenge-title">${title}</div><div class="digit-boxes" id="digitBoxes">${boxes}</div>
       <div class="feedback-msg" id="feedbackMsg"></div>
       <button class="check-btn" id="checkBtn">Kontrol Edelim</button>
       <button class="next-btn hidden-btn" id="nextBtn">Devam Et →</button>`;
   }
   if(ch.type === 'kilit'){
-    tagHtml = '🔒 Kilidi Aç!';
+    tagText = '🔒 Kilidi Aç!';
     bodyHtml = `<div class="challenge-title">İki adımı çöz, şifreyi bul ve kilidi aç!</div>
-      <div class="lock-scene">
-        <div class="lock-steps">
-          <div><span class="lock-step">1. Basamak</span><br><span class="lock-expr">${ch.l1} = ?</span></div>
-          <div><span class="lock-step">2. Basamak</span><br><span class="lock-expr">${ch.l2} = ?</span></div>
-        </div>
-        <div class="lock-visual" id="lockVisual">${LOCK_CLOSED}</div>
-      </div>
+      <div class="lock-scene"><div class="lock-steps">
+        <div><span class="lock-step">1. Basamak</span><br><span class="lock-expr">${ch.l1} = ?</span></div>
+        <div><span class="lock-step">2. Basamak</span><br><span class="lock-expr">${ch.l2} = ?</span></div>
+      </div><div class="lock-visual" id="lockVisual">${LOCK_CLOSED}</div></div>
       <div class="lock-inputs"><input class="lock-input" id="lockIn1" inputmode="numeric"><input class="lock-input" id="lockIn2" inputmode="numeric"></div>
       <div class="feedback-msg" id="feedbackMsg"></div>
       <button class="check-btn" id="checkBtn">Aç</button>
       <button class="next-btn hidden-btn" id="nextBtn">Devam Et →</button>`;
   }
   if(ch.type === 'bulmaca'){
-    tagHtml = '🧩 Bulmaca!';
-    let opts = '';
-    ch.options.forEach((o,i)=> opts += `<button class="opt-pill" data-i="${i}">${o}</button>`);
+    tagText = '🧩 Bulmaca!';
+    let opts=''; ch.options.forEach((o,i)=> opts += `<button class="opt-pill" data-i="${i}">${o}</button>`);
     bodyHtml = `<div class="challenge-title">${ch.q}</div><div class="bulmaca-options">${opts}</div>
       <div class="feedback-msg" id="feedbackMsg"></div>
       <button class="next-btn hidden-btn" id="nextBtn">Devam Et →</button>`;
   }
+  if(ch.type === 'hiz'){
+    tagText = '⚡ Hız Testi!';
+    let opts=''; ch.options.forEach((o,i)=> opts += `<button class="bubble-opt" data-i="${i}" style="animation-delay:${i*0.15}s">${o}</button>`);
+    bodyHtml = `<div class="challenge-title">${ch.q}</div>
+      <div class="timer-track"><div class="timer-fill running" id="timerFill"></div></div>
+      <div class="bubble-grid">${opts}</div>
+      <div class="feedback-msg" id="feedbackMsg"></div>
+      <button class="next-btn hidden-btn" id="nextBtn">Devam Et →</button>`;
+  }
+  if(ch.type === 'eslestir'){
+    tagText = '🃏 Eşleştir!';
+    let cards = [];
+    ch.pairs.forEach((p,i)=>{ cards.push({pairId:i,label:p[0]}); cards.push({pairId:i,label:p[1]}); });
+    shuffle(cards);
+    let cardsHtml = '';
+    cards.forEach((c,idx)=> cardsHtml += `<div class="match-card" data-idx="${idx}" data-pair="${c.pairId}"><div class="match-card-inner"><div class="match-face match-front">?</div><div class="match-face match-back">${c.label}</div></div></div>`);
+    bodyHtml = `<div class="challenge-title">Eşleşen çiftleri bul!</div><div class="match-grid" id="matchGrid">${cardsHtml}</div>
+      <div class="feedback-msg" id="feedbackMsg"></div>
+      <button class="next-btn hidden-btn" id="nextBtn">Devam Et →</button>`;
+  }
 
-  panel.innerHTML = `<span class="challenge-tag">${tagHtml}</span>` + starsHtml + bodyHtml;
-  renderStars(panel.querySelector(`#starsRow_${ch.type}`));
+  panel.innerHTML = progressHtml + bodyHtml;
+  panel.querySelector('#tagSlot').textContent = tagText;
   goScene(sceneId);
   wireChallenge(ch, panel);
 }
@@ -612,21 +609,15 @@ function wireChallenge(ch, panel){
   if(ch.type === 'hesapla'){
     const inputs = panel.querySelectorAll('.digit-box');
     inputs.forEach((inp, idx)=>{
-      inp.addEventListener('input', ()=>{
-        inp.value = inp.value.replace(/[^0-9]/g,'');
-        if(inp.value && idx < inputs.length-1) inputs[idx+1].focus();
-      });
+      inp.addEventListener('input', ()=>{ inp.value = inp.value.replace(/[^0-9]/g,''); if(inp.value && idx < inputs.length-1) inputs[idx+1].focus(); });
       inp.addEventListener('keydown', (e)=>{ if(e.key==='Backspace' && !inp.value && idx>0) inputs[idx-1].focus(); });
     });
     setTimeout(()=> inputs[0] && inputs[0].focus(), 150);
-    panel.querySelector('#checkBtn').onclick = ()=>{
-      const val = Array.from(inputs).map(i=>i.value||'').join('');
-      checkAnswer(panel, val === ch.answer, inputs, ch.answer);
-    };
+    panel.querySelector('#checkBtn').onclick = ()=>{ const val = Array.from(inputs).map(i=>i.value||'').join(''); checkAnswer(panel, val===ch.answer, inputs, ch.answer); };
   }
   if(ch.type === 'kilit'){
     panel.querySelector('#checkBtn').onclick = ()=>{
-      const in1 = panel.querySelector('#lockIn1'), in2 = panel.querySelector('#lockIn2');
+      const in1=panel.querySelector('#lockIn1'), in2=panel.querySelector('#lockIn2');
       const ok = (in1.value.trim()===ch.a1) && (in2.value.trim()===ch.a2);
       checkAnswer(panel, ok, [in1,in2], ch.a1+' / '+ch.a2, ()=>{ panel.querySelector('#lockVisual').innerHTML = LOCK_OPEN; });
     };
@@ -635,11 +626,53 @@ function wireChallenge(ch, panel){
     panel.querySelectorAll('.opt-pill').forEach(btn=>{
       btn.addEventListener('click', ()=>{
         panel.querySelectorAll('.opt-pill').forEach(b=>b.disabled=true);
-        const i = parseInt(btn.dataset.i);
-        const ok = i === ch.correct;
-        if(ok) btn.classList.add('correct');
-        else { btn.classList.add('wrong'); panel.querySelectorAll('.opt-pill')[ch.correct].classList.add('correct'); }
+        const i = parseInt(btn.dataset.i); const ok = i===ch.correct;
+        if(ok) btn.classList.add('correct'); else { btn.classList.add('wrong'); panel.querySelectorAll('.opt-pill')[ch.correct].classList.add('correct'); }
         finishChallenge(panel, ok);
+      });
+    });
+  }
+  if(ch.type === 'hiz'){
+    const timerFill = panel.querySelector('#timerFill');
+    let answered = false;
+    const opts = panel.querySelectorAll('.bubble-opt');
+    timerFill.addEventListener('animationend', ()=>{
+      if(answered) return; answered = true;
+      opts.forEach(b=>b.disabled=true);
+      opts[ch.correct].classList.add('correct');
+      panel.querySelector('#feedbackMsg').textContent = 'Süre doldu! Doğru cevap işaretlendi.';
+      panel.querySelector('#feedbackMsg').className = 'feedback-msg no';
+      finishChallenge(panel, false);
+    });
+    opts.forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        if(answered) return; answered = true;
+        opts.forEach(b=>{ b.disabled=true; b.style.animationPlayState='paused'; });
+        timerFill.classList.remove('running'); timerFill.style.animationPlayState='paused';
+        const i = parseInt(btn.dataset.i); const ok = i===ch.correct;
+        if(ok) btn.classList.add('correct'); else { btn.classList.add('wrong'); opts[ch.correct].classList.add('correct'); }
+        finishChallenge(panel, ok);
+      });
+    });
+  }
+  if(ch.type === 'eslestir'){
+    let flipped = []; let matchedCount = 0; let lock = false;
+    panel.querySelectorAll('.match-card').forEach(card=>{
+      card.addEventListener('click', ()=>{
+        if(lock || card.classList.contains('flipped') || card.classList.contains('matched')) return;
+        card.classList.add('flipped'); flipped.push(card);
+        if(flipped.length === 2){
+          lock = true;
+          const [a,b] = flipped;
+          if(a.dataset.pair === b.dataset.pair){
+            setTimeout(()=>{ a.classList.add('matched'); b.classList.add('matched'); flipped=[]; lock=false; matchedCount++;
+              if(matchedCount === ch.pairs.length){ panel.querySelector('#feedbackMsg').textContent='Harika, hepsini eşleştirdin! 🎉'; panel.querySelector('#feedbackMsg').className='feedback-msg ok'; finishChallenge(panel, true); }
+            }, 350);
+          } else {
+            a.classList.add('wrongflash'); b.classList.add('wrongflash');
+            setTimeout(()=>{ a.classList.remove('flipped','wrongflash'); b.classList.remove('flipped','wrongflash'); flipped=[]; lock=false; }, 700);
+          }
+        }
       });
     });
   }
@@ -648,8 +681,7 @@ function wireChallenge(ch, panel){
 function checkAnswer(panel, ok, els, correctAnswer, onOk){
   const feedback = panel.querySelector('#feedbackMsg');
   if(ok){
-    els.forEach(e=> e.classList.add('correct'));
-    if(onOk) onOk();
+    els.forEach(e=> e.classList.add('correct')); if(onOk) onOk();
     feedback.textContent = 'Harika, doğru! 🎉'; feedback.className = 'feedback-msg ok';
     finishChallenge(panel, true);
   } else {
@@ -657,43 +689,38 @@ function checkAnswer(panel, ok, els, correctAnswer, onOk){
     els.forEach(e=>{ e.classList.add('wrong'); setTimeout(()=>e.classList.remove('wrong'),400); });
     if(attempts >= 2){
       feedback.textContent = 'Doğru cevap: ' + correctAnswer; feedback.className = 'feedback-msg no';
-      els.forEach(e=> e.classList.add('correct'));
-      if(onOk) onOk();
+      els.forEach(e=> e.classList.add('correct')); if(onOk) onOk();
       finishChallenge(panel, false);
-    } else {
-      feedback.textContent = 'Tekrar dene, çok yaklaştın!'; feedback.className = 'feedback-msg hint';
-    }
+    } else { feedback.textContent = 'Tekrar dene, çok yaklaştın!'; feedback.className = 'feedback-msg hint'; }
   }
 }
 
-function finishChallenge(panel, gotStar){
-  if(gotStar){ stars++; renderStars(panel.querySelector('[id^="starsRow_"]')); burstConfetti(); }
-  const checkBtn = panel.querySelector('#checkBtn');
-  if(checkBtn) checkBtn.classList.add('hidden-btn');
-  const nextBtn = panel.querySelector('#nextBtn');
-  if(nextBtn) nextBtn.classList.remove('hidden-btn');
-  solvedCurrent = true;
-  updateNav();
-  if(nextBtn) nextBtn.onclick = advanceChallenge;
+function finishChallenge(panel, gotCorrect){
+  if(gotCorrect){ correctCount++; burstConfetti(20); }
+  const checkBtn = panel.querySelector('#checkBtn'); if(checkBtn) checkBtn.classList.add('hidden-btn');
+  const nextBtn = panel.querySelector('#nextBtn'); if(nextBtn){ nextBtn.classList.remove('hidden-btn'); nextBtn.onclick = advanceChallenge; }
+  const fill = panel.querySelector('.progress-fill'); if(fill) fill.style.width = Math.round(((chIndex+1)/currentLevel.challenges.length)*100)+'%';
+  solvedCurrent = true; updateNav();
 }
-
 function advanceChallenge(){
   chIndex++;
-  if(chIndex < currentLevel.challenges.length){ renderChallenge(); }
-  else { showResult(); }
+  if(chIndex < currentLevel.challenges.length) renderChallenge(); else showResult();
 }
-
 function showResult(){
-  document.getElementById('scoreBig').textContent = stars + ' / 3 ⭐';
+  const total = currentLevel.challenges.length;
+  document.getElementById('scoreBig').textContent = correctCount + ' / ' + total;
   document.getElementById('scoreLabel').textContent = currentLevel.label + ' Tamamlandı';
   document.getElementById('revealText').textContent = currentLevel.reveal;
   document.getElementById('parentText').textContent = currentLevel.parent;
+  const ratio = correctCount/total;
+  const starsEarned = Math.max(1, Math.round(ratio*5));
+  const starsRow = document.getElementById('resultStars'); starsRow.innerHTML='';
+  for(let i=0;i<5;i++){ const s=document.createElement('span'); s.className='star'+(i<starsEarned?' filled':''); s.innerHTML=`<svg viewBox="0 0 24 24" fill="${i<starsEarned?'#C99A2E':'#171050'}"><path d="M12 2l2.9 6.9 7.1.6-5.4 4.7 1.7 7-6.3-4-6.3 4 1.7-7L1.9 9.5l7.1-.6z"/></svg>`; starsRow.appendChild(s); }
   const msgs = ['Harika iş çıkardın, tebrikler! 🎉','Süpersin, bütün bulmacaları çözdün! 🌟','Aferin sana, gerçek bir matematik kaşifisin! 🚀'];
-  document.getElementById('resultBubble').innerHTML = msgs[Math.min(stars,2)];
+  document.getElementById('resultBubble').innerHTML = msgs[Math.min(starsEarned-1,2)];
   goScene('scene-result');
-  burstConfetti();
+  burstConfetti(36);
 }
-
 document.getElementById('retryBtn').addEventListener('click', ()=> goScene('scene-grade'));
 
 mountMascots();
