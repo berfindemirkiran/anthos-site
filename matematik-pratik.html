@@ -85,11 +85,20 @@
   .challenge-tag{display:inline-flex; align-items:center; gap:6px; font-family:'JetBrains Mono', monospace; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--ink); margin-bottom:6px;}
   .challenge-title{font-size:17px; font-weight:700; color:var(--ink-deep); margin-bottom:16px; text-align:center; line-height:1.4;}
 
-  .digit-boxes{display:flex; gap:7px; justify-content:center; margin-bottom:16px; flex-wrap:wrap;}
-  .digit-box{width:42px; height:52px; border:2px solid var(--line); border-radius:11px; background:var(--cream); text-align:center; font-size:22px; font-weight:800; color:var(--ink-deep); font-family:'JetBrains Mono', monospace;}
+  .digit-boxes{display:flex; gap:7px; justify-content:center; margin-bottom:18px; flex-wrap:wrap;}
+  .digit-box{width:42px; height:52px; border:2px solid var(--line); border-radius:11px; background:var(--cream); text-align:center; font-size:22px; font-weight:800; color:var(--ink-deep); font-family:'JetBrains Mono', monospace; display:flex; align-items:center; justify-content:center;}
   .digit-box:focus{outline:none; border-color:var(--ink); background:#fff;}
+  .digit-box.filled{border-color:var(--ink); background:#fff; animation:pop 0.15s ease;}
   .digit-box.correct{border-color:var(--sage); background:var(--sage-soft); color:#2f4a26;}
   .digit-box.wrong{border-color:var(--bloom); background:var(--bloom-soft); color:#7a2a1f; animation:shake 0.4s;}
+
+  .numpad{display:grid; grid-template-columns:repeat(3,60px); gap:9px; justify-content:center; margin-bottom:14px;}
+  .numpad-btn{width:60px; height:52px; border-radius:14px; border:2px solid var(--line); background:#fff; font-size:20px; font-weight:800; color:var(--ink-deep); font-family:'JetBrains Mono', monospace; cursor:pointer; transition:all 0.15s ease; box-shadow:0 2px 0 var(--line);}
+  .numpad-btn:hover{border-color:var(--ink); transform:translateY(-2px); box-shadow:0 4px 0 var(--line);}
+  .numpad-btn:active{transform:translateY(1px); box-shadow:0 1px 0 var(--line);}
+  .numpad-btn.numpad-clear{font-size:12px; color:#7a2a1f; border-color:var(--bloom-soft);}
+  .numpad-btn.numpad-back{font-size:18px; color:#7a5c14; border-color:var(--gold-soft);}
+  .numpad-btn:disabled{opacity:0.4; cursor:default; transform:none;}
 
   .lock-scene{display:flex; align-items:center; justify-content:center; gap:18px; margin-bottom:16px; flex-wrap:wrap;}
   .lock-steps{display:flex; flex-direction:column; gap:12px;}
@@ -553,10 +562,16 @@ function renderChallenge(){
   if(ch.type === 'hesapla'){
     tagText = '🧮 Hesaplayalım!';
     const title = ch.display || ch.expr.join(' ') + ' = ?';
-    let boxes = ''; for(let i=0;i<ch.answer.length;i++) boxes += `<input class="digit-box" maxlength="1" inputmode="numeric" data-i="${i}">`;
+    let boxes = ''; for(let i=0;i<ch.answer.length;i++) boxes += `<div class="digit-box" data-i="${i}"></div>`;
+    const padKeys = ['1','2','3','4','5','6','7','8','9','clear','0','back'];
+    let pad = ''; padKeys.forEach(k=>{
+      if(k==='clear') pad += `<button class="numpad-btn numpad-clear" data-key="clear">Temizle</button>`;
+      else if(k==='back') pad += `<button class="numpad-btn numpad-back" data-key="back">⌫</button>`;
+      else pad += `<button class="numpad-btn" data-key="${k}">${k}</button>`;
+    });
     bodyHtml = `<div class="challenge-title">${title}</div><div class="digit-boxes" id="digitBoxes">${boxes}</div>
+      <div class="numpad" id="numpad">${pad}</div>
       <div class="feedback-msg" id="feedbackMsg"></div>
-      <button class="check-btn" id="checkBtn">Kontrol Edelim</button>
       <button class="next-btn hidden-btn" id="nextBtn">Devam Et →</button>`;
   }
   if(ch.type === 'kilit'){
@@ -607,13 +622,23 @@ function renderChallenge(){
 
 function wireChallenge(ch, panel){
   if(ch.type === 'hesapla'){
-    const inputs = panel.querySelectorAll('.digit-box');
-    inputs.forEach((inp, idx)=>{
-      inp.addEventListener('input', ()=>{ inp.value = inp.value.replace(/[^0-9]/g,''); if(inp.value && idx < inputs.length-1) inputs[idx+1].focus(); });
-      inp.addEventListener('keydown', (e)=>{ if(e.key==='Backspace' && !inp.value && idx>0) inputs[idx-1].focus(); });
+    const boxes = Array.from(panel.querySelectorAll('.digit-box'));
+    const padBtns = Array.from(panel.querySelectorAll('.numpad-btn'));
+    let typed = '';
+    const refresh = ()=>{ boxes.forEach((b,i)=>{ b.textContent = typed[i] || ''; b.classList.toggle('filled', !!typed[i]); }); };
+    padBtns.forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const key = btn.dataset.key;
+        if(key === 'clear'){ typed=''; refresh(); return; }
+        if(key === 'back'){ typed = typed.slice(0,-1); refresh(); return; }
+        if(typed.length >= ch.answer.length) return;
+        typed += key; refresh();
+        if(typed.length === ch.answer.length){
+          padBtns.forEach(b=>b.disabled=true);
+          setTimeout(()=> checkAnswer(panel, typed===ch.answer, boxes, ch.answer, ()=>{ padBtns.forEach(b=>b.disabled=false); }), 280);
+        }
+      });
     });
-    setTimeout(()=> inputs[0] && inputs[0].focus(), 150);
-    panel.querySelector('#checkBtn').onclick = ()=>{ const val = Array.from(inputs).map(i=>i.value||'').join(''); checkAnswer(panel, val===ch.answer, inputs, ch.answer); };
   }
   if(ch.type === 'kilit'){
     panel.querySelector('#checkBtn').onclick = ()=>{
