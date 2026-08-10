@@ -635,7 +635,13 @@ function wireChallenge(ch, panel){
         typed += key; refresh();
         if(typed.length === ch.answer.length){
           padBtns.forEach(b=>b.disabled=true);
-          setTimeout(()=> checkAnswer(panel, typed===ch.answer, boxes, ch.answer, ()=>{ padBtns.forEach(b=>b.disabled=false); }), 280);
+          setTimeout(()=>{
+            const isOk = typed === ch.answer;
+            checkAnswer(panel, isOk, boxes, ch.answer);
+            if(!isOk && attempts < 2){
+              setTimeout(()=>{ typed=''; refresh(); padBtns.forEach(b=>b.disabled=false); }, 500);
+            }
+          }, 280);
         }
       });
     });
