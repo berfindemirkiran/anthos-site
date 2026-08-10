@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Anthos — Matematik Seviye Testi</title>
+<title>Anthos — Matematik Macerası</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root{
     --cream: #F7F1E3;
@@ -21,146 +21,214 @@
     --gold: #C99A2E;
     --gold-soft: #F3E3BE;
     --line: rgba(23,16,80,0.12);
-    --radius: 22px;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   html{scroll-behavior:smooth;}
   body{
-    background:var(--cream);
+    background:radial-gradient(circle at 15% 0%, #FBF6E9 0%, var(--cream) 45%, var(--cream-2) 100%);
     color:var(--charcoal);
     font-family:'Plus Jakarta Sans', sans-serif;
     min-height:100vh;
     display:flex;
     flex-direction:column;
     align-items:center;
-    padding:32px 16px 60px;
+    padding:28px 16px 60px;
+    overflow-x:hidden;
+    position:relative;
   }
   h1,h2,h3{font-family:'Fraunces', serif; color:var(--ink-deep); font-weight:600; letter-spacing:-0.01em;}
 
+  .blob{position:fixed; border-radius:50%; filter:blur(2px); opacity:0.35; z-index:0; pointer-events:none;}
+
   .top{
-    width:100%; max-width:640px; display:flex; flex-direction:column; align-items:center;
-    text-align:center; margin-bottom:22px;
+    width:100%; max-width:680px; display:flex; flex-direction:column; align-items:center;
+    text-align:center; margin-bottom:18px; position:relative; z-index:1;
   }
-  .top h1{font-size:clamp(24px,4vw,32px); margin-bottom:8px;}
-  .top p{font-size:15.5px; color:var(--charcoal); opacity:0.78; max-width:460px;}
   .badge{
     display:inline-block; background:var(--gold-soft); color:#7a5c14; font-family:'JetBrains Mono', monospace;
     font-size:11.5px; font-weight:600; letter-spacing:0.04em; text-transform:uppercase;
-    padding:6px 14px; border-radius:100px; margin-bottom:14px;
+    padding:6px 14px; border-radius:100px; margin-bottom:12px;
   }
+  .top h1{font-size:clamp(24px,4vw,32px); margin-bottom:6px;}
+  .top p{font-size:15px; color:var(--charcoal); opacity:0.75; max-width:460px;}
 
   .stage{
-    width:100%; max-width:640px;
-    background:#fff; border-radius:24px; padding:32px 28px;
-    box-shadow:0 20px 46px rgba(23,16,80,0.14);
+    width:100%; max-width:680px; position:relative; z-index:1;
+    background:#fff; border-radius:28px; padding:30px 26px;
+    box-shadow:0 24px 54px rgba(23,16,80,0.16);
+    min-height:420px;
+    overflow:hidden;
   }
   .hidden{display:none !important;}
 
+  /* --- Mascot & speech bubble --- */
+  .mascot-row{display:flex; align-items:flex-end; gap:14px; margin-bottom:18px;}
+  .mascot-row.center{flex-direction:column; align-items:center; text-align:center;}
+  .mascot{width:76px; height:88px; flex-shrink:0;}
+  .mascot.big{width:120px; height:138px;}
+  .bubble{
+    position:relative; background:var(--cream); border:1.5px solid var(--line); border-radius:18px;
+    padding:14px 18px; font-size:15px; line-height:1.5; color:var(--ink-deep); font-weight:500;
+  }
+  .bubble:before{
+    content:""; position:absolute; left:-8px; bottom:16px; width:16px; height:16px;
+    background:var(--cream); border-left:1.5px solid var(--line); border-bottom:1.5px solid var(--line);
+    transform:rotate(45deg);
+  }
+  .bubble b{color:var(--bloom);}
+
   /* --- Grade picker --- */
-  .kademe-group{margin-bottom:22px;}
+  .kademe-group{margin-bottom:20px;}
   .kademe-group:last-child{margin-bottom:0;}
   .kademe-title{
-    font-family:'JetBrains Mono', monospace; font-size:12px; font-weight:600;
-    color:var(--ink); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:10px;
+    font-family:'JetBrains Mono', monospace; font-size:11.5px; font-weight:600;
+    color:var(--ink); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:9px;
   }
   .grade-grid{display:flex; flex-wrap:wrap; gap:9px;}
   .grade-btn{
     border:1.5px solid var(--line); background:var(--cream); color:var(--ink-deep);
-    font-family:'Plus Jakarta Sans', sans-serif; font-weight:600; font-size:14px;
+    font-family:'Plus Jakarta Sans', sans-serif; font-weight:700; font-size:14px;
     padding:12px 16px; border-radius:14px; cursor:pointer; transition:all 0.15s ease;
   }
-  .grade-btn:hover{border-color:var(--ink); transform:translateY(-1px);}
+  .grade-btn:hover{border-color:var(--ink); background:#fff; transform:translateY(-2px); box-shadow:0 8px 16px rgba(23,16,80,0.1);}
 
-  /* --- Quiz --- */
-  .quiz-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:18px;}
-  .quiz-level{font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--ink); font-weight:600;}
-  .quiz-progress-text{font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--charcoal); opacity:0.6;}
-  .progress-track{width:100%; height:6px; background:var(--cream-2); border-radius:100px; overflow:hidden; margin-bottom:26px;}
-  .progress-fill{height:100%; background:var(--bloom); border-radius:100px; transition:width 0.3s ease; width:0%;}
-
-  .question-text{font-size:19px; font-weight:600; color:var(--ink-deep); margin-bottom:20px; line-height:1.4;}
-  .options{display:flex; flex-direction:column; gap:10px;}
-  .option-btn{
-    text-align:left; border:1.5px solid var(--line); background:var(--cream);
-    color:var(--charcoal); font-family:'Plus Jakarta Sans', sans-serif; font-size:15px; font-weight:500;
-    padding:14px 16px; border-radius:14px; cursor:pointer; transition:all 0.15s ease;
+  .start-btn, .cta-btn, .next-btn, .check-btn{
+    display:block; width:100%; text-align:center; padding:15px 20px; border:none; border-radius:100px;
+    background:var(--ink); color:#fff; text-decoration:none; font-family:'Plus Jakarta Sans', sans-serif;
+    font-weight:700; font-size:15.5px; cursor:pointer; transition:transform 0.15s ease; box-shadow:0 10px 22px rgba(36,27,195,0.28);
   }
-  .option-btn:hover:not(:disabled){border-color:var(--ink); transform:translateY(-1px);}
-  .option-btn:disabled{cursor:default;}
-  .option-btn.correct{background:var(--sage-soft); border-color:var(--sage); color:#2f4a26;}
-  .option-btn.wrong{background:var(--bloom-soft); border-color:var(--bloom); color:#7a2a1f;}
+  .start-btn:hover, .next-btn:hover, .check-btn:hover{transform:translateY(-2px);}
+  .cta-btn{background:var(--bloom); box-shadow:0 10px 24px rgba(232,92,74,0.35); margin-bottom:10px;}
 
-  .feedback{
-    margin-top:16px; padding:12px 14px; border-radius:14px; font-size:14px; font-weight:500;
-    display:none;
+  /* --- Level intro --- */
+  #view-intro .mascot-row{margin-bottom:22px;}
+  .level-pill{
+    display:inline-block; background:var(--ink-deep); color:#fff; font-family:'JetBrains Mono', monospace;
+    font-size:12px; font-weight:700; letter-spacing:0.04em; padding:6px 16px; border-radius:100px; margin-bottom:14px;
   }
-  .feedback.show{display:block;}
-  .feedback.ok{background:var(--sage-soft); color:#2f4a26;}
-  .feedback.no{background:var(--bloom-soft); color:#7a2a1f;}
 
-  .next-btn{
-    margin-top:20px; width:100%; padding:14px 20px; border:none; border-radius:100px;
-    background:var(--ink); color:#fff; font-family:'Plus Jakarta Sans', sans-serif;
-    font-weight:700; font-size:15px; cursor:pointer; display:none;
+  /* --- Challenge shell --- */
+  .stars-row{display:flex; justify-content:center; gap:10px; margin-bottom:18px;}
+  .star{width:26px; height:26px; opacity:0.25; transition:all 0.25s ease;}
+  .star.filled{opacity:1; transform:scale(1.15);}
+  .challenge-tag{
+    display:inline-flex; align-items:center; gap:6px; font-family:'JetBrains Mono', monospace; font-size:11.5px;
+    font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--ink); margin-bottom:14px;
   }
-  .next-btn.show{display:block;}
+  .challenge-title{font-size:20px; font-weight:700; color:var(--ink-deep); margin-bottom:22px; text-align:center; line-height:1.4;}
 
-  /* --- Result --- */
-  .result-score{
-    text-align:center; margin-bottom:22px;
+  /* --- Hesaplayalim (digit boxes) --- */
+  .sum-row{display:flex; flex-direction:column; align-items:flex-end; gap:4px; margin:0 auto 22px; width:fit-content;}
+  .sum-line{font-family:'JetBrains Mono', monospace; font-size:34px; font-weight:700; color:var(--ink-deep); letter-spacing:4px;}
+  .sum-rule{width:100%; height:3px; background:var(--ink-deep); border-radius:2px;}
+  .digit-boxes{display:flex; gap:8px; justify-content:center; margin-bottom:20px;}
+  .digit-box{
+    width:46px; height:56px; border:2px solid var(--line); border-radius:12px; background:var(--cream);
+    text-align:center; font-size:24px; font-weight:800; color:var(--ink-deep); font-family:'JetBrains Mono', monospace;
   }
-  .result-score .big{font-family:'Fraunces', serif; font-size:44px; color:var(--ink-deep); font-weight:700;}
-  .result-score .label{font-family:'JetBrains Mono', monospace; font-size:12.5px; color:var(--charcoal); opacity:0.65; text-transform:uppercase; letter-spacing:0.04em;}
+  .digit-box:focus{outline:none; border-color:var(--ink); background:#fff;}
+  .digit-box.correct{border-color:var(--sage); background:var(--sage-soft); color:#2f4a26;}
+  .digit-box.wrong{border-color:var(--bloom); background:var(--bloom-soft); color:#7a2a1f; animation:shake 0.4s;}
 
-  .reveal-box{
-    background:var(--gold-soft); border-radius:18px; padding:20px 20px; margin-bottom:18px;
+  /* --- Kilidi ac --- */
+  .lock-scene{display:flex; align-items:center; justify-content:center; gap:26px; margin-bottom:22px; flex-wrap:wrap;}
+  .lock-steps{display:flex; flex-direction:column; gap:16px;}
+  .lock-step{font-size:14px; color:var(--charcoal); opacity:0.75; font-weight:600;}
+  .lock-expr{font-family:'JetBrains Mono', monospace; font-size:24px; font-weight:700; color:var(--bloom);}
+  .lock-visual{width:110px; height:110px;}
+  .lock-inputs{display:flex; gap:10px; justify-content:center; margin-bottom:18px;}
+  .lock-input{
+    width:60px; height:52px; border:2px solid var(--line); border-radius:12px; background:var(--cream);
+    text-align:center; font-size:20px; font-weight:800; color:var(--ink-deep); font-family:'JetBrains Mono', monospace;
   }
-  .reveal-box .tag{font-family:'JetBrains Mono', monospace; font-size:11.5px; font-weight:700; color:#7a5c14; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px; display:block;}
-  .reveal-box p{font-size:14.5px; line-height:1.55; color:#4a3a10;}
+  .lock-input:focus{outline:none; border-color:var(--ink); background:#fff;}
+  .lock-input.correct{border-color:var(--sage); background:var(--sage-soft); color:#2f4a26;}
+  .lock-input.wrong{border-color:var(--bloom); background:var(--bloom-soft); color:#7a2a1f; animation:shake 0.4s;}
 
-  .parent-box{
-    background:var(--ink-deep); border-radius:18px; padding:22px 20px; margin-bottom:24px;
+  /* --- Bulmaca (mc circles) --- */
+  .bulmaca-options{display:flex; flex-wrap:wrap; gap:12px; justify-content:center; margin-bottom:10px;}
+  .opt-pill{
+    min-width:70px; padding:14px 20px; border-radius:100px; border:2px solid var(--line); background:var(--cream);
+    color:var(--ink-deep); font-family:'Plus Jakarta Sans', sans-serif; font-weight:700; font-size:15px; cursor:pointer;
+    transition:all 0.15s ease;
   }
-  .parent-box .tag{font-family:'JetBrains Mono', monospace; font-size:11.5px; font-weight:700; color:var(--bloom-soft); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:10px; display:block;}
-  .parent-box p{font-size:15px; line-height:1.6; color:#fff; font-style:italic;}
+  .opt-pill:hover:not(:disabled){border-color:var(--ink); transform:translateY(-2px);}
+  .opt-pill:disabled{cursor:default;}
+  .opt-pill.correct{background:var(--sage-soft); border-color:var(--sage); color:#2f4a26;}
+  .opt-pill.wrong{background:var(--bloom-soft); border-color:var(--bloom); color:#7a2a1f; animation:shake 0.4s;}
 
-  .cta-btn{
-    display:block; width:100%; text-align:center; padding:16px 20px; border:none; border-radius:100px;
-    background:var(--bloom); color:#fff; text-decoration:none; font-family:'Plus Jakarta Sans', sans-serif;
-    font-weight:700; font-size:16px; cursor:pointer; box-shadow:0 10px 24px rgba(232,92,74,0.35);
-    transition:transform 0.15s ease; margin-bottom:12px;
+  .feedback-msg{text-align:center; font-size:14.5px; font-weight:700; margin:14px 0; min-height:20px;}
+  .feedback-msg.ok{color:#3d6b2e;}
+  .feedback-msg.no{color:#a13f2f;}
+  .feedback-msg.hint{color:var(--gold); font-weight:600;}
+
+  .hidden-btn{display:none !important;}
+
+  @keyframes shake{
+    10%,90%{transform:translateX(-3px);} 20%,80%{transform:translateX(5px);}
+    30%,50%,70%{transform:translateX(-8px);} 40%,60%{transform:translateX(8px);}
   }
-  .cta-btn:hover{transform:translateY(-1px);}
+  @keyframes pop{0%{transform:scale(0.7); opacity:0;} 60%{transform:scale(1.08);} 100%{transform:scale(1); opacity:1;}}
+  .pop-in{animation:pop 0.35s ease;}
+
+  /* --- Result / celebration --- */
+  .result-score{text-align:center; margin-bottom:20px;}
+  .result-score .big{font-family:'Fraunces', serif; font-size:40px; color:var(--ink-deep); font-weight:700;}
+  .result-score .label{font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--charcoal); opacity:0.65; text-transform:uppercase; letter-spacing:0.04em;}
+
+  .reveal-box{background:var(--gold-soft); border-radius:18px; padding:18px 20px; margin-bottom:14px;}
+  .reveal-box .tag{font-family:'JetBrains Mono', monospace; font-size:11px; font-weight:700; color:#7a5c14; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:7px; display:block;}
+  .reveal-box p{font-size:14px; line-height:1.55; color:#4a3a10;}
+
+  .parent-box{background:var(--ink-deep); border-radius:18px; padding:20px 20px; margin-bottom:22px;}
+  .parent-box .tag{font-family:'JetBrains Mono', monospace; font-size:11px; font-weight:700; color:var(--bloom-soft); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:9px; display:block;}
+  .parent-box p{font-size:14.5px; line-height:1.6; color:#fff; font-style:italic;}
+
   .retry-link{
-    display:block; text-align:center; font-size:13px; color:var(--ink-deep); opacity:0.65;
+    display:block; text-align:center; margin-top:12px; font-size:13px; color:var(--ink-deep); opacity:0.65;
     text-decoration:none; font-family:'JetBrains Mono', monospace; cursor:pointer;
   }
   .retry-link:hover{opacity:1; text-decoration:underline;}
 
   .back-link{
-    margin-top:28px; font-size:13px; color:var(--ink-deep); opacity:0.7;
-    text-decoration:none; font-family:'JetBrains Mono', monospace;
+    margin-top:26px; font-size:13px; color:var(--ink-deep); opacity:0.7;
+    text-decoration:none; font-family:'JetBrains Mono', monospace; position:relative; z-index:1;
   }
   .back-link:hover{opacity:1; text-decoration:underline;}
+
+  .confetti-piece{
+    position:fixed; top:-20px; width:9px; height:14px; z-index:50; pointer-events:none;
+    animation:fall linear forwards;
+  }
+  @keyframes fall{
+    to{transform:translateY(110vh) rotate(540deg); opacity:0.9;}
+  }
 
   @media(max-width:600px){
     .stage{padding:24px 18px;}
     .grade-btn{padding:11px 14px; font-size:13.5px;}
+    .sum-line{font-size:26px; letter-spacing:2px;}
+    .digit-box{width:38px; height:48px; font-size:20px;}
+    .lock-input{width:50px; height:46px; font-size:17px;}
   }
 </style>
 </head>
 <body>
 
   <div class="top">
-    <span class="badge">Ücretsiz Seviye Testi</span>
-    <h1>Matematik Seviyeni Ölç</h1>
-    <p>3 soruluk kısa bir pratikle nerede olduğunu gör. Anaokulundan 12. sınıfa (YKS) kadar her seviye için hazır.</p>
+    <span class="badge">Ücretsiz Matematik Macerası</span>
+    <h1>Seviyeni Bul, Kilidi Aç!</h1>
+    <p>Her seviyede 3 farklı bulmaca var. Anaokulundan 12. sınıfa (YKS) kadar senin için hazırlandı.</p>
   </div>
 
-  <div class="stage">
+  <div class="stage" id="stage">
 
-    <!-- STEP 1: Grade picker -->
-    <div id="step-grade">
+    <!-- VIEW: Grade picker -->
+    <div id="view-grade">
+      <div class="mascot-row center">
+        <div class="mascot" id="mascotPickSlot"></div>
+        <div class="bubble" style="margin-top:12px;">Merhaba maceracı! Hangi sınıftasın? Sana uygun bulmacaları hazırlayayım. 🎒</div>
+      </div>
       <div class="kademe-group">
         <div class="kademe-title">Okul Öncesi</div>
         <div class="grade-grid">
@@ -196,35 +264,48 @@
       </div>
     </div>
 
-    <!-- STEP 2: Quiz -->
-    <div id="step-quiz" class="hidden">
-      <div class="quiz-head">
-        <span class="quiz-level" id="quiz-level-label"></span>
-        <span class="quiz-progress-text" id="quiz-progress-text"></span>
+    <!-- VIEW: Level intro -->
+    <div id="view-intro" class="hidden">
+      <div class="mascot-row center">
+        <div class="mascot big" id="mascotIntroSlot"></div>
+        <span class="level-pill" id="introLevelLabel"></span>
+        <div class="bubble" id="introBubble" style="margin-top:6px; max-width:460px;"></div>
       </div>
-      <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
-      <div class="question-text" id="question-text"></div>
-      <div class="options" id="options"></div>
-      <div class="feedback" id="feedback"></div>
-      <button class="next-btn" id="next-btn">Devam Et →</button>
+      <button class="start-btn" id="startLevelBtn">Maceraya Başla →</button>
     </div>
 
-    <!-- STEP 3: Result -->
-    <div id="step-result" class="hidden">
+    <!-- VIEW: Challenge -->
+    <div id="view-challenge" class="hidden">
+      <div class="stars-row" id="starsRow"></div>
+      <div style="text-align:center;">
+        <span class="challenge-tag" id="challengeTag"></span>
+      </div>
+      <div id="challengeBody"></div>
+      <div class="feedback-msg" id="feedbackMsg"></div>
+      <button class="check-btn" id="checkBtn">Kontrol Edelim</button>
+      <button class="next-btn hidden-btn" id="nextChallengeBtn">Devam Et →</button>
+    </div>
+
+    <!-- VIEW: Result -->
+    <div id="view-result" class="hidden">
+      <div class="mascot-row center">
+        <div class="mascot big" id="mascotResultSlot"></div>
+        <div class="bubble" id="resultBubble" style="margin-top:10px;"></div>
+      </div>
       <div class="result-score">
-        <div class="big" id="score-big"></div>
-        <div class="label" id="score-label"></div>
+        <div class="big" id="scoreBig"></div>
+        <div class="label" id="scoreLabel"></div>
       </div>
       <div class="reveal-box">
         <span class="tag">Bonus — Vay Be Anı</span>
-        <p id="reveal-text"></p>
+        <p id="revealText"></p>
       </div>
       <div class="parent-box">
         <span class="tag">Anthos Notu</span>
-        <p id="parent-text"></p>
+        <p id="parentText"></p>
       </div>
-      <a class="cta-btn" href="deneme-formu.html" id="cta-btn">Ücretsiz Deneme Dersine Katıl</a>
-      <span class="retry-link" id="retry-btn">Başka bir seviyeyi dene</span>
+      <a class="cta-btn" href="deneme-formu.html">Ücretsiz Deneme Dersine Katıl</a>
+      <span class="retry-link" id="retryBtn">Başka bir seviyeyi dene</span>
     </div>
 
   </div>
@@ -232,228 +313,389 @@
   <a class="back-link" href="index.html">← Anthos Academy'ye dön</a>
 
 <script>
+/* ---------- Mascot SVG ---------- */
+const MASCOT_SVG = `<svg viewBox="0 0 120 150" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="60" cy="142" rx="42" ry="8" fill="rgba(23,16,80,0.10)"/>
+  <path d="M18 148 Q18 92 60 92 Q102 92 102 148 Z" fill="#E85C4A"/>
+  <path d="M60 92 Q75 100 78 118 L70 122 Q64 106 60 100 Z" fill="#d1503f"/>
+  <path d="M60 92 Q45 100 42 118 L50 122 Q56 106 60 100 Z" fill="#d1503f"/>
+  <circle cx="60" cy="52" r="36" fill="#F4B9AE"/>
+  <path d="M24 44 Q30 8 60 10 Q92 8 96 44 Q96 16 60 15 Q26 16 24 44Z" fill="#171050"/>
+  <circle cx="27" cy="60" r="6" fill="#F4B9AE"/>
+  <circle cx="93" cy="60" r="6" fill="#F4B9AE"/>
+  <circle cx="46" cy="54" r="4.5" fill="#1B1A2A"/>
+  <circle cx="74" cy="54" r="4.5" fill="#1B1A2A"/>
+  <circle cx="34" cy="62" r="6" fill="#F49E8C" opacity="0.6"/>
+  <circle cx="86" cy="62" r="6" fill="#F49E8C" opacity="0.6"/>
+  <path d="M46 70 Q60 80 74 70" stroke="#1B1A2A" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+</svg>`;
+
+function mountMascots(){
+  document.querySelectorAll('.mascot').forEach(el => el.innerHTML = MASCOT_SVG);
+}
+
+/* ---------- Lock SVGs ---------- */
+const LOCK_CLOSED = `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <rect x="24" y="46" width="52" height="42" rx="9" fill="#171050"/>
+  <path d="M34 46 V32 a16 16 0 0 1 32 0 V46" stroke="#171050" stroke-width="8" fill="none" stroke-linecap="round"/>
+  <circle cx="50" cy="63" r="6" fill="#F7F1E3"/>
+  <rect x="47" y="66" width="6" height="12" rx="3" fill="#F7F1E3"/>
+</svg>`;
+const LOCK_OPEN = `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <rect x="24" y="46" width="52" height="42" rx="9" fill="#7C9D6F"/>
+  <path d="M34 46 V32 a16 16 0 0 1 32 0" stroke="#7C9D6F" stroke-width="8" fill="none" stroke-linecap="round" transform="rotate(-28 34 46)"/>
+  <path d="M42 66 l6 7 l12 -14" stroke="#F7F1E3" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`;
+
+/* ---------- Confetti ---------- */
+function burstConfetti(){
+  const colors = ['#E85C4A','#241BC3','#7C9D6F','#C99A2E','#F4B9AE'];
+  for(let i=0;i<28;i++){
+    const el = document.createElement('div');
+    el.className = 'confetti-piece';
+    el.style.left = Math.random()*100+'vw';
+    el.style.background = colors[Math.floor(Math.random()*colors.length)];
+    el.style.animationDuration = (2 + Math.random()*1.5)+'s';
+    el.style.opacity = 0.85;
+    document.body.appendChild(el);
+    setTimeout(()=> el.remove(), 3800);
+  }
+}
+
+/* ---------- Level data ----------
+   Each level: intro text, 3 challenges (hesapla / kilit / bulmaca) */
 const LEVELS = {
-  anaokulu: {
-    label: "Anaokulu (4–6 yaş)",
-    questions: [
-      { q: "🍎🍎🍎🍎🍎 mi yoksa 🍎🍎🍎 mi daha çok?", options: ["5 elma","3 elma","İkisi eşit","Bilmiyorum"], correct: 0 },
-      { q: "2 elman var, 1 tane daha aldın. Kaç elman oldu?", options: ["3","2","4","1"], correct: 0 },
-      { q: "1'den 10'a kadar sayarken 7'den sonra hangisi gelir?", options: ["8","6","9","10"], correct: 0 }
+  anaokulu: { label:"Anaokulu (4–6 yaş)",
+    intro:"Seviye 1'e hoş geldin! Küçük bulmacalarla sayıları birlikte keşfedeceğiz. Hazır mısın?",
+    challenges:[
+      {type:'hesapla', expr:['2','+','3'], answer:'5'},
+      {type:'kilit', l1:'3 + 2', a1:'5', l2:'4 + 4', a2:'8'},
+      {type:'bulmaca', q:'🍎🍎🍎🍎🍎 mi yoksa 🍎🍎🍎 mü daha çok?', options:['5 elma','3 elma','Eşit','Bilmiyorum'], correct:0}
     ],
-    reveal: "Küçük yaşta sayıları parmakla değil gözle 'görerek' tanımak (5'i tek tek saymadan tanımak gibi) ileride hızlı işlem yapmanın temelini atıyor.",
-    parent: "Bugün [çocuğunuz] ile sayı-nicelik ilişkisini çalıştık. Bu yaşta kurulan sağlam sayı algısı, ilkokulda işlem hızını ve ortaokulda LGS'ye giden yolda kavramsal anlamayı doğrudan besliyor. Düzenli çalışmayla bu farkı birkaç ay içinde net görebilirsiniz."
+    reveal:"Küçük yaşta sayıları parmakla değil gözle 'görerek' tanımak, ileride hızlı işlem yapmanın temelini atıyor.",
+    parent:"Bugün [çocuğunuz] ile sayı-nicelik ilişkisini oyunlaştırarak çalıştık. Bu yaşta kurulan sağlam sayı algısı, ilkokulda işlem hızını ve ortaokulda LGS'ye giden yolda kavramsal anlamayı doğrudan besliyor."
   },
-  ilkokul1: {
-    label: "1. Sınıf",
-    questions: [
-      { q: "7 + 5 = ?", options: ["12","11","13","10"], correct: 0 },
-      { q: "14 − 6 = ?", options: ["8","7","9","6"], correct: 0 },
-      { q: "23'ten sonra gelen sayı hangisidir?", options: ["24","22","25","20"], correct: 0 }
+  ilkokul1: { label:"1. Sınıf",
+    intro:"Seviye 2'ye hoş geldin! Toplama ve çıkarma bulmacaları seni bekliyor.",
+    challenges:[
+      {type:'hesapla', expr:['7','+','5'], answer:'12'},
+      {type:'kilit', l1:'14 - 6', a1:'8', l2:'9 + 3', a2:'12'},
+      {type:'bulmaca', q:"23'ten sonra gelen sayı hangisidir?", options:['24','22','25','20'], correct:0}
     ],
-    reveal: "Onluk geçişli toplama-çıkarmada parmak saymak yerine '10'a tamamlama' tekniğini gösterdik — işlemi 3-4 kat hızlandırıyor.",
-    parent: "Bugün [çocuğunuz] ile toplama-çıkarma üzerinde çalıştık. Onluk bozup-kurma mantığını erken kavramak, ileriki sınıflarda büyük sayılarla işlemi ve LGS'de zamana karşı hız kazanmayı doğrudan etkiliyor. Bizimle düzenli çalışırsa bu farkı birkaç ay içinde görebilirsiniz."
+    reveal:"Onluk geçişli toplama-çıkarmada parmak saymak yerine '10'a tamamlama' tekniğini gösterdik — işlemi 3-4 kat hızlandırıyor.",
+    parent:"Bugün [çocuğunuz] ile toplama-çıkarma üzerinde çalıştık. Onluk bozup-kurma mantığını erken kavramak, ileriki sınıflarda büyük sayılarla işlemi ve LGS'de zamana karşı hız kazanmayı doğrudan etkiliyor."
   },
-  ilkokul2: {
-    label: "2. Sınıf",
-    questions: [
-      { q: "48 + 27 = ?", options: ["75","65","74","85"], correct: 0 },
-      { q: "63 − 29 = ?", options: ["34","44","36","24"], correct: 0 },
-      { q: "4 sırada 5'er top var, toplam kaç top eder?", options: ["20","9","15","25"], correct: 0 }
+  ilkokul2: { label:"2. Sınıf",
+    intro:"Seviye 3'e hoş geldin! Bu sefer sayılar biraz büyüyor.",
+    challenges:[
+      {type:'hesapla', expr:['48','+','27'], answer:'75'},
+      {type:'kilit', l1:'63 - 29', a1:'34', l2:'50 - 14', a2:'36'},
+      {type:'bulmaca', q:"4 sırada 5'er top var, toplam kaç top eder?", options:['20','9','15','25'], correct:0}
     ],
-    reveal: "Toplamayı basamak basamak değil, sayıyı 'yuvarlayıp geri düzeltme' yöntemiyle zihinden yapmayı gösterdik (48+27 = 50+27−2 gibi).",
-    parent: "Bugün [çocuğunuz] ile eldeli işlemler ve gruplama mantığını (çarpmanın temeli) çalıştık. Bu temel sağlam kurulursa 3. ve 4. sınıfta çarpım tablosuna geçiş çok daha kolay oluyor, bu da LGS'ye giden yolda zaman kazandırıyor."
+    reveal:"Toplamayı basamak basamak değil, sayıyı 'yuvarlayıp geri düzeltme' yöntemiyle zihinden yapmayı gösterdik.",
+    parent:"Bugün [çocuğunuz] ile eldeli işlemler ve gruplama mantığını (çarpmanın temeli) çalıştık. Bu temel sağlam kurulursa çarpım tablosuna geçiş çok daha kolay oluyor."
   },
-  ilkokul3: {
-    label: "3. Sınıf",
-    questions: [
-      { q: "7 × 6 = ?", options: ["42","36","48","40"], correct: 0 },
-      { q: "36 ÷ 4 = ?", options: ["9","8","6","12"], correct: 0 },
-      { q: "8 dilime bölünmüş bir pastanın yarısı kaç dilimdir?", options: ["4","2","8","3"], correct: 0 }
+  ilkokul3: { label:"3. Sınıf",
+    intro:"Seviye 4'e hoş geldin! Çarpım tablosu bulmacaları başlıyor.",
+    challenges:[
+      {type:'hesapla', expr:['7','×','6'], answer:'42'},
+      {type:'kilit', l1:'36 ÷ 4', a1:'9', l2:'5 × 5', a2:'25'},
+      {type:'bulmaca', q:'8 dilime bölünmüş bir pastanın yarısı kaç dilimdir?', options:['4','2','8','3'], correct:0}
     ],
-    reveal: "7×6 gibi 'zor' çarpımları 7×5+7 şeklinde parçalayarak hatırlamayı gösterdik — çarpım tablosunu ezber değil mantıkla öğretiyoruz.",
-    parent: "Bugün [çocuğunuz] ile çarpım tablosu ve bölme kavramını çalıştık. Çarpım tablosunda sağlam bir temel, kesirlere ve orantıya geçişte (5.-6. sınıf) ve nihayetinde LGS matematik sorularında büyük fark yaratıyor."
+    reveal:"7×6 gibi 'zor' çarpımları 7×5+7 şeklinde parçalayarak hatırlamayı gösterdik.",
+    parent:"Bugün [çocuğunuz] ile çarpım tablosu ve bölme kavramını çalıştık. Bu, kesirlere ve LGS matematik sorularına giden yolda büyük fark yaratıyor."
   },
-  ilkokul4: {
-    label: "4. Sınıf",
-    questions: [
-      { q: "1258 + 976 = ?", options: ["2234","2224","2134","2244"], correct: 0 },
-      { q: "3/8 + 2/8 = ?", options: ["5/8","1/8","6/8","5/16"], correct: 0 },
-      { q: "0,4 ondalık kesri hangi kesire eşittir?", options: ["4/10","4/100","40/10","1/4"], correct: 0 }
+  ilkokul4: { label:"4. Sınıf",
+    intro:"Seviye 5'e hoş geldin! Büyük sayılar ve kesirler seni bekliyor.",
+    challenges:[
+      {type:'hesapla', expr:['1258','+','976'], answer:'2234'},
+      {type:'kilit', l1:'144 ÷ 12', a1:'12', l2:'9 × 9', a2:'81'},
+      {type:'bulmaca', q:'3/8 + 2/8 = ?', options:['5/8','1/8','6/8','5/16'], correct:0}
     ],
-    reveal: "Aynı paydalı kesirleri pasta dilimi gibi görselleştirerek göstermek, kesir korkusunu daha ilk günden ortadan kaldırıyor.",
-    parent: "Bugün [çocuğunuz] ile kesir ve ondalık sayı ilişkisini çalıştık. Bu konu 5. ve 6. sınıfın (dolayısıyla LGS'nin) en çok soru gelen konularından biri — burada atılan sağlam temel ileride ciddi zaman kazandırıyor."
+    reveal:"Aynı paydalı kesirleri pasta dilimi gibi görselleştirerek göstermek, kesir korkusunu daha ilk günden ortadan kaldırıyor.",
+    parent:"Bugün [çocuğunuz] ile kesir ve ondalık sayı ilişkisini çalıştık. Bu konu 5.-6. sınıfın (dolayısıyla LGS'nin) en çok soru gelen konularından biri."
   },
-  ortaokul5: {
-    label: "5. Sınıf",
-    questions: [
-      { q: "2/3 × 3/4 = ?", options: ["1/2","5/12","3/4","2/3"], correct: 0 },
-      { q: "Bir sayının %25'i 80 ise, sayı kaçtır?", options: ["320","300","200","100"], correct: 0 },
-      { q: "(−5) + 8 = ?", options: ["3","−3","13","−13"], correct: 0 }
+  ortaokul5: { label:"5. Sınıf",
+    intro:"Seviye 6'ya hoş geldin! Yüzde ve kesir bulmacaları zamanı.",
+    challenges:[
+      {type:'hesapla', expr:['%25','\'i','80→?'], answer:'320', display:"Bir sayının %25'i 80 ise sayı kaçtır?"},
+      {type:'kilit', l1:'15 × 4', a1:'60', l2:'100 - 37', a2:'63'},
+      {type:'bulmaca', q:'2/3 × 3/4 = ?', options:['1/2','5/12','3/4','2/3'], correct:0}
     ],
-    reveal: "Yüzde problemlerini '%25 = çeyrek' gibi günlük hayat karşılıklarıyla çözmeyi gösterdik — ezbersiz, kalıcı bir yöntem.",
-    parent: "Bugün [çocuğunuz] ile kesirli işlemler ve yüzde-oran kavramını çalıştık. Bu konular LGS matematik sorularının önemli bir kısmını oluşturuyor; burada güçlenmek 8. sınıfa çok daha rahat girmesini sağlıyor."
+    reveal:"Yüzde problemlerini '%25 = çeyrek' gibi günlük hayat karşılıklarıyla çözmeyi gösterdik — ezbersiz, kalıcı bir yöntem.",
+    parent:"Bugün [çocuğunuz] ile kesirli işlemler ve yüzde-oran kavramını çalıştık. Bu konular LGS matematik sorularının önemli bir kısmını oluşturuyor."
   },
-  ortaokul6: {
-    label: "6. Sınıf",
-    questions: [
-      { q: "(−6) × (−3) = ?", options: ["18","−18","9","−9"], correct: 0 },
-      { q: "3a + 2 ifadesinde a = 4 ise sonuç kaçtır?", options: ["14","12","9","20"], correct: 0 },
-      { q: "4 kalem 12 TL ise 7 kalem kaç TL'dir?", options: ["21","28","24","18"], correct: 0 }
+  ortaokul6: { label:"6. Sınıf",
+    intro:"Seviye 7'ye hoş geldin! Negatif sayılar ve cebire giriş yapıyoruz.",
+    challenges:[
+      {type:'hesapla', expr:['(-6)','×','(-3)'], answer:'18'},
+      {type:'kilit', l1:'9 × 9', a1:'81', l2:'144 ÷ 12', a2:'12'},
+      {type:'bulmaca', q:'3a + 2 ifadesinde a = 4 ise sonuç kaçtır?', options:['14','12','9','20'], correct:0}
     ],
-    reveal: "Negatif sayı çarpımını 'iki olumsuzun bir olumluyu getirmesi' hikayesiyle anlattık — çocuklar bu kuralı bir daha unutmuyor.",
-    parent: "Bugün [çocuğunuz] ile tam sayılarla işlemler ve cebire giriş yaptık. Cebirsel ifadeleri erken ve doğru kavramak, 7.-8. sınıfta denklemlere ve LGS'nin en kritik konularından birine sağlam bir zemin hazırlıyor."
+    reveal:"Negatif sayı çarpımını 'iki olumsuzun bir olumluyu getirmesi' hikayesiyle anlattık — çocuklar bu kuralı bir daha unutmuyor.",
+    parent:"Bugün [çocuğunuz] ile tam sayılarla işlemler ve cebire giriş yaptık. Cebirsel ifadeleri erken kavramak, LGS'nin en kritik konularından birine zemin hazırlıyor."
   },
-  ortaokul7: {
-    label: "7. Sınıf",
-    questions: [
-      { q: "−3/4 + 1/2 = ?", options: ["−1/4","1/4","−5/4","1/2"], correct: 0 },
-      { q: "(x + 3)² ifadesinin açılımı nedir?", options: ["x² + 6x + 9","x² + 9","x² + 3x + 9","x² + 6x + 6"], correct: 0 },
-      { q: "Bir ürün %20 indirimle 240 TL oluyorsa, orijinal fiyatı kaçtır?", options: ["300","288","260","320"], correct: 0 }
+  ortaokul7: { label:"7. Sınıf",
+    intro:"Seviye 8'e hoş geldin! Rasyonel sayılar ve özdeşlikler zamanı.",
+    challenges:[
+      {type:'hesapla', expr:['%20','indirim','240→?'], answer:'300', display:"Bir ürün %20 indirimle 240 TL oluyorsa, orijinal fiyatı kaçtır?"},
+      {type:'kilit', l1:'13 × 13', a1:'169', l2:'225 ÷ 15', a2:'15'},
+      {type:'bulmaca', q:'(x + 3)² ifadesinin açılımı nedir?', options:['x² + 6x + 9','x² + 9','x² + 3x + 9','x² + 6x + 6'], correct:0}
     ],
-    reveal: "Özdeşlikleri ezberletmeden, alan modeliyle (kare çizerek) görsel olarak ispatlamayı gösterdik — LGS'de en çok şaşırtan konulardan biri.",
-    parent: "Bugün [çocuğunuz] ile rasyonel sayılar ve cebirsel özdeşlikleri çalıştık. Bu, LGS yılı olan 8. sınıfa girmeden önce sağlamlaştırılması gereken en kritik konu başlıklarından biri."
+    reveal:"Özdeşlikleri ezberletmeden, alan modeliyle (kare çizerek) görsel olarak ispatlamayı gösterdik.",
+    parent:"Bugün [çocuğunuz] ile rasyonel sayılar ve cebirsel özdeşlikleri çalıştık. LGS yılı olan 8. sınıfa girmeden önce sağlamlaştırılması gereken en kritik konulardan biri."
   },
-  ortaokul8: {
-    label: "8. Sınıf (LGS Yılı)",
-    questions: [
-      { q: "2³ × 2⁴ = ?", options: ["2⁷ = 128","2¹²","4⁷","2⁶ = 64"], correct: 0 },
-      { q: "√48 sayısının en sade hâli nedir?", options: ["4√3","2√12","6√2","√48"], correct: 0 },
-      { q: "24 ve 36'nın EBOB'u kaçtır?", options: ["12","6","24","4"], correct: 0 }
+  ortaokul8: { label:"8. Sınıf (LGS Yılı)",
+    intro:"Seviye 9'a hoş geldin! LGS'nin en sevilen konuları burada.",
+    challenges:[
+      {type:'hesapla', expr:['EBOB','(24,36)'], answer:'12', display:"24 ve 36'nın EBOB'u kaçtır?"},
+      {type:'kilit', l1:'2⁴', a1:'16', l2:'√64', a2:'8'},
+      {type:'bulmaca', q:'√48 sayısının en sade hâli nedir?', options:['4√3','2√12','6√2','√48'], correct:0}
     ],
-    reveal: "Üslü sayılarda taban aynıysa üslerin toplandığını, kareköklü sayılarda ise 'içindeki tam kare çarpanı dışarı çıkarma' tekniğini gösterdik — LGS'de doğrudan puan getiren bir kısayol.",
-    parent: "Bugün [çocuğunuz] ile LGS'nin en yoğun sorulduğu konulardan üslü/köklü sayılar ve EBOB-EKOK'u çalıştık. Sınava kalan süre içinde bu tür konularda düzenli, hedefli tekrar; net artışını doğrudan etkiliyor."
+    reveal:"Üslü sayılarda taban aynıysa üslerin toplandığını, kareköklü sayılarda 'içindeki tam kare çarpanı dışarı çıkarma' tekniğini gösterdik — LGS'de doğrudan puan getiren bir kısayol.",
+    parent:"Bugün [çocuğunuz] ile LGS'nin en yoğun sorulduğu konulardan üslü/köklü sayılar ve EBOB-EKOK'u çalıştık. Sınava kalan sürede hedefli tekrar, net artışını doğrudan etkiliyor."
   },
-  lise9: {
-    label: "9. Sınıf",
-    questions: [
-      { q: "A={1,2,3,4}, B={3,4,5,6} ise A∩B kümesi nedir?", options: ["{3,4}","{1,2,5,6}","{1,2,3,4,5,6}","{ }"], correct: 0 },
-      { q: "2x + 3 ≤ 11 eşitsizliğinin çözümü nedir?", options: ["x ≤ 4","x ≥ 4","x ≤ 7","x ≤ 8"], correct: 0 },
-      { q: "Bir üçgenin iki açısı 50° ve 60°'dir. Üçüncü açı kaç derecedir?", options: ["70","60","80","90"], correct: 0 }
+  lise9: { label:"9. Sınıf",
+    intro:"Seviye 10'a hoş geldin! Kümeler ve temel denklemler seni bekliyor.",
+    challenges:[
+      {type:'hesapla', expr:['50°','+','60°','+','?=180°'], answer:'70', display:"Bir üçgenin iki açısı 50° ve 60°'dir. Üçüncü açı kaç derecedir?"},
+      {type:'kilit', l1:'4 × 5', a1:'20', l2:'9²', a2:'81'},
+      {type:'bulmaca', q:'A={1,2,3,4}, B={3,4,5,6} ise A∩B kümesi nedir?', options:['{3,4}','{1,2,5,6}','{1,2,3,4,5,6}','{ }'], correct:0}
     ],
-    reveal: "Kümelerde kesişim-birleşimi Venn şemasıyla gözle görünür hale getirdik — TYT'de saniyeler içinde çözülen bir soru tipine dönüşüyor.",
-    parent: "Bugün [çocuğunuz] ile kümeler ve temel eşitsizlikleri çalıştık. Lise matematiğinin temel dili olan bu konular, YKS'ye giden 4 yıllık sürecin ilk sağlam adımı."
+    reveal:"Kümelerde kesişim-birleşimi Venn şemasıyla gözle görünür hale getirdik — TYT'de saniyeler içinde çözülen bir soru tipine dönüşüyor.",
+    parent:"Bugün [çocuğunuz] ile kümeler ve temel eşitsizlikleri çalıştık. Lise matematiğinin temel dili olan bu konular, YKS'ye giden 4 yıllık sürecin ilk sağlam adımı."
   },
-  lise10: {
-    label: "10. Sınıf",
-    questions: [
-      { q: "x² − 5x + 6 = 0 denkleminin köklerinden biri hangisidir?", options: ["2 ve 3","1 ve 6","−2 ve −3","2 ve −3"], correct: 0 },
-      { q: "P(x) = 2x² + 3x − 1 ise P(2) kaçtır?", options: ["13","9","15","11"], correct: 0 },
-      { q: "sin 30° kaçtır?", options: ["1/2","√3/2","1","√2/2"], correct: 0 }
+  lise10: { label:"10. Sınıf",
+    intro:"Seviye 11'e hoş geldin! İkinci dereceden denklemler zamanı.",
+    challenges:[
+      {type:'hesapla', expr:['P(x)=2x²+3x-1','P(2)='], answer:'13', display:"P(x) = 2x² + 3x − 1 ise P(2) kaçtır?"},
+      {type:'kilit', l1:'6 × 7', a1:'42', l2:'100 ÷ 4', a2:'25'},
+      {type:'bulmaca', q:'x² − 5x + 6 = 0 denkleminin köklerinden biri hangisidir?', options:['2 ve 3','1 ve 6','−2 ve −3','2 ve −3'], correct:0}
     ],
-    reveal: "İkinci dereceden denklemleri çarpanlara ayırırken 'toplamı-çarpımı' kısayolunu gösterdik — formülsüz, saniyeler içinde kök bulma.",
-    parent: "Bugün [çocuğunuz] ile ikinci dereceden denklemler ve trigonometriye giriş yaptık. Bu iki konu YKS'nin (özellikle AYT matematik) en çok soru gelen başlıkları arasında."
+    reveal:"İkinci dereceden denklemleri çarpanlara ayırırken 'toplamı-çarpımı' kısayolunu gösterdik — formülsüz, saniyeler içinde kök bulma.",
+    parent:"Bugün [çocuğunuz] ile ikinci dereceden denklemler ve fonksiyonları çalıştık. Bu konu YKS'nin (özellikle AYT matematik) en çok soru gelen başlıklarından."
   },
-  lise11: {
-    label: "11. Sınıf",
-    questions: [
-      { q: "log₂8 kaçtır?", options: ["3","4","2","8"], correct: 0 },
-      { q: "Bir aritmetik dizide a₁=3, ortak fark d=4 ise a₅ kaçtır?", options: ["19","15","23","16"], correct: 0 },
-      { q: "5 kişiden 2 kişilik bir komite kaç farklı şekilde seçilebilir?", options: ["10","20","5","25"], correct: 0 }
+  lise11: { label:"11. Sınıf",
+    intro:"Seviye 12'ye hoş geldin! Diziler ve olasılık zamanı.",
+    challenges:[
+      {type:'hesapla', expr:['a1=3,','d=4,','a5='], answer:'19', display:"Bir aritmetik dizide a₁=3, ortak fark d=4 ise a₅ kaçtır?"},
+      {type:'kilit', l1:'log₂8', a1:'3', l2:'log₃9', a2:'2'},
+      {type:'bulmaca', q:'5 kişiden 2 kişilik bir komite kaç farklı şekilde seçilebilir?', options:['10','20','5','25'], correct:0}
     ],
-    reveal: "Logaritmayı 'kaçıncı kuvvet' sorusu olarak yeniden çerçeveledik — ezbersiz, sezgisel bir bakış açısı kazandırıyor.",
-    parent: "Bugün [çocuğunuz] ile logaritma, diziler ve olasılığın temellerini çalıştık. Bunlar AYT matematikte en yüksek ağırlıklı konulardan; 12. sınıfa güçlü girmek için kritik."
+    reveal:"Logaritmayı 'kaçıncı kuvvet' sorusu olarak yeniden çerçeveledik — ezbersiz, sezgisel bir bakış açısı kazandırıyor.",
+    parent:"Bugün [çocuğunuz] ile logaritma, diziler ve olasılığın temellerini çalıştık. Bunlar AYT matematikte en yüksek ağırlıklı konulardan; 12. sınıfa güçlü girmek için kritik."
   },
-  lise12: {
-    label: "12. Sınıf (YKS Yılı)",
-    questions: [
-      { q: "f(x) = 3x² − 2x + 1 fonksiyonunun türevi nedir?", options: ["6x − 2","3x − 2","6x² − 2","6x + 1"], correct: 0 },
-      { q: "∫(2x + 3) dx = ?", options: ["x² + 3x + C","2x² + 3x + C","x² + 3 + C","x² + 3x"], correct: 0 },
-      { q: "A(2,3) ve B(6,7) noktaları arasındaki uzaklık kaçtır?", options: ["4√2","4","8","2√2"], correct: 0 }
+  lise12: { label:"12. Sınıf (YKS Yılı)",
+    intro:"Seviye 13'e hoş geldin! Son seviye — türev ve integral.",
+    challenges:[
+      {type:'hesapla', expr:["f(x)=3x²-2x+1","f'(2)="], answer:'10', display:"f(x) = 3x² − 2x + 1 fonksiyonunun x=2 için türevi f'(2) kaçtır?"},
+      {type:'kilit', l1:'6 × 4 - 2', a1:'22', l2:'3 × 8 - 4', a2:'20'},
+      {type:'bulmaca', q:'f(x) = 3x² − 2x + 1 fonksiyonunun türevi nedir?', options:["6x − 2","3x − 2","6x² − 2","6x + 1"], correct:0}
     ],
-    reveal: "Türev almayı 'üssü öne çarp, üssü bir azalt' kısayoluyla saniyelik işleme indirdik — sınavda zaman kazandıran en temel teknik.",
-    parent: "Bugün [çocuğunuz] ile türev-integral ve analitik geometriyi çalıştık. Bu, YKS'ye giden son yılın en yüksek net getirisi olan konu başlıkları. Sınava kalan süreyi doğru hedeflerle kullanmak fark yaratıyor."
+    reveal:"Türev almayı 'üssü öne çarp, üssü bir azalt' kısayoluyla saniyelik işleme indirdik — sınavda zaman kazandıran en temel teknik.",
+    parent:"Bugün [çocuğunuz] ile türev-integral konusunu çalıştık. Bu, YKS'ye giden son yılın en yüksek net getirisi olan konu başlıklarından. Sınava kalan süreyi doğru hedeflerle kullanmak fark yaratıyor."
   }
 };
 
-let currentLevel = null;
-let currentIndex = 0;
-let score = 0;
+/* ---------- State ---------- */
+let currentLevelKey = null, currentLevel = null, chIndex = 0, stars = 0, attempts = 0;
 
-const stepGrade = document.getElementById('step-grade');
-const stepQuiz = document.getElementById('step-quiz');
-const stepResult = document.getElementById('step-result');
+const viewGrade = document.getElementById('view-grade');
+const viewIntro = document.getElementById('view-intro');
+const viewChallenge = document.getElementById('view-challenge');
+const viewResult = document.getElementById('view-result');
 
-document.querySelectorAll('.grade-btn').forEach(btn => {
-  btn.addEventListener('click', () => startQuiz(btn.dataset.level));
+function showView(v){
+  [viewGrade, viewIntro, viewChallenge, viewResult].forEach(el => el.classList.add('hidden'));
+  v.classList.remove('hidden');
+  v.classList.add('pop-in');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+document.querySelectorAll('.grade-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    currentLevelKey = btn.dataset.level;
+    currentLevel = LEVELS[currentLevelKey];
+    document.getElementById('introLevelLabel').textContent = currentLevel.label;
+    document.getElementById('introBubble').innerHTML = currentLevel.intro;
+    showView(viewIntro);
+    mountMascots();
+  });
 });
 
-function startQuiz(levelKey){
-  currentLevel = LEVELS[levelKey];
-  currentIndex = 0;
-  score = 0;
-  stepGrade.classList.add('hidden');
-  stepResult.classList.add('hidden');
-  stepQuiz.classList.remove('hidden');
-  document.getElementById('quiz-level-label').textContent = currentLevel.label;
-  renderQuestion();
-}
+document.getElementById('startLevelBtn').addEventListener('click', ()=>{
+  chIndex = 0; stars = 0;
+  renderStars();
+  renderChallenge();
+  showView(viewChallenge);
+});
 
-function renderQuestion(){
-  const total = currentLevel.questions.length;
-  const q = currentLevel.questions[currentIndex];
-  document.getElementById('quiz-progress-text').textContent = (currentIndex+1) + " / " + total;
-  document.getElementById('progress-fill').style.width = Math.round(((currentIndex)/total)*100) + "%";
-  document.getElementById('question-text').textContent = q.q;
-  const optionsEl = document.getElementById('options');
-  optionsEl.innerHTML = "";
-  const feedback = document.getElementById('feedback');
-  feedback.className = 'feedback';
-  feedback.textContent = '';
-  document.getElementById('next-btn').classList.remove('show');
-
-  q.options.forEach((opt, i) => {
-    const b = document.createElement('button');
-    b.className = 'option-btn';
-    b.textContent = opt;
-    b.addEventListener('click', () => selectAnswer(i));
-    optionsEl.appendChild(b);
-  });
-}
-
-function selectAnswer(i){
-  const q = currentLevel.questions[currentIndex];
-  const buttons = document.querySelectorAll('.option-btn');
-  buttons.forEach(b => b.disabled = true);
-  const feedback = document.getElementById('feedback');
-
-  if(i === q.correct){
-    buttons[i].classList.add('correct');
-    feedback.classList.add('show','ok');
-    feedback.textContent = "Doğru! 🎉";
-    score++;
-  } else {
-    buttons[i].classList.add('wrong');
-    buttons[q.correct].classList.add('correct');
-    feedback.classList.add('show','no');
-    feedback.textContent = "Doğru cevap: " + q.options[q.correct];
+function renderStars(){
+  const row = document.getElementById('starsRow');
+  row.innerHTML = '';
+  for(let i=0;i<3;i++){
+    const s = document.createElement('span');
+    s.className = 'star' + (i < stars ? ' filled' : '');
+    s.innerHTML = `<svg viewBox="0 0 24 24" fill="${i<stars?'#C99A2E':'#171050'}"><path d="M12 2l2.9 6.9 7.1.6-5.4 4.7 1.7 7-6.3-4-6.3 4 1.7-7L1.9 9.5l7.1-.6z"/></svg>`;
+    row.appendChild(s);
   }
-  document.getElementById('progress-fill').style.width = Math.round(((currentIndex+1)/currentLevel.questions.length)*100) + "%";
-  document.getElementById('next-btn').classList.add('show');
 }
 
-document.getElementById('next-btn').addEventListener('click', () => {
-  currentIndex++;
-  if(currentIndex < currentLevel.questions.length){
-    renderQuestion();
+function renderChallenge(){
+  attempts = 0;
+  const ch = currentLevel.challenges[chIndex];
+  const body = document.getElementById('challengeBody');
+  const tag = document.getElementById('challengeTag');
+  const feedback = document.getElementById('feedbackMsg');
+  feedback.textContent = ''; feedback.className = 'feedback-msg';
+  document.getElementById('checkBtn').classList.remove('hidden-btn');
+  document.getElementById('checkBtn').disabled = false;
+  document.getElementById('nextChallengeBtn').classList.add('hidden-btn');
+
+  if(ch.type === 'hesapla'){
+    tag.innerHTML = '🧮 Hesaplayalım!';
+    const title = ch.display || ch.expr.join(' ') + ' = ?';
+    let boxes = '';
+    for(let i=0;i<ch.answer.length;i++) boxes += `<input class="digit-box" maxlength="1" inputmode="numeric" data-i="${i}">`;
+    body.innerHTML = `<div class="challenge-title">${title}</div><div class="digit-boxes" id="digitBoxes">${boxes}</div>`;
+    const inputs = body.querySelectorAll('.digit-box');
+    inputs.forEach((inp, idx)=>{
+      inp.addEventListener('input', ()=>{
+        inp.value = inp.value.replace(/[^0-9]/g,'');
+        if(inp.value && idx < inputs.length-1) inputs[idx+1].focus();
+      });
+      inp.addEventListener('keydown', (e)=>{
+        if(e.key === 'Backspace' && !inp.value && idx>0) inputs[idx-1].focus();
+      });
+    });
+    setTimeout(()=> inputs[0] && inputs[0].focus(), 100);
+    document.getElementById('checkBtn').onclick = ()=>{
+      const val = Array.from(inputs).map(i=>i.value||'').join('');
+      checkAnswer(val === ch.answer, inputs, ch.answer);
+    };
+  }
+
+  if(ch.type === 'kilit'){
+    tag.innerHTML = '🔒 Kilidi Aç!';
+    body.innerHTML = `
+      <div class="challenge-title">İki adımı çöz, şifreyi bul ve kilidi aç!</div>
+      <div class="lock-scene">
+        <div class="lock-steps">
+          <div><span class="lock-step">1. Basamak</span><br><span class="lock-expr">${ch.l1} = ?</span></div>
+          <div><span class="lock-step">2. Basamak</span><br><span class="lock-expr">${ch.l2} = ?</span></div>
+        </div>
+        <div class="lock-visual" id="lockVisual">${LOCK_CLOSED}</div>
+      </div>
+      <div class="lock-inputs">
+        <input class="lock-input" id="lockIn1" inputmode="numeric">
+        <input class="lock-input" id="lockIn2" inputmode="numeric">
+      </div>`;
+    document.getElementById('checkBtn').onclick = ()=>{
+      const in1 = document.getElementById('lockIn1');
+      const in2 = document.getElementById('lockIn2');
+      const ok = (in1.value.trim() === ch.a1) && (in2.value.trim() === ch.a2);
+      checkAnswer(ok, [in1,in2], ch.a1+' / '+ch.a2, ()=>{
+        document.getElementById('lockVisual').innerHTML = LOCK_OPEN;
+      });
+    };
+  }
+
+  if(ch.type === 'bulmaca'){
+    tag.innerHTML = '🧩 Bulmaca!';
+    let opts = '';
+    ch.options.forEach((o,i)=> opts += `<button class="opt-pill" data-i="${i}">${o}</button>`);
+    body.innerHTML = `<div class="challenge-title">${ch.q}</div><div class="bulmaca-options">${opts}</div>`;
+    document.getElementById('checkBtn').classList.add('hidden-btn');
+    body.querySelectorAll('.opt-pill').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        body.querySelectorAll('.opt-pill').forEach(b=>b.disabled = true);
+        const i = parseInt(btn.dataset.i);
+        const ok = i === ch.correct;
+        if(ok){ btn.classList.add('correct'); }
+        else{
+          btn.classList.add('wrong');
+          body.querySelectorAll('.opt-pill')[ch.correct].classList.add('correct');
+        }
+        finishChallenge(ok);
+      });
+    });
+  }
+}
+
+function checkAnswer(ok, els, correctAnswer, onOk){
+  const feedback = document.getElementById('feedbackMsg');
+  if(ok){
+    els.forEach(e=> e.classList.add('correct'));
+    if(onOk) onOk();
+    feedback.textContent = 'Harika, doğru! 🎉';
+    feedback.className = 'feedback-msg ok';
+    finishChallenge(true);
+  } else {
+    attempts++;
+    els.forEach(e=> { e.classList.add('wrong'); setTimeout(()=>e.classList.remove('wrong'), 400); });
+    if(attempts >= 2){
+      feedback.textContent = 'Doğru cevap: ' + correctAnswer;
+      feedback.className = 'feedback-msg no';
+      els.forEach(e=> e.classList.add('correct'));
+      if(onOk) onOk();
+      finishChallenge(false);
+    } else {
+      feedback.textContent = 'Tekrar dene, çok yaklaştın!';
+      feedback.className = 'feedback-msg hint';
+    }
+  }
+}
+
+function finishChallenge(gotStar){
+  if(gotStar){ stars++; renderStars(); burstConfetti(); }
+  document.getElementById('checkBtn').classList.add('hidden-btn');
+  document.getElementById('nextChallengeBtn').classList.remove('hidden-btn');
+}
+
+document.getElementById('nextChallengeBtn').addEventListener('click', ()=>{
+  chIndex++;
+  if(chIndex < currentLevel.challenges.length){
+    renderChallenge();
   } else {
     showResult();
   }
 });
 
 function showResult(){
-  stepQuiz.classList.add('hidden');
-  stepResult.classList.remove('hidden');
-  const total = currentLevel.questions.length;
-  document.getElementById('score-big').textContent = score + "/" + total;
-  document.getElementById('score-label').textContent = currentLevel.label + " Sonucu";
-  document.getElementById('reveal-text').textContent = currentLevel.reveal;
-  document.getElementById('parent-text').textContent = currentLevel.parent;
+  document.getElementById('scoreBig').textContent = stars + ' / 3 ⭐';
+  document.getElementById('scoreLabel').textContent = currentLevel.label + ' Tamamlandı';
+  document.getElementById('revealText').textContent = currentLevel.reveal;
+  document.getElementById('parentText').textContent = currentLevel.parent;
+  const msgs = ['Harika iş çıkardın, tebrikler! 🎉','Süpersin, bütün bulmacaları çözdün! 🌟','Aferin sana, gerçek bir matematik kaşifisin! 🚀'];
+  document.getElementById('resultBubble').innerHTML = msgs[Math.min(stars,2)];
+  showView(viewResult);
+  mountMascots();
+  burstConfetti();
 }
 
-document.getElementById('retry-btn').addEventListener('click', () => {
-  stepResult.classList.add('hidden');
-  stepGrade.classList.remove('hidden');
+document.getElementById('retryBtn').addEventListener('click', ()=>{
+  showView(viewGrade);
 });
+
+/* background decorative blobs */
+function addBlobs(){
+  const specs = [
+    {top:'-60px', left:'-60px', size:220, color:'var(--bloom-soft)'},
+    {top:'40%', right:'-80px', size:260, color:'var(--sage-soft)'},
+    {bottom:'-70px', left:'20%', size:200, color:'var(--gold-soft)'}
+  ];
+  specs.forEach(s=>{
+    const d = document.createElement('div');
+    d.className = 'blob';
+    d.style.width = s.size+'px'; d.style.height = s.size+'px'; d.style.background = s.color;
+    if(s.top) d.style.top = s.top; if(s.left) d.style.left = s.left;
+    if(s.right) d.style.right = s.right; if(s.bottom) d.style.bottom = s.bottom;
+    document.body.appendChild(d);
+  });
+}
+
+mountMascots();
+addBlobs();
 </script>
 
 </body>
